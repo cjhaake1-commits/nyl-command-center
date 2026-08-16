@@ -99,6 +99,10 @@ Those defaults produce a planning estimate of about 4 placed sales, 14 held appo
 
 Once real activity is logged, the War Room begins blending your actual performance with the starting assumptions. This avoids replacing the model with one lucky or unlucky day while still allowing the plan to become increasingly personal to your real conversion rates and average commission.
 
+## Automated validation
+
+GitHub Actions runs the test suite on pushes and pull requests to `main`.
+
 ## Compliance boundary
 
 This is intentionally a **personal productivity and performance system**, not a client system of record.
