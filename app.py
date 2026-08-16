@@ -24,11 +24,14 @@ from data.db import (
     upsert_daily_activity,
 )
 
+BUILD_VERSION = "2026-08-15 • Orlando Prospecting + Marketing"
+
 st.set_page_config(page_title="NYL Command Center", page_icon="🎯", layout="wide")
 init_db()
 
 st.title("NYL Command Center")
 st.caption("Daily War Room for turning a commission goal into an exact execution plan. Keep compensation assumptions editable until verified against your official NYL plan.")
+st.caption(f"Build: {BUILD_VERSION}")
 
 if persistent_storage_enabled():
     st.success("Storage: PostgreSQL connected — activity history is using persistent cloud storage.")
@@ -38,7 +41,22 @@ else:
         "Do not rely on this as the permanent record until this banner turns green."
     )
 
+st.subheader("Command Center Modules")
+nav1, nav2 = st.columns(2)
+with nav1:
+    st.page_link("pages/2_Prospecting.py", label="🧭 Open Prospecting & Pipeline")
+    st.caption("Lead Scout, Greater Orlando prospecting, priority queue, touches/replies and Salesforce-ready activity history.")
+with nav2:
+    st.page_link("pages/3_Marketing.py", label="📣 Open Marketing Command Center")
+    st.caption("Orlando priority markets, 90-day campaign, direct mail, digital strategy, networking groups and event schedule.")
+st.divider()
+
 with st.sidebar:
+    st.header("Navigation")
+    st.page_link("app.py", label="🎯 Daily War Room")
+    st.page_link("pages/2_Prospecting.py", label="🧭 Prospecting & Pipeline")
+    st.page_link("pages/3_Marketing.py", label="📣 Marketing Command Center")
+    st.divider()
     st.header("Mission Setup")
     commission_goal = st.number_input("Commission goal ($)", min_value=0.0, value=3000.0, step=250.0)
     goal_end_date = st.date_input("Goal deadline", value=date.today() + timedelta(days=29))
