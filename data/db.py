@@ -5,8 +5,13 @@ from pathlib import Path
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
+from sqlalchemy.exc import SQLAlchemyError
 
 SQLITE_PATH = Path(__file__).resolve().parent / "nyl_command_center.db"
+
+_ENGINE: Engine | None = None
+_BACKEND = "Not initialized"
+_STORAGE_ERROR = ""
 
 
 def _secret_database_url() -> str:
@@ -20,28 +25,67 @@ def _secret_database_url() -> str:
         return ""
 
 
-def _database_url() -> str:
+def _configured_database_url() -> str:
     url = os.getenv("DATABASE_URL", "").strip() or _secret_database_url()
     if url.startswith("postgres://"):
         url = "postgresql://" + url[len("postgres://"):]
-    return url or f"sqlite:///{SQLITE_PATH}"
+    return url
 
 
-def storage_backend() -> str:
-    return "PostgreSQL (persistent)" if _database_url().startswith("postgresql") else "SQLite (temporary on Streamlit Cloud)"
-
-
-def persistent_storage_enabled() -> bool:
-    return _database_url().startswith("postgresql")
+def _sqlite_engine() -> Engine:
+    return create_engine(f"sqlite:///{SQLITE_PATH}", pool_pre_ping=True, future=True)
 
 
 def engine() -> Engine:
-    return create_engine(_database_url(), pool_pre_ping=True, future=True)
+    """Use PostgreSQL when reachable; otherwise keep the app online with SQLite fallback."""
+    global _ENGINE, _BACKEND, _STORAGE_ERROR
+
+    if _ENGINE is not None:
+        return _ENGINE
+
+    configured_url = _configured_database_url()
+    if configured_url:
+        candidate = create_engine(configured_url, pool_pre_ping=True, future=True)
+        try:
+            with candidate.connect() as conn:
+                conn.execute(text("SELECT 1"))
+            _ENGINE = candidate
+            _BACKEND = "PostgreSQL (persistent)"
+            _STORAGE_ERROR = ""
+            return _ENGINE
+        except SQLAlchemyError as exc:
+            candidate.dispose()
+            _STORAGE_ERROR = str(exc).splitlines()[0]
+            _BACKEND = "SQLite fallback (database connection failed)"
+
+    _ENGINE = _sqlite_engine()
+    if not configured_url:
+        _BACKEND = "SQLite (temporary on Streamlit Cloud)"
+    return _ENGINE
+
+
+def storage_backend() -> str:
+    engine()
+    return _BACKEND
+
+
+def storage_error() -> str:
+    engine()
+    return _STORAGE_ERROR
+
+
+def persistent_storage_enabled() -> bool:
+    engine()
+    return _BACKEND == "PostgreSQL (persistent)"
+
+
+def _using_sqlite() -> bool:
+    return engine().dialect.name == "sqlite"
 
 
 def init_db() -> None:
     with engine().begin() as conn:
-        if _database_url().startswith("sqlite"):
+        if _using_sqlite():
             conn.execute(text("""
                 CREATE TABLE IF NOT EXISTS daily_activity (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -93,7 +137,7 @@ def upsert_daily_activity(
     }
 
     with engine().begin() as conn:
-        if _database_url().startswith("sqlite"):
+        if _using_sqlite():
             conn.execute(text("""
                 INSERT INTO daily_activity (
                     activity_date, outreach_attempts, conversations,
