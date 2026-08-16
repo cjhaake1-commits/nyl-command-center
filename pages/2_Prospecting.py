@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date
 
 import pandas as pd
 import streamlit as st
 
+from core.hotlist import ORLANDO_PUBLIC_HOTLIST
 from core.prospecting import (
     PUBLIC_SOURCE_PLAYBOOKS,
     allowed_signal_note,
@@ -33,6 +34,62 @@ st.info(allowed_signal_note())
 
 activity = totals()
 counts = prospect_counts()
+
+st.subheader("Orlando Hot List")
+st.caption("Public-business research candidates ranked by local relevance, leadership visibility, relationship accessibility and planning fit — not inferred personal wealth.")
+hot_df = pd.DataFrame(ORLANDO_PUBLIC_HOTLIST)
+st.dataframe(
+    hot_df[["rank", "organization", "contact", "role", "area", "hot_score", "public_signal", "relationship_angle"]],
+    width="stretch",
+    hide_index=True,
+)
+
+st.markdown("#### Add a hot-list candidate to your pipeline")
+selected_hot_label = st.selectbox(
+    "Candidate",
+    [f"#{h['rank']} — {h['contact']} / {h['organization']}" for h in ORLANDO_PUBLIC_HOTLIST],
+    key="hotlist_candidate",
+)
+selected_hot = ORLANDO_PUBLIC_HOTLIST[[f"#{h['rank']} — {h['contact']} / {h['organization']}" for h in ORLANDO_PUBLIC_HOTLIST].index(selected_hot_label)]
+if st.button("Add selected candidate to pipeline", type="primary"):
+    existing_keys = {(str(p.get("prospect_name", "")).lower(), str(p.get("organization", "")).lower()) for p in get_prospects()}
+    candidate_key = (selected_hot["contact"].lower(), selected_hot["organization"].lower())
+    if candidate_key in existing_keys:
+        st.info("That candidate is already in your pipeline.")
+    else:
+        add_prospect(
+            prospect_name=selected_hot["contact"],
+            organization=selected_hot["organization"],
+            market_segment=selected_hot["segment"],
+            source="Public business hot list",
+            source_detail=selected_hot["source_url"],
+            stage="New",
+            fit_score=5,
+            warmth_score=2,
+            urgency_score=3,
+            source_quality=5,
+            consent_status="Unknown",
+            next_action="Research approved introduction path",
+            next_action_date=str(date.today()),
+            notes=f"Public signal: {selected_hot['public_signal']} Relationship angle: {selected_hot['relationship_angle']}",
+        )
+        st.success("Candidate added to the prospect pipeline for human review.")
+        st.rerun()
+
+st.divider()
+st.subheader("Future Salesforce Relationship Review")
+st.info(
+    "Once NYL authorizes Salesforce access, existing policyholders should receive the first review priority. "
+    "The planned ranking will use approved relationship signals such as policyholder status, review due date, inbound engagement, "
+    "documented needs-analysis gaps, and contact recency. It will not rank clients using inferred wealth, health, claims, protected traits, or private financial-condition profiling."
+)
+sf_rows = [
+    {"Priority band": "1 — Existing client review", "Rule": "Existing NYL policyholder + review due / engaged / documented planning need", "Action": "Schedule holistic relationship review first"},
+    {"Priority band": "2 — Existing client nurture", "Rule": "Existing policyholder without an urgent documented review trigger", "Action": "Maintain compliant review cadence and top-of-mind education"},
+    {"Priority band": "3 — Warm prospect", "Rule": "Referral, inbound reply, event connection or established relationship", "Action": "Human follow-up and approved fact-finding"},
+    {"Priority band": "4 — Public hot-list prospect", "Rule": "Verified public business/professional signal but no relationship yet", "Action": "Research introduction path before outreach"},
+]
+st.dataframe(pd.DataFrame(sf_rows), width="stretch", hide_index=True)
 
 st.subheader("Lead Inventory")
 new_name_share = st.slider("Share of daily outreach that should come from new names", 10, 80, 35, step=5) / 100
