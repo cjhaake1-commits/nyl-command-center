@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date, timedelta
+from datetime import date, datetime
 
 import pandas as pd
 import streamlit as st
@@ -13,7 +13,16 @@ from core.prospecting import (
     rank_prospects,
 )
 from data.db import totals
-from data.prospects import add_prospect, get_prospects, init_prospect_db, prospect_counts, update_prospect
+from data.prospects import (
+    add_prospect,
+    add_touchpoint,
+    get_prospects,
+    get_touchpoints,
+    init_prospect_db,
+    prospect_counts,
+    touchpoint_stats,
+    update_prospect,
+)
 
 st.set_page_config(page_title="NYL Prospecting", page_icon="🧭", layout="wide")
 init_prospect_db()
@@ -28,7 +37,6 @@ counts = prospect_counts()
 st.subheader("Lead Inventory")
 new_name_share = st.slider("Share of daily outreach that should come from new names", 10, 80, 35, step=5) / 100
 coverage_days = st.slider("Lead inventory coverage", 2, 15, 5)
-# Use recent observed outreach when available; otherwise use the War Room's current default-scale target.
 recent_outreach = max(1, int(activity.get("outreach_attempts", 0) or 0))
 planning_outreach = st.number_input("Planned outreach attempts per day", min_value=1, value=max(67, recent_outreach), step=1)
 gap = lead_gap(int(counts.get("active", 0)), planning_outreach, new_name_share, coverage_days)
@@ -45,7 +53,7 @@ else:
     st.success("Your active lead inventory currently covers the prospecting target you set.")
 
 st.subheader("Lead Scout — Public Sources")
-territory = st.text_input("Territory / city / county / ZIP", placeholder="Example: Buffalo NY or Erie County NY")
+territory = st.text_input("Territory / city / county / ZIP", value="Greater Orlando, FL")
 segment = st.text_input("Target professional/business segment", value="business owners professionals executives")
 
 playbook_df = pd.DataFrame(PUBLIC_SOURCE_PLAYBOOKS)
@@ -56,13 +64,6 @@ if territory.strip():
     st.caption("These links open public web searches for manual review. They do not scrape, auto-enrich, or auto-contact anyone.")
     for item in public_search_queries(territory, segment):
         st.link_button(item["label"], item["search_url"], width="stretch")
-
-st.markdown("#### Sources to prioritize")
-st.markdown(
-    "- **Corporations/business owners:** company websites, chambers, trade associations, Secretary of State filings, local business journals, expansion/hiring announcements, public commercial-property records.\n"
-    "- **Professionals/individuals:** public professional profiles, public promotions/job changes, property purchase/public-record signals, referrals, public community/professional events.\n"
-    "- **Territory planning:** Census/ACS and government statistics for aggregate ZIP/county/city market characteristics — not sensitive individual profiling."
-)
 
 st.divider()
 st.subheader("Add Prospect")
@@ -130,6 +131,7 @@ if ranked:
             "Organization": p.get("organization", ""),
             "Stage": p.get("stage", ""),
             "Source": p.get("source", ""),
+            "Last contact": p.get("last_contact_date", ""),
             "Next action": p.get("next_action", ""),
             "Due": p.get("next_action_date", ""),
             "CRM": p.get("crm_source", ""),
@@ -188,11 +190,55 @@ if prospects:
             st.rerun()
 
 st.divider()
-st.subheader("Salesforce Readiness")
+st.subheader("Touches & Replies")
+st.caption("Manual today; Salesforce activities can feed this automatically once NYL authorizes the integration.")
+stats = touchpoint_stats()
+t1, t2, t3, t4 = st.columns(4)
+t1.metric("Total touches", stats.get("total_touches", 0))
+t2.metric("Inbound replies", stats.get("inbound", 0))
+t3.metric("Outbound touches", stats.get("outbound", 0))
+t4.metric("Follow-ups flagged", stats.get("follow_ups", 0))
+
+if prospects:
+    touch_labels = {f"#{p['id']} — {p['prospect_name']}": p for p in prospects}
+    chosen_touch_label = st.selectbox("Prospect for touch/reply", list(touch_labels.keys()), key="touch_prospect")
+    chosen_touch = touch_labels[chosen_touch_label]
+    with st.form("log_touchpoint"):
+        tc1, tc2 = st.columns(2)
+        touch_type = tc1.selectbox("Touch type", ["Call", "Email", "Meeting", "Text", "Direct mail", "LinkedIn", "Event", "Salesforce activity", "Other"])
+        direction = tc2.selectbox("Direction", ["outbound", "inbound"])
+        occurred_date = st.date_input("Date", value=date.today(), key="touch_date")
+        subject = st.text_input("Subject / short label")
+        summary = st.text_area("Summary")
+        outcome = st.selectbox("Outcome", ["No response", "Reply received", "Connected", "Appointment set", "Follow-up requested", "Not interested", "Other"])
+        follow_up = st.checkbox("Requires follow-up")
+        log_touch = st.form_submit_button("Log touch / reply")
+        if log_touch:
+            add_touchpoint(
+                chosen_touch["id"],
+                touch_type=touch_type,
+                direction=direction,
+                occurred_at=f"{occurred_date.isoformat()}T12:00:00",
+                subject=subject,
+                summary=summary,
+                outcome=outcome,
+                requires_follow_up=follow_up,
+            )
+            st.success("Touchpoint logged and prospect recency refreshed.")
+            st.rerun()
+
+recent_touches = get_touchpoints(limit=100)
+if recent_touches:
+    touch_df = pd.DataFrame(recent_touches)
+    display_cols = ["occurred_at", "prospect_name", "organization", "touch_type", "direction", "subject", "outcome", "requires_follow_up", "source_system"]
+    st.dataframe(touch_df[display_cols], width="stretch", hide_index=True)
+
+st.divider()
+st.subheader("Salesforce Sync Readiness")
 st.info(
-    "The pipeline is Salesforce-ready: each prospect can carry a Salesforce record ID and CRM source. "
-    "When NYL authorizes Salesforce OAuth/API access, the intended architecture is Salesforce as the official system of record, "
-    "with the Command Center reading approved fields for prioritization and optionally syncing permitted tasks/statuses back."
+    "Planned sync behavior: Salesforce remains the official record. The Command Center will read only NYL-approved objects/fields, "
+    "import new activities using Salesforce IDs for de-duplication, refresh last-contact and priority scores, and optionally send permitted tasks/status updates back. "
+    "No Salesforce sync is active until NYL provides and authorizes OAuth/API access."
 )
 
 st.caption(
