@@ -15,13 +15,28 @@ from core.war_room import (
     funnel_health,
     weakest_link,
 )
-from data.db import get_activity, init_db, totals, upsert_daily_activity
+from data.db import (
+    get_activity,
+    init_db,
+    persistent_storage_enabled,
+    storage_backend,
+    totals,
+    upsert_daily_activity,
+)
 
 st.set_page_config(page_title="NYL Command Center", page_icon="🎯", layout="wide")
 init_db()
 
 st.title("NYL Command Center")
 st.caption("Daily War Room for turning a commission goal into an exact execution plan. Keep compensation assumptions editable until verified against your official NYL plan.")
+
+if persistent_storage_enabled():
+    st.success("Storage: PostgreSQL connected — activity history is using persistent cloud storage.")
+else:
+    st.warning(
+        f"Storage: {storage_backend()}. The Command Center is online, but activity history is not yet on persistent cloud storage. "
+        "Do not rely on this as the permanent record until this banner turns green."
+    )
 
 with st.sidebar:
     st.header("Mission Setup")
@@ -131,7 +146,7 @@ for m in health:
         "Sample": m.sample_size,
         "Status": m.status,
     })
-st.dataframe(pd.DataFrame(health_rows), use_container_width=True, hide_index=True)
+st.dataframe(pd.DataFrame(health_rows), width="stretch", hide_index=True)
 if weak:
     st.warning(f"Current weakest link: {weak.stage}. Improve this stage first because it is furthest below its target relative to the rest of the funnel.")
 else:
@@ -160,7 +175,7 @@ for label, multiplier in [("Gate", 1.0), ("1.5× Goal", 1.5), ("2× Goal", 2.0),
         "Outreach/day": dm.outreach_attempts,
         "Conversations/day": dm.conversations,
     })
-st.dataframe(pd.DataFrame(scenario_rows), use_container_width=True, hide_index=True)
+st.dataframe(pd.DataFrame(scenario_rows), width="stretch", hide_index=True)
 
 st.subheader("Log Today’s Actuals")
 with st.form("daily_activity"):
@@ -187,7 +202,7 @@ history = get_activity()
 if history:
     df = pd.DataFrame(history)
     st.subheader("Performance History")
-    st.dataframe(df.drop(columns=["id"]), use_container_width=True, hide_index=True)
+    st.dataframe(df.drop(columns=["id"]), width="stretch", hide_index=True)
 
     chart_df = df[["activity_date", "commission"]].copy()
     chart_df["activity_date"] = pd.to_datetime(chart_df["activity_date"])
