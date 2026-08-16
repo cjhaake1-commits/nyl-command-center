@@ -41,6 +41,23 @@ def init_prospect_db() -> None:
                     updated_at TEXT NOT NULL
                 )
             """))
+            conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS prospect_touchpoints (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    prospect_id INTEGER NOT NULL,
+                    external_id TEXT DEFAULT '',
+                    source_system TEXT NOT NULL DEFAULT 'Command Center',
+                    touch_type TEXT NOT NULL,
+                    direction TEXT NOT NULL DEFAULT 'outbound',
+                    occurred_at TEXT NOT NULL,
+                    subject TEXT DEFAULT '',
+                    summary TEXT DEFAULT '',
+                    outcome TEXT DEFAULT '',
+                    requires_follow_up INTEGER NOT NULL DEFAULT 0,
+                    created_at TEXT NOT NULL,
+                    UNIQUE(source_system, external_id)
+                )
+            """))
         else:
             conn.execute(text("""
                 CREATE TABLE IF NOT EXISTS prospects (
@@ -65,6 +82,23 @@ def init_prospect_db() -> None:
                     notes TEXT DEFAULT '',
                     created_at TEXT NOT NULL,
                     updated_at TEXT NOT NULL
+                )
+            """))
+            conn.execute(text("""
+                CREATE TABLE IF NOT EXISTS prospect_touchpoints (
+                    id BIGSERIAL PRIMARY KEY,
+                    prospect_id BIGINT NOT NULL,
+                    external_id TEXT DEFAULT '',
+                    source_system TEXT NOT NULL DEFAULT 'Command Center',
+                    touch_type TEXT NOT NULL,
+                    direction TEXT NOT NULL DEFAULT 'outbound',
+                    occurred_at TEXT NOT NULL,
+                    subject TEXT DEFAULT '',
+                    summary TEXT DEFAULT '',
+                    outcome TEXT DEFAULT '',
+                    requires_follow_up BOOLEAN NOT NULL DEFAULT FALSE,
+                    created_at TEXT NOT NULL,
+                    UNIQUE(source_system, external_id)
                 )
             """))
 
@@ -151,5 +185,99 @@ def prospect_counts() -> dict:
                 COALESCE(SUM(CASE WHEN stage='Appointment set' THEN 1 ELSE 0 END),0) AS appointments_set,
                 COALESCE(SUM(CASE WHEN stage='Won' THEN 1 ELSE 0 END),0) AS won
             FROM prospects
+        """)).mappings().one()
+        return dict(row)
+
+
+def add_touchpoint(
+    prospect_id: int,
+    touch_type: str,
+    direction: str,
+    occurred_at: str,
+    subject: str = "",
+    summary: str = "",
+    outcome: str = "",
+    requires_follow_up: bool = False,
+    source_system: str = "Command Center",
+    external_id: str = "",
+) -> bool:
+    payload = {
+        "prospect_id": int(prospect_id),
+        "external_id": external_id.strip(),
+        "source_system": source_system.strip() or "Command Center",
+        "touch_type": touch_type,
+        "direction": direction,
+        "occurred_at": occurred_at,
+        "subject": subject.strip(),
+        "summary": summary.strip(),
+        "outcome": outcome.strip(),
+        "requires_follow_up": bool(requires_follow_up),
+        "created_at": _now_iso(),
+    }
+    with engine().begin() as conn:
+        if external_id.strip():
+            existing = conn.execute(text("""
+                SELECT 1 FROM prospect_touchpoints
+                WHERE source_system=:source_system AND external_id=:external_id
+            """), payload).first()
+            if existing:
+                return False
+        conn.execute(text("""
+            INSERT INTO prospect_touchpoints (
+                prospect_id, external_id, source_system, touch_type, direction, occurred_at,
+                subject, summary, outcome, requires_follow_up, created_at
+            ) VALUES (
+                :prospect_id, :external_id, :source_system, :touch_type, :direction, :occurred_at,
+                :subject, :summary, :outcome, :requires_follow_up, :created_at
+            )
+        """), payload)
+        contact_date = occurred_at[:10]
+        next_action = "Follow up" if requires_follow_up else ""
+        conn.execute(text("""
+            UPDATE prospects SET
+                last_contact_date=:contact_date,
+                next_action=CASE WHEN :next_action <> '' THEN :next_action ELSE next_action END,
+                updated_at=:updated_at
+            WHERE id=:prospect_id
+        """), {
+            "contact_date": contact_date,
+            "next_action": next_action,
+            "updated_at": _now_iso(),
+            "prospect_id": int(prospect_id),
+        })
+    return True
+
+
+def get_touchpoints(prospect_id: int | None = None, limit: int = 200) -> list[dict]:
+    with engine().connect() as conn:
+        if prospect_id is None:
+            rows = conn.execute(text("""
+                SELECT t.*, p.prospect_name, p.organization
+                FROM prospect_touchpoints t
+                JOIN prospects p ON p.id=t.prospect_id
+                ORDER BY t.occurred_at DESC, t.id DESC
+                LIMIT :limit
+            """), {"limit": int(limit)}).mappings().all()
+        else:
+            rows = conn.execute(text("""
+                SELECT t.*, p.prospect_name, p.organization
+                FROM prospect_touchpoints t
+                JOIN prospects p ON p.id=t.prospect_id
+                WHERE t.prospect_id=:prospect_id
+                ORDER BY t.occurred_at DESC, t.id DESC
+                LIMIT :limit
+            """), {"prospect_id": int(prospect_id), "limit": int(limit)}).mappings().all()
+        return [dict(row) for row in rows]
+
+
+def touchpoint_stats() -> dict:
+    with engine().connect() as conn:
+        row = conn.execute(text("""
+            SELECT
+                COUNT(*) AS total_touches,
+                COALESCE(SUM(CASE WHEN direction='inbound' THEN 1 ELSE 0 END),0) AS inbound,
+                COALESCE(SUM(CASE WHEN direction='outbound' THEN 1 ELSE 0 END),0) AS outbound,
+                COALESCE(SUM(CASE WHEN requires_follow_up THEN 1 ELSE 0 END),0) AS follow_ups
+            FROM prospect_touchpoints
         """)).mappings().one()
         return dict(row)
