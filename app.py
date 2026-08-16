@@ -23,10 +23,15 @@ my_strategy = st.Page(
     title="My NYL Strategy",
     icon="💎",
 )
+first_sale = st.Page(
+    "pages/5_First_Sale_Program.py",
+    title="First-Sale Program",
+    icon="🚀",
+)
 
 navigation = st.navigation(
     {
-        "NYL Command Center": [war_room, my_strategy],
+        "NYL Command Center": [war_room, my_strategy, first_sale],
         "Growth": [prospecting, marketing],
     },
     position="sidebar",
