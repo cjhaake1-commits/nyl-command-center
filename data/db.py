@@ -9,11 +9,30 @@ from sqlalchemy.engine import Engine
 SQLITE_PATH = Path(__file__).resolve().parent / "nyl_command_center.db"
 
 
+def _secret_database_url() -> str:
+    """Read DATABASE_URL from Streamlit secrets when deployed, without requiring it locally."""
+    try:
+        import streamlit as st
+
+        value = st.secrets.get("DATABASE_URL", "")
+        return str(value).strip() if value else ""
+    except Exception:
+        return ""
+
+
 def _database_url() -> str:
-    url = os.getenv("DATABASE_URL", "").strip()
+    url = os.getenv("DATABASE_URL", "").strip() or _secret_database_url()
     if url.startswith("postgres://"):
         url = "postgresql://" + url[len("postgres://"):]
     return url or f"sqlite:///{SQLITE_PATH}"
+
+
+def storage_backend() -> str:
+    return "PostgreSQL (persistent)" if _database_url().startswith("postgresql") else "SQLite (temporary on Streamlit Cloud)"
+
+
+def persistent_storage_enabled() -> bool:
+    return _database_url().startswith("postgresql")
 
 
 def engine() -> Engine:
