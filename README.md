@@ -2,20 +2,25 @@
 
 A standalone goal-to-action operating system for a New York Life sales career.
 
-## Current MVP
+## What is live now
 
-- Starts with a configurable **$3,000 / 30-day commission gate**.
-- Works backward from commission goal to:
-  - placed sales
-  - held appointments
-  - booked appointments
-  - conversations
-  - outreach attempts
-- Converts remaining production into a daily minimum pace.
-- Tracks actual activity and commission in SQLite.
-- Shows pace versus goal.
-- Includes 1.5x, 2x and 3x "record-setting" scenarios.
-- Exports activity history to CSV.
+### Daily War Room
+
+The UI now turns a commission goal and deadline into an exact execution mission:
+
+- configurable commission goal and deadline
+- selectable selling days
+- execution buffer above the mathematical minimum
+- Gate / 1.25x / 1.5x / 2x / 3x record modes
+- today's required commission, sales, held appointments, booked appointments, conversations, and outreach
+- this week's required production
+- automatic recalculation after actual results are logged
+- adaptive funnel assumptions that blend real performance with starting assumptions
+- weakest-link detection across contact, booking, show, close, and average-commission stages
+- record-setting scenario table
+- daily activity history and CSV export
+
+The starting **$3,000 / 30-day commission gate** remains the default, but any target can be entered.
 
 All funnel assumptions are editable. The initial defaults are placeholders, not New York Life compensation facts.
 
@@ -25,11 +30,29 @@ This repository is intentionally separate from every other project. Keep its vir
 
 - Use a dedicated `.venv` inside this repository.
 - Keep local secrets in `.env`; `.env` is ignored by Git.
-- The SQLite database lives under `data/` and is ignored by Git.
+- The SQLite database stays local and is ignored by Git.
 - Do not copy configuration or credentials from unrelated projects.
 - Deploy this repository independently from other systems.
 
-## Run locally
+## View the UI on your computer
+
+### Option A — GitHub Desktop
+
+1. In GitHub Desktop, clone `cjhaake1-commits/nyl-command-center` into its own local folder.
+2. Open that folder in VS Code.
+3. Open the VS Code terminal.
+4. Run the commands for your operating system below.
+
+### Windows PowerShell
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+### Mac / Linux
 
 ```bash
 python -m venv .venv
@@ -38,14 +61,13 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-On Windows PowerShell:
+Streamlit will print a local address, normally:
 
-```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-streamlit run app.py
+```text
+http://localhost:8501
 ```
+
+Open that address in your browser. Leave the terminal running while you use the Command Center.
 
 ## First 30-day logic
 
@@ -62,7 +84,7 @@ outreach attempts
 
 For each step, the system uses an editable conversion assumption. It then calculates the activity needed to hit the goal.
 
-Example default assumptions:
+Example starting assumptions:
 
 - Goal: $3,000
 - Average commission per placed sale: $750
@@ -71,22 +93,19 @@ Example default assumptions:
 - Conversation-to-booking rate: 25%
 - Outreach-to-conversation rate: 30%
 
-Those defaults produce a planning estimate of about 4 placed sales, 14 held appointments, 19 booked appointments, 76 conversations and 254 outreach attempts across the goal period.
+Those defaults produce a planning estimate of about 4 placed sales, 14 held appointments, 19 booked appointments, 76 conversations and 254 outreach attempts across a 30-day period when all 30 days are treated as active selling days. The Daily War Room now lets you choose the actual weekdays you intend to sell and recalculates the daily burden accordingly.
 
-## Compliance boundary for MVP
+## Adaptive planning
+
+Once real activity is logged, the War Room begins blending your actual performance with the starting assumptions. This avoids replacing the model with one lucky or unlucky day while still allowing the plan to become increasingly personal to your real conversion rates and average commission.
+
+## Compliance boundary
 
 This is intentionally a **personal productivity and performance system**, not a client system of record.
 
-Do not store sensitive client information such as Social Security numbers, account numbers, medical information, or other protected/sensitive data in this MVP. Product-specific recommendations and regulated communications should stay inside New York Life-approved systems and compliance workflows.
+Do not store sensitive client information such as Social Security numbers, account numbers, medical information, or other protected/sensitive data here. Product-specific recommendations and regulated communications should stay inside New York Life-approved systems and compliance workflows.
 
-## Recommended next build phases
-
-### Phase 2 — Daily War Room
-- automatic morning plan
-- weekly target allocator
-- backlog / follow-up queue
-- "what do I do next?" priority engine
-- streaks and pace alerts
+## Next build phases
 
 ### Phase 3 — Prospect Pipeline
 - non-sensitive prospect tracking
@@ -94,6 +113,7 @@ Do not store sensitive client information such as Social Security numbers, accou
 - stage conversion analytics
 - next-action dates
 - priority scoring
+- follow-up queue
 
 ### Phase 4 — AI Coach
 - generates daily plan from actual performance
