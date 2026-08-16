@@ -18,10 +18,15 @@ marketing = st.Page(
     title="Marketing Command Center",
     icon="📣",
 )
+my_strategy = st.Page(
+    "pages/4_My_Strategy.py",
+    title="My NYL Strategy",
+    icon="💎",
+)
 
 navigation = st.navigation(
     {
-        "NYL Command Center": [war_room],
+        "NYL Command Center": [war_room, my_strategy],
         "Growth": [prospecting, marketing],
     },
     position="sidebar",
