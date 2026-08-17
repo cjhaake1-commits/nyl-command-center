@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import streamlit as st
 
-st.set_page_config(page_title="Advisor Growth OS", page_icon="◆", layout="wide")
+st.set_page_config(page_title="Advisor Growth OS", page_icon="📈", layout="wide")
 
-executive = st.Page("pages/0_Executive_Command_Center.py", title="COMMAND CENTER", icon="◆", default=True)
+executive = st.Page("pages/0_Executive_Command_Center.py", title="COMMAND CENTER", icon="📈", default=True)
 war_room = st.Page("pages/1_Daily_War_Room.py", title="Daily War Room", icon="🎯")
 lead_lists = st.Page("pages/9_Lead_Lists.py", title="LEAD LISTS - EXPORT", icon="📋")
 prospect_intel = st.Page("pages/6_Prospect_Intelligence.py", title="Prospect Intelligence", icon="🔎")
