@@ -5,6 +5,8 @@ from io import BytesIO
 import pandas as pd
 import streamlit as st
 
+from data.public_leads import PUBLIC_LEADS
+
 st.set_page_config(page_title="Lead Lists", page_icon="📋", layout="wide")
 st.title("Lead Lists + Opportunity Match")
 st.caption("Independent public-source prospecting lane with multi-service opportunity matching, ranking, provenance, and export tools.")
@@ -40,9 +42,9 @@ def service_matches(row: pd.Series) -> list[str]:
     owner = any(k in role for k in ["owner", "founder", "partner", "president", "ceo", "principal"])
     executive = owner or any(k in role for k in ["executive", "chief", "vp", "vice president", "director"])
     professional = any(k in text for k in ["physician", "medical", "dental", "veterinary", "attorney", "law", "cpa", "accounting", "architect", "engineer", "consulting"])
-    coi = any(k in text for k in ["cpa", "accounting", "attorney", "law", "bank", "commercial real estate", "realtor", "mortgage", "title", "benefits"])
+    coi = any(k in text for k in ["cpa", "accounting", "attorney", "law", "bank", "commercial real estate", "realtor", "real estate", "mortgage", "title", "benefits", "local media", "publishing"])
     retirement_signal = any(k in text for k in ["retirement", "succession", "transition", "exit", "estate", "legacy"])
-    growth = any(k in text for k in ["new business", "new registration", "hiring", "growth", "expansion", "new location", "acquisition"])
+    growth = any(k in text for k in ["new business", "new registration", "hiring", "growth", "expansion", "new location", "acquisition", "opening", "contract"])
 
     if "business" in lead_type or owner or executive:
         matches.append("Business-owner life protection" if owner else "Personal life protection")
@@ -66,7 +68,7 @@ def service_matches(row: pd.Series) -> list[str]:
         matches.append("Investment / advisory conversation")
     if any(k in text for k in ["long-term care", "ltc", "retirement"]):
         matches.append("Long-term care planning")
-    if coi:
+    if coi or "coi" in lead_type:
         matches.append("COI / referral relationship")
     if age <= 10 and owner and growth:
         matches += ["Key-person protection", "Business-owner retirement planning"]
@@ -83,7 +85,10 @@ def enrich_matches(df: pd.DataFrame) -> pd.DataFrame:
     return out
 
 if "lead_list_master" not in st.session_state:
-    st.session_state.lead_list_master = pd.DataFrame(columns=LEAD_COLUMNS)
+    seeded = pd.DataFrame(PUBLIC_LEADS)
+    for col in LEAD_COLUMNS:
+        if col not in seeded.columns: seeded[col] = ""
+    st.session_state.lead_list_master = enrich_matches(seeded[LEAD_COLUMNS])
 
 with st.sidebar:
     st.header("Lead List Filters")
@@ -95,6 +100,7 @@ with st.sidebar:
     search_text = st.text_input("Search name / company / industry / area")
 
 st.subheader("Master Lead List")
+st.caption("Seeded with verified Greater Orlando public-source records; you can edit, add, score, and export from here.")
 master = st.data_editor(st.session_state.lead_list_master, num_rows="dynamic", width="stretch", hide_index=True, key="master_lead_editor")
 master = enrich_matches(master)
 if st.button("Save + Recalculate Opportunity Matches", type="primary"):
@@ -118,7 +124,7 @@ m1,m2,m3,m4 = st.columns(4)
 m1.metric("Leads", len(filtered))
 m2.metric("Multi-opportunity leads", int((pd.to_numeric(filtered.get("Opportunity count", 0), errors="coerce").fillna(0) >= 2).sum()) if not filtered.empty else 0)
 m3.metric("Business", int((filtered.get("Lead type", pd.Series(dtype=str)) == "Business").sum()) if not filtered.empty else 0)
-m4.metric("Individuals / professionals", int((filtered.get("Lead type", pd.Series(dtype=str)) == "Individual / professional").sum()) if not filtered.empty else 0)
+m4.metric("COI", int((filtered.get("Lead type", pd.Series(dtype=str)) == "COI").sum()) if not filtered.empty else 0)
 st.dataframe(filtered, width="stretch", hide_index=True)
 
 st.subheader("Opportunity Coverage")
@@ -156,7 +162,7 @@ def pdf_bytes(df: pd.DataFrame) -> bytes:
 
 st.markdown("#### Export")
 if filtered.empty:
-    st.warning("No leads match the current filters yet. The ingestion layer is being populated with real sourced records rather than fabricated leads.")
+    st.warning("No leads match the current filters.")
 else:
     e1,e2=st.columns(2)
     with e1: st.download_button("⬇️ Export Lead List to Excel", excel_bytes(filtered), f"nyl_leads_{datetime.now().strftime('%Y%m%d')}.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True)
