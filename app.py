@@ -28,10 +28,26 @@ first_sale = st.Page(
     title="First-Sale Program",
     icon="🚀",
 )
+operating_system = st.Page(
+    "pages/6_Operating_System.py",
+    title="Operating System",
+    icon="🧰",
+)
+autopilot = st.Page(
+    "pages/7_Autopilot.py",
+    title="Sales Autopilot",
+    icon="⚡",
+)
+interview = st.Page(
+    "pages/8_Interview_Ace.py",
+    title="Final Interview Ace",
+    icon="🃏",
+)
 
 navigation = st.navigation(
     {
-        "NYL Command Center": [war_room, my_strategy, first_sale],
+        "Tomorrow": [interview],
+        "NYL Command Center": [war_room, my_strategy, first_sale, operating_system, autopilot],
         "Growth": [prospecting, marketing],
     },
     position="sidebar",
