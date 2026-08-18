@@ -7,10 +7,11 @@ import streamlit as st
 
 from core.exam_training import FLASHCARDS, FL_215_LESSONS, QUESTIONS, SIE_DOMAINS, SIE_LESSONS, SOURCES, THREE_DAY_PLANS
 from core.florida_215_high_yield import HIGH_YIELD_CARDS, OFFICIAL_ONLY_BUCKETS, PUBLIC_SIGNAL_NOTE, SCENARIO_PATTERNS
+from core.fl215_blueprint import CONSENSUS_PRIORITIES, FL215_BLUEPRINT, FL215_EXAM_FACTS, MEMORIZATION_BUCKETS, PUBLIC_STUDY_CONSENSUS
 
 st.set_page_config(page_title="NYL Exam Training Center", page_icon="🎓", layout="wide")
 
-DEFAULTS = {"quiz_history": [], "card_ratings": {}, "missed_ids": [], "simulation": None, "simulation_answers": {}, "simulation_started": None, "exam_date": date.today()+timedelta(days=3), "hy_ratings": {}, "hy_idx": 0}
+DEFAULTS = {"quiz_history": [], "card_ratings": {}, "missed_ids": [], "simulation": None, "exam_date": date.today()+timedelta(days=3), "hy_ratings": {}, "hy_idx": 0}
 for key, value in DEFAULTS.items():
     if key not in st.session_state: st.session_state[key] = value
 
@@ -31,11 +32,11 @@ def stats(track):
 
 st.title("🎓 NYL Exam Training Center — 3-Day Pass Sprint")
 st.caption("Active recall first. Practice second. Recycle every miss.")
-st.warning("Original study material only. Public candidate discussions are used only as topic signals—not as recalled/live exam questions. Verify Florida-specific numbers and deadlines against current official Florida materials.")
+st.warning("Original study material only. Public candidate discussions are used only as topic signals—not as recalled/live exam questions. Current official Florida/Pearson material controls exam facts and state-specific rules.")
 
 track=st.sidebar.radio("Training track",["Florida 2-15","SIE"])
 base_modes=["3-Day Mission","Readiness Dashboard"]
-if track=="Florida 2-15": base_modes += ["Most-Testable Memory Deck","Recognition Drills"]
+if track=="Florida 2-15": base_modes += ["Official Exam Blueprint","Consensus Priority Map","Most-Testable Memory Deck","Recognition Drills"]
 base_modes += ["Bullet Lessons","Spaced Flashcards","Quick Practice","Timed Simulation","Missed Question Recycler","Weak Areas","Official Sources"]
 mode=st.sidebar.radio("Mode",base_modes)
 exam_date=st.sidebar.date_input("Exam date",value=st.session_state.exam_date,min_value=date.today()); st.session_state.exam_date=exam_date; days_left=max((exam_date-date.today()).days,0); st.sidebar.metric("Days remaining",days_left)
@@ -47,7 +48,10 @@ if mode=="3-Day Mission":
         with st.expander(plan["day"],expanded=True):
             st.markdown(f"**Goal:** {plan['goal']}")
             for item in plan["blocks"]: st.markdown(f"- {item}")
-    if track=="Florida 2-15": st.info("For a 3-day window, prioritize rapid recognition and memorization first, then short scenarios. Do not spend 20 minutes deeply analyzing a definition that can be learned as a one-line rule.")
+    if track=="Florida 2-15":
+        st.info("Current full exam target: 165 total questions in 165 minutes. Build instant recall first, then recognition, then full-length endurance.")
+        st.markdown("**Consensus study rules**")
+        for x in PUBLIC_STUDY_CONSENSUS: st.markdown(f"- {x}")
 
 elif mode=="Readiness Dashboard":
     st.header(f"{track} Readiness")
@@ -58,31 +62,49 @@ elif mode=="Readiness Dashboard":
     else: st.error("NOT READY YET — run the mission and high-yield deck.")
     for d,s in sorted(by_domain.items(),key=lambda x:x[1]): st.write(f"**{d}: {s:.0%}**"); st.progress(s)
 
+elif mode=="Official Exam Blueprint":
+    st.header("📋 Current Florida 2-15 Exam Blueprint")
+    c1,c2,c3,c4=st.columns(4)
+    c1.metric("Total questions",FL215_EXAM_FACTS["total_questions"]); c2.metric("Scored",FL215_EXAM_FACTS["scored_questions"]); c3.metric("Unscored pretest",FL215_EXAM_FACTS["pretest_questions"]); c4.metric("Time",f"{FL215_EXAM_FACTS['time_minutes']} min")
+    st.caption("The candidate cannot identify which questions are pretest, so treat all 165 as scored-quality questions.")
+    for topic,weight in FL215_BLUEPRINT:
+        approx=round(FL215_EXAM_FACTS["scored_questions"]*weight)
+        st.write(f"**{topic}: {weight:.0%} (~{approx} scored questions)**"); st.progress(weight)
+    st.success("Key takeaway: the three Florida statutes/rules sections combine to 33% of the scored exam. Florida law cannot be an afterthought.")
+
+elif mode=="Consensus Priority Map":
+    st.header("🧭 What to Prioritize")
+    st.write("Official weighting is the anchor. Public candidate reports only increase drill priority; they never override the official outline.")
+    for row in CONSENSUS_PRIORITIES:
+        with st.expander(f"{row['priority']} — {row['topic']}", expanded=row["priority"]=="Very high"):
+            st.write(row["why"]); st.caption(f"Evidence: {row['basis']}")
+    st.subheader("Memorization buckets")
+    for bucket,items in MEMORIZATION_BUCKETS.items():
+        with st.expander(bucket):
+            for item in items: st.markdown(f"- {item}")
+
 elif mode=="Most-Testable Memory Deck":
     st.header("🔥 Florida 2-15 Most-Testable Memory Deck")
     st.info(PUBLIC_SIGNAL_NOTE)
-    st.write("This mode is intentionally optimized for **fast memorization and recognition**. Priority 5 cards appear before lower-priority cards you already know.")
+    st.write("This mode is optimized for fast memorization and recognition. Priority 5 cards appear before lower-priority cards you already know.")
     category=st.selectbox("Category",["All"]+sorted({c["category"] for c in HIGH_YIELD_CARDS}))
     pool=[c for c in HIGH_YIELD_CARDS if category=="All" or c["category"]==category]
     pool.sort(key=lambda c:(st.session_state.hy_ratings.get(c["front"],0),-c["priority"]))
     card=pool[st.session_state.hy_idx%len(pool)]; rating=st.session_state.hy_ratings.get(card["front"],0)
     st.caption(f"{card['category']} • priority {'★'*card['priority']} • mastery {rating}/5")
-    st.markdown(f"## {card['front']}")
-    st.write("Say the definition/rule out loud in one sentence.")
+    st.markdown(f"## {card['front']}"); st.write("Say the definition/rule out loud in one sentence.")
     with st.expander("Reveal answer"): st.success(card["back"])
     cols=st.columns(4)
     for col,(score,label) in zip(cols,[(1,"Again"),(2,"Hard"),(4,"Know it"),(5,"Instant")]):
         if col.button(label,use_container_width=True): st.session_state.hy_ratings[card["front"]]=score; st.session_state.hy_idx+=1; st.rerun()
     known=sum(v>=4 for v in st.session_state.hy_ratings.values()); st.progress(known/len(HIGH_YIELD_CARDS)); st.caption(f"Instant/known: {known}/{len(HIGH_YIELD_CARDS)}")
     with st.expander("Numbers and deadlines: official-source-only bucket"):
-        st.write("Do not memorize crowdsourced numbers. Drill these from the current Florida manual:")
         for x in OFFICIAL_ONLY_BUCKETS: st.markdown(f"- {x}")
 
 elif mode=="Recognition Drills":
-    st.header("⚡ Recognition Drills")
-    st.write("These are short pattern-recognition prompts. Goal: identify the concept in under 10 seconds.")
-    scenario,answer=random.choice(SCENARIO_PATTERNS); st.subheader(scenario); guess=st.text_input("Name the concept")
-    if st.button("Reveal"): st.success(answer); st.caption("If you hesitated, find that term in the Most-Testable Memory Deck and mark it Again/Hard.")
+    st.header("⚡ Recognition Drills"); st.write("Goal: identify the concept in under 10 seconds.")
+    scenario,answer=random.choice(SCENARIO_PATTERNS); st.subheader(scenario); st.text_input("Name the concept")
+    if st.button("Reveal"): st.success(answer); st.caption("If you hesitated, mark that concept Again/Hard in the memory deck.")
 
 elif mode=="Bullet Lessons":
     st.header(f"{track} Bullet Lessons"); domain=st.selectbox("Domain",list(lessons))
@@ -104,10 +126,16 @@ elif mode=="Quick Practice":
 
 elif mode=="Timed Simulation":
     st.header(f"{track} Timed Simulation")
-    size=st.select_slider("Questions",options=[15,30,45,60] if track=="Florida 2-15" else [15,30,50,75],value=60 if track=="Florida 2-15" else 75)
-    if st.button("Start / restart",type="primary"): st.session_state.simulation={"track":track,"questions":random.choices(questions,k=size),"started":datetime.now()}; st.rerun()
+    if track=="Florida 2-15":
+        size=st.select_slider("Questions",options=[25,50,100,165],value=165)
+        target_minutes=round(FL215_EXAM_FACTS["time_minutes"]*size/FL215_EXAM_FACTS["total_questions"])
+        st.write(f"Target time: **{target_minutes} minutes**. Full simulation mirrors the current 165-question / 165-minute administration length.")
+    else:
+        size=st.select_slider("Questions",options=[15,30,50,75],value=75); target_minutes=round(105*size/75)
+    if st.button("Start / restart",type="primary"): st.session_state.simulation={"track":track,"questions":random.choices(questions,k=size),"started":datetime.now(),"target_minutes":target_minutes}; st.rerun()
     sim=st.session_state.simulation
     if sim and sim["track"]==track:
+        elapsed=(datetime.now()-sim["started"]).total_seconds()/60; remaining=max(sim["target_minutes"]-elapsed,0); st.metric("Target time remaining",f"{int(remaining)} min")
         with st.form("sim"):
             answers={}
             for i,q in enumerate(sim["questions"],1): st.markdown(f"**{i}. {q['q']}**"); answers[i]=st.radio(f"Q{i}",q["choices"],index=None,key=f"sim{i}{qid(q)}",label_visibility="collapsed")
@@ -116,7 +144,10 @@ elif mode=="Timed Simulation":
             correct=0
             for i,q in enumerate(sim["questions"],1):
                 ok=answers[i] is not None and q["choices"].index(answers[i])==q["answer"]; correct+=ok; record(q,ok,"simulation")
-            pct=correct/len(sim["questions"]); st.subheader(f"Score: {correct}/{len(sim['questions'])} — {pct:.0%}"); st.success("Strong. Repeat it.") if pct>=.85 else st.warning("Review misses, then retest.")
+            pct=correct/len(sim["questions"]); st.subheader(f"Score: {correct}/{len(sim['questions'])} — {pct:.0%}")
+            if pct>=.85: st.success("Strong. Review misses and reproduce this score.")
+            elif pct>=.70: st.warning("Passing-range practice result, but keep building margin. Target repeated 80–85%+.")
+            else: st.error("Below target. Review misses by topic before another full simulation.")
 
 elif mode=="Missed Question Recycler":
     st.header("Missed Question Recycler"); missed=set(st.session_state.missed_ids); pool=[q for q in questions if qid(q) in missed]
