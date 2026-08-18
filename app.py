@@ -12,14 +12,32 @@ opportunity = st.Page("pages/12_Opportunity_Radar.py", title="OPPORTUNITY RADAR"
 prospect_intel = st.Page("pages/6_Prospect_Intelligence.py", title="Prospect Intelligence", icon="🔎")
 meeting_intel = st.Page("pages/10_Meeting_Intelligence.py", title="MEETING INTELLIGENCE", icon="🎙️")
 prospecting = st.Page("pages/2_Prospecting.py", title="Prospecting & Pipeline", icon="🧭")
+prospect_discovery = st.Page("pages/2A_Prospect_Discovery.py", title="Prospect Discovery", icon="🎯")
 my_strategy = st.Page("pages/4_My_Strategy.py", title="Practice Strategy", icon="💎")
 first_sale = st.Page("pages/5_First_Sale_Program.py", title="First-Sale Program", icon="🚀")
 autopilot = st.Page("pages/7_Autopilot.py", title="Sales Autopilot", icon="⚡")
 marketing = st.Page("pages/3_Marketing.py", title="Marketing Command Center", icon="📣")
+influencer_network = st.Page("pages/3A_Influencer_Network.py", title="Influencer & Referral Network", icon="📱")
 interview = st.Page("pages/8_Interview_Ace.py", title="Interview / Presentation", icon="🃏")
 
 navigation = st.navigation(
-    [executive, war_room, lead_lists, mailing, opportunity, prospect_intel, meeting_intel, prospecting, my_strategy, first_sale, autopilot, marketing, interview],
+    [
+        executive,
+        war_room,
+        lead_lists,
+        mailing,
+        opportunity,
+        prospect_intel,
+        meeting_intel,
+        prospecting,
+        prospect_discovery,
+        my_strategy,
+        first_sale,
+        autopilot,
+        marketing,
+        influencer_network,
+        interview,
+    ],
     position="sidebar",
 )
 
