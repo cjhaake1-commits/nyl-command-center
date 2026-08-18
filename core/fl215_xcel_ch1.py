@@ -17,6 +17,15 @@ CH1_CARDS = [
     {"front":"Documentation","back":"Document meetings, fact-finding, identified needs, recommendations, and client decisions/acknowledgments as required."},
     {"front":"Client service","back":"The relationship continues after the sale; maintain service, assist through delivery and ongoing needs, and act professionally."},
     {"front":"Producer role","back":"A conduit between insurer and insurance-buying public; solicits business, helps clients obtain coverage from application through delivery, guides clients toward appropriate products, and maintains relationships."},
+    {"front":"Purpose of insurer rating services","back":"Independent rating organizations publicize/evaluate an insurer's financial strength and ability to meet obligations; examples include A.M. Best, Fitch, S&P, and Moody's."},
+    {"front":"Solvency","back":"The insurer's overall financial ability to meet its obligations. Financial strength/solvency is a major concern for policyowners and regulators."},
+    {"front":"Insurer reserves","back":"Accounting measurement of future obligations to policyholders. Reserves are carried as liabilities because the insurer expects to settle those obligations in the future."},
+    {"front":"Insurer liquidity","back":"Ability to have sufficient available funds/assets to make payouts as obligations arise, including unpredictable policyowner claims or benefits."},
+    {"front":"Reserves vs liquidity","back":"Reserves = measured future obligations/liabilities. Liquidity = ability to produce cash/available funds for payments when needed."},
+    {"front":"Risk transfer and pooling","back":"Insurance transfers financial risk from individuals to an insurer and pools premiums/loss exposure across many insureds."},
+    {"front":"Stock vs mutual insurer","back":"Stock insurer is owned by shareholders/stockholders; mutual insurer is owned by policyholders."},
+    {"front":"Underwriting / claims / actuarial","back":"Underwriting evaluates/selects risk; claims evaluates and pays covered losses; actuarial work uses statistics/mortality/morbidity and financial assumptions to help price products and establish reserves."},
+    {"front":"Insurance distribution paths","back":"Insurance may reach consumers through career/captive agents, independent agents, and direct-marketing channels; know the basic distinctions."},
 ]
 
 CH1_QUESTIONS = [
@@ -30,6 +39,12 @@ CH1_QUESTIONS = [
     {"q":"Under NAIC unfair-trade-practice concepts, which is most likely considered unfair?","choices":["Accurate disclosure","False advertising","Fact-finding","Policy delivery"],"answer":1,"why":"False or misleading advertising is a classic unfair trade practice."},
     {"q":"The NAIC Advertising Code is designed primarily to reduce:","choices":["Misleading insurance advertising","Medical underwriting","Premium collection","Actuarial reserving"],"answer":0,"why":"Its focus is truthful, properly disclosed insurance advertising and solicitation."},
     {"q":"Which organization is most closely associated with writing model laws for consideration by state legislatures?","choices":["NCOIL","SIPC","FDIC","Federal Reserve"],"answer":0,"why":"NCOIL develops model insurance laws for state legislative consideration."},
+    {"q":"A rating service such as A.M. Best is primarily useful for evaluating an insurer's:","choices":["Producer commission schedule","Financial strength","Advertising slogan","Policyowner age"],"answer":1,"why":"Rating services focus primarily on insurer financial strength and ability to meet obligations."},
+    {"q":"An insurer's reserves are best described as:","choices":["Future obligations measured as liabilities","Producer bonuses","Guaranteed profits","Advertising expenses"],"answer":0,"why":"Reserves represent measured future obligations to policyholders and are accounted for as liabilities."},
+    {"q":"Which term most directly describes an insurer's ability to make payments when funds are needed?","choices":["Liquidity","Rebating","Adhesion","Indemnity"],"answer":0,"why":"Liquidity concerns the availability of funds/assets to make payments as obligations arise."},
+    {"q":"Who owns a mutual insurance company?","choices":["Policyholders","Stockholders","State regulators","Producers"],"answer":0,"why":"Mutual insurers are owned by their policyholders."},
+    {"q":"Which department is primarily responsible for evaluating applicants and selecting risk?","choices":["Underwriting","Claims","Marketing","Accounting"],"answer":0,"why":"Underwriting evaluates and classifies risks presented to the insurer."},
+    {"q":"Which insurance-company function relies heavily on statistical assumptions to help price products and establish reserves?","choices":["Actuarial","Claims intake","Agency recruiting","Policy delivery"],"answer":0,"why":"Actuaries use statistical and financial assumptions in pricing and reserve calculations."},
 ]
 
 LIGHTNING = [
@@ -41,4 +56,12 @@ LIGHTNING = [
     ("Explain benefits and limitations accurately", "Full and accurate disclosure"),
     ("Record needs, recommendations, and decisions", "Documentation"),
     ("Relationship continues after the sale", "Client service"),
+    ("Future obligations shown as liabilities", "Reserves"),
+    ("Ability to make payments when needed", "Liquidity"),
+    ("A.M. Best / Fitch / S&P / Moody's", "Rating services"),
+    ("Owned by shareholders", "Stock insurer"),
+    ("Owned by policyholders", "Mutual insurer"),
+    ("Evaluates and selects risk", "Underwriting"),
+    ("Evaluates covered losses and benefits", "Claims"),
+    ("Statistics, pricing, mortality/morbidity, reserves", "Actuarial"),
 ]
