@@ -1,76 +1,98 @@
 from __future__ import annotations
 
 from datetime import date
+
 import streamlit as st
 
-st.set_page_config(page_title="Advisor Growth OS", page_icon="◆", layout="wide")
+from core.branding import brand_hero
+from data.hnw_leads import HNW_LEADS
+from data.marketing_network_leads import MARKETING_NETWORK_LEADS
+from data.public_leads import PUBLIC_LEADS
 
-st.markdown("""
-<style>
-.block-container {padding-top: 1.25rem; padding-bottom: 2rem; max-width: 1450px;}
-h1,h2,h3 {letter-spacing:-.02em;}
-[data-testid="stMetric"] {background:rgba(255,255,255,.035); border:1px solid rgba(128,128,128,.20); padding:15px 16px; border-radius:14px; box-shadow:0 8px 24px rgba(0,0,0,.06);}
-.hero {padding:30px; border:1px solid rgba(128,128,128,.22); border-radius:20px; margin-bottom:20px; background:linear-gradient(135deg,rgba(19,52,84,.42),rgba(15,27,43,.14)); box-shadow:0 14px 40px rgba(0,0,0,.10);}
-.eyebrow {font-size:.74rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; opacity:.62;}
-.hero h1 {margin:.35rem 0 .45rem; font-size:2.45rem; line-height:1.05;}
-.hero p {margin:0; opacity:.78; font-size:1.04rem; max-width:950px;}
-.section-card {border:1px solid rgba(128,128,128,.18); border-radius:16px; padding:18px 20px; margin:8px 0 16px; background:rgba(255,255,255,.018);}
-.pill {display:inline-block; padding:5px 9px; margin:3px 4px 3px 0; border-radius:999px; border:1px solid rgba(128,128,128,.25); font-size:.78rem; opacity:.82;}
-</style>
-<div class="hero">
-<div class="eyebrow">Advisor Growth Operating System • Greater Orlando</div>
-<h1>Growth Command Center</h1>
-<p>A unified operating layer for prospect intelligence, relationship development, meeting preparation, pipeline execution, opportunity discovery, production management and continuous learning.</p>
-</div>
-""", unsafe_allow_html=True)
+st.set_page_config(page_title="Command Center | Chris Haake", page_icon="◆", layout="wide")
 
-status1,status2,status3 = st.columns([1,1,2])
-status1.success("SYSTEM • ONLINE")
-status2.info("LEAD ENGINE • BUILDING")
-status3.caption("Future NYL/Salesforce connectivity activates only with authorized access. Public-source intelligence remains independently traceable.")
+brand_hero(
+    "Growth Command Center",
+    "Your operating cockpit for Central Florida prospect discovery, relationship development, marketing reach, pipeline execution and production discipline.",
+    "Chris Haake • Advisor Growth OS",
+)
 
-c1,c2,c3,c4,c5 = st.columns(5)
-c1.metric("Lead Reservoir", "Building", "Continuous")
-c2.metric("Daily Priority", "20", "Hot-list target")
-c3.metric("Weekly Touches", "60", "Target")
-c4.metric("First Meetings", "3–4", "per week")
-c5.metric("Diagnostics", "1–2", "per week")
+business_count = len(PUBLIC_LEADS)
+hnw_count = len(HNW_LEADS)
+network_count = len(MARKETING_NETWORK_LEADS)
+total_discovery = business_count + hnw_count + network_count
+high_fit_network = sum(1 for x in MARKETING_NETWORK_LEADS if float(x.get("Audience fit score", 0) or 0) >= 95)
+high_hnw = sum(1 for x in HNW_LEADS if float(x.get("Opportunity score", 0) or 0) >= 95)
 
-st.subheader("Operating System")
+s1, s2, s3 = st.columns([1, 1, 2])
+s1.success("SYSTEM • ONLINE")
+s2.info("DISCOVERY ENGINE • ACTIVE")
+s3.caption("Public-source intelligence is kept traceable. Regulated recommendations, communications and advertising remain inside approved processes.")
+
+st.subheader("Executive Snapshot")
+c1, c2, c3, c4, c5 = st.columns(5)
+c1.metric("Discovery Universe", total_discovery, "live records")
+c2.metric("Business Prospects", business_count)
+c3.metric("HNW / COI", hnw_count, f"{high_hnw} priority")
+c4.metric("Referral Network", network_count, f"{high_fit_network} fit 95+")
+c5.metric("Daily Priority", "20", "relationship actions")
+
+st.subheader("Today's Operating Priorities")
+left, center, right = st.columns([1.15, 1, 1])
+with left:
+    st.markdown("### 01 • Build Pipeline")
+    st.write("Work the highest-scoring business and household prospects first. Prioritize fresh triggers and credible warm paths over generic cold volume.")
+    st.progress(0.72, text="Discovery engine coverage")
+    st.caption("Hourly research feeds Business, HNW/COI and Marketing/Referral discovery lanes.")
+with center:
+    st.markdown("### 02 • Build Relationships")
+    st.write("Develop COIs, influencers, Realtors, attorneys, CPAs, bankers and community connectors who can compound access to the right households.")
+    st.progress(0.58, text="Network development")
+    st.caption("Audience fit and relationship leverage matter more than raw follower count.")
+with right:
+    st.markdown("### 03 • Execute")
+    st.write("Move research into dated next actions: introductions, calls, coffees, events, meeting preparation and disciplined follow-through.")
+    st.progress(0.45, text="Execution rhythm")
+    st.caption("Use Daily War Room for production math and activity tracking.")
+
+st.subheader("Growth Flywheel")
 cols = st.columns(4)
 modules = [
-    ("01", "Discover", "Public sources, referrals, events and business triggers"),
-    ("02", "Prioritize", "Opportunity, warmth, timing and strategic-fit scoring"),
-    ("03", "Prepare", "Warm paths, research, meeting briefs and value-before-ask"),
-    ("04", "Execute", "Touches, meetings, diagnostics and dated next actions"),
-    ("05", "Design", "Documented needs, planning paths and specialist coordination"),
-    ("06", "Implement", "Case progression, follow-through and service discipline"),
-    ("07", "Expand", "Reviews, introductions, COIs and additional documented needs"),
-    ("08", "Learn", "Conversion analytics continuously recalibrate priorities"),
+    ("01", "Discover", "Public signals, referrals, events, creators and business triggers"),
+    ("02", "Prioritize", "Opportunity, warmth, timing, audience fit and strategic value"),
+    ("03", "Connect", "Warm paths, COIs, LinkedIn, events and relationship-first outreach"),
+    ("04", "Prepare", "Research, first-touch context and meeting intelligence"),
+    ("05", "Execute", "Touches, meetings, diagnostics and dated next actions"),
+    ("06", "Coordinate", "Documented needs and approved specialist workflows"),
+    ("07", "Expand", "Reviews, introductions, community and additional relationships"),
+    ("08", "Learn", "Conversion data continuously improves prioritization"),
 ]
-for i,(num,title,desc) in enumerate(modules):
+for i, (num, title, desc) in enumerate(modules):
     with cols[i % 4]:
-        st.markdown(f"<div class='section-card'><div class='eyebrow'>{num}</div><h3>{title}</h3><div style='opacity:.72'>{desc}</div></div>", unsafe_allow_html=True)
+        st.markdown(
+            f"<div class='brand-hero' style='padding:1rem 1.05rem;min-height:145px;margin-bottom:.8rem'>"
+            f"<div class='brand-kicker'>{num}</div><div class='brand-hero-title' style='font-size:1.08rem'>{title}</div>"
+            f"<div class='brand-hero-copy' style='font-size:.86rem'>{desc}</div></div>",
+            unsafe_allow_html=True,
+        )
 
 st.subheader("Intelligence Stack")
-left,right = st.columns(2)
-with left:
-    st.markdown("### Acquisition & Relationship Intelligence")
-    st.markdown("<span class='pill'>Public Lead Engine</span><span class='pill'>Trigger Radar</span><span class='pill'>Warm-Path Graph</span><span class='pill'>COI Network</span><span class='pill'>Event Intelligence</span><span class='pill'>Campaign Planning</span><span class='pill'>Lead Provenance</span>", unsafe_allow_html=True)
-    st.markdown("### Execution & Coaching")
-    st.markdown("<span class='pill'>Daily War Room</span><span class='pill'>First-Touch Briefs</span><span class='pill'>Meeting Intelligence</span><span class='pill'>Pipeline Rescue</span><span class='pill'>Conversion Learning</span><span class='pill'>Production Math</span>", unsafe_allow_html=True)
-with right:
-    st.markdown("### Opportunity Intelligence")
-    st.markdown("<span class='pill'>Protection</span><span class='pill'>Business Owner</span><span class='pill'>Key Person</span><span class='pill'>Succession</span><span class='pill'>Retirement</span><span class='pill'>Executive Benefits</span><span class='pill'>Employee Benefits</span><span class='pill'>Legacy</span><span class='pill'>Advisory*</span>", unsafe_allow_html=True)
-    st.markdown("### Enterprise Integration")
-    st.markdown("<span class='pill'>CRM Match</span><span class='pill'>Deduplication</span><span class='pill'>Relationship Check</span><span class='pill'>Activity Sync</span><span class='pill'>Gap Analysis</span><span class='pill'>Outcome Feedback</span>", unsafe_allow_html=True)
-    st.caption("*Where licensed, registered and authorized; opportunity flags are not recommendations.")
-
-st.subheader("Next-Level Analytics")
-roadmap = ["Pipeline velocity & stage aging", "Expected-production forecasting", "Lead-source ROI", "COI/referral yield", "Appointment-quality conversion", "Service-category coverage", "90-day review calendar", "Event ROI", "Territory/industry heat maps", "Production scenario planning", "Stale-opportunity rescue", "Morning executive brief"]
-r1,r2,r3 = st.columns(3)
-for i,item in enumerate(roadmap):
-    [r1,r2,r3][i % 3].write(f"✓ {item}")
+t1, t2, t3 = st.tabs(["Acquire", "Develop", "Execute"])
+with t1:
+    a, b, c = st.columns(3)
+    a.markdown("**Prospect Discovery**\n\nBusiness owners, HNW households, COIs and public growth triggers.")
+    b.markdown("**Opportunity Radar**\n\nSurface timing signals and research-backed hypotheses without assuming private needs.")
+    c.markdown("**Lead Lists**\n\nTurn research into controlled, source-aware working lists and exports.")
+with t2:
+    a, b, c = st.columns(3)
+    a.markdown("**Influencer Network**\n\nReal-estate, home, design and lifestyle relationships ranked by audience fit.")
+    b.markdown("**LinkedIn Network**\n\nVerify professional identity, mutual context and warm paths before connecting.")
+    c.markdown("**Marketing Command Center**\n\nPlan compliant local visibility, events, content and relationship campaigns.")
+with t3:
+    a, b, c = st.columns(3)
+    a.markdown("**Daily War Room**\n\nReverse-engineer goals into today's exact activity mission.")
+    b.markdown("**Meeting Intelligence**\n\nPrepare for higher-quality conversations with public context and clear objectives.")
+    c.markdown("**Sales Autopilot**\n\nKeep follow-up, stale opportunities and execution discipline visible.")
 
 st.divider()
-st.caption(f"Advisor Growth OS • Build {date.today().isoformat()} • Automate research, prioritization, preparation and reporting; keep regulated judgment and recommendations within approved processes.")
+st.caption(f"Chris Haake Command Center • {date.today().isoformat()} • Central Florida Growth OS • Research signals are not financial recommendations.")
