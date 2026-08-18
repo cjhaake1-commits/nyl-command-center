@@ -1,0 +1,29 @@
+Florida 2-15 License Prep — Exam-Day Drive Review
+
+Target runtime: approximately 30 minutes at a calm narration pace.
+
+Safety opening: Keep your attention on the road. Do not look at a screen while driving. Today is for retrieval, confidence, precision and calm execution—not learning a new textbook.
+
+Review sequence:
+1. Peril vs hazard; pure risk; indemnity; insurable interest.
+2. Aleatory, unilateral, adhesion, conditional.
+3. Express, implied, apparent authority.
+4. Twisting, rebating, misrepresentation, defamation, coercion, unfair discrimination.
+5. Term, whole, universal, variable life.
+6. Primary/contingent and revocable/irrevocable beneficiaries.
+7. Waiver of premium, guaranteed insurability, accelerated benefits.
+8. Cash surrender, reduced paid-up, extended term.
+9. Absolute vs collateral assignment; policy loans.
+10. Immediate/deferred and fixed/variable annuities; accumulation vs annuity units; payout options.
+11. Deductible, copay, coinsurance, out-of-pocket maximum.
+12. Disability: elimination period = waiting period; benefit period = duration.
+13. Guaranteed renewable vs noncancelable; LTC; group insurance; coordination of benefits.
+14. Medicare: A hospital, B medical/outpatient, C Medicare Advantage, D prescription drugs.
+15. Application, field underwriting, accurate information and policy delivery concepts.
+16. Florida concepts: fiduciary handling of premiums; domestic/foreign/alien; authorized insurers; unfair trade practices; replacement/consumer protection.
+17. Exact Florida numbers must come only from the current official material already drilled in the trainer.
+18. Rapid recognition round and short scenarios.
+19. Test execution: watch NOT/EXCEPT/BEST/MOST/FIRST/PRIMARY; eliminate choices; do not let one difficult question affect the next; retrieve one rule at a time.
+20. Calm close: relax shoulders, arrive safely, avoid frantic last-minute searching, and execute one question at a time.
+
+The full narration-ready version is maintained as a generated project artifact and should be rendered to `audio/florida_215_exam_day_30min.mp3` before deployment.
