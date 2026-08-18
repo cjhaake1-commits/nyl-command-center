@@ -8,6 +8,55 @@ st.set_page_config(page_title="Chris Haake Command Center", page_icon="◆", lay
 apply_brand_theme()
 sidebar_brand()
 
+# Streamlit's multipage navigation is rendered ahead of normal sidebar content by
+# default. Force the Chris Haake identity block above navigation on both desktop
+# and the mobile sidebar drawer so branding is visible immediately, not below the fold.
+st.markdown(
+    """
+    <style>
+    section[data-testid="stSidebar"] [data-testid="stSidebarContent"] {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    section[data-testid="stSidebar"] [data-testid="stSidebarUserContent"] {
+        order: -100 !important;
+        flex: 0 0 auto !important;
+        padding-top: 0.35rem !important;
+    }
+
+    section[data-testid="stSidebar"] [data-testid="stSidebarNav"] {
+        order: 10 !important;
+        flex: 1 1 auto !important;
+    }
+
+    /* Fallback for Streamlit builds where the user-content wrapper changes. */
+    section[data-testid="stSidebar"] [data-testid="stSidebarContent"] > div:has(.brand-lockup) {
+        order: -100 !important;
+    }
+
+    /* Keep the identity panel compact enough to remain visible on smaller phones. */
+    @media (max-width: 760px) {
+        section[data-testid="stSidebar"] [data-testid="stSidebarUserContent"] {
+            padding-top: 0.15rem !important;
+        }
+        section[data-testid="stSidebar"] .brand-lockup {
+            margin-bottom: 0.25rem !important;
+            padding-top: 0.25rem !important;
+            padding-bottom: 0.75rem !important;
+        }
+        section[data-testid="stSidebar"] .brand-person {
+            margin-top: 0.65rem !important;
+        }
+        section[data-testid="stSidebar"] .brand-sidebar-note {
+            margin-top: 0.6rem !important;
+        }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 executive = st.Page("pages/0_Executive_Command_Center.py", title="Command Center", icon="📈", default=True)
 war_room = st.Page("pages/1_Daily_War_Room.py", title="Daily War Room", icon="🎯")
 lead_lists = st.Page("pages/9_Lead_Lists.py", title="Lead Lists & Export", icon="📋")
