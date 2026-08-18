@@ -25,6 +25,13 @@ CARDS = [
     {"front":"Who usually pays for credit life","back":"The borrower typically pays the entire cost, including when group credit life is arranged through a lending institution."},
     {"front":"Maximum credit life benefit","back":"The benefit cannot exceed the amount of the indebtedness; the creditor's insurable interest is limited to the debt owed."},
     {"front":"Credit insurance coercion rule","back":"A lender may require suitable insurance as a loan condition in some settings, but cannot force the borrower to buy it from that lender or a particular insurer. Doing so is coercion."},
+    {"front":"Increasing term life","back":"Term insurance whose death benefit rises at stated intervals during the policy term."},
+    {"front":"How increasing-term increases may be stated","back":"The increase can be a fixed dollar amount, a percentage of the original face amount, or tied to a cost-of-living measure such as CPI."},
+    {"front":"Increasing term / incremental term","back":"Increasing term life may also be called incremental term life insurance."},
+    {"front":"Common increasing-term packaging","back":"It can be sold separately but is often included in a package or added as a cost-of-living rider."},
+    {"front":"Common purpose of increasing term","back":"To keep protection aligned with needs expected to rise over time, such as anticipated income growth or inflation."},
+    {"front":"Increasing term premium pattern in the course example","back":"The face amount rises over time while the premium remains level."},
+    {"front":"Term-to-age increasing policy at expiration","back":"If the insured survives to the stated termination age, the term policy ends and no death benefit is paid."},
 ]
 
 QUESTIONS = [
@@ -44,6 +51,12 @@ QUESTIONS = [
     {"q":"What is the maximum allowable benefit under credit life insurance?","choices":["The amount of the outstanding indebtedness","Twice the loan balance","Any amount chosen by the lender","The debtor's annual income"],"answer":0,"why":"The creditor's insurable interest is limited to the value of the debt."},
     {"q":"A bank tells a borrower that loan approval requires buying credit life insurance specifically from the bank's chosen insurer. What practice is this?","choices":["Coercion","Subrogation","Waiver","Estoppel"],"answer":0,"why":"A lender cannot force a borrower to purchase required insurance from a specific organization or insurer."},
     {"q":"Who typically pays the cost of group credit life insurance?","choices":["The borrower","The lender","The state guaranty association","The beneficiary's estate"],"answer":0,"why":"The borrower typically bears the full cost of credit life coverage."},
+    {"q":"Which statement best describes increasing term life insurance?","choices":["The death benefit rises at periodic intervals during the term","The cash value rises while the death benefit stays fixed","The death benefit declines as debt is repaid","Coverage is permanent and cannot expire"],"answer":0,"why":"Increasing term is defined by a face amount that increases during the term."},
+    {"q":"An increasing term policy raises its face amount according to the Consumer Price Index. What is the increase designed to address?","choices":["Changes in cost of living","A declining mortgage balance","Policy loans","Reduced mortality risk"],"answer":0,"why":"CPI-linked increases are intended to adjust protection for cost-of-living changes."},
+    {"q":"Increasing term life insurance is also commonly called what?","choices":["Incremental term life","Credit life","Mortgage redemption life","Ordinary whole life"],"answer":0,"why":"Incremental term is another name used for increasing term life."},
+    {"q":"A 30-year-old buys term-to-age-65 coverage whose face amount rises every five years. If the insured dies at age 52, what amount is generally payable?","choices":["The face amount applicable at the insured's attained age","Only the original face amount","All future scheduled increases added together","No benefit because age 65 was not reached"],"answer":0,"why":"Death during the term pays the face amount in force at the insured's current attained age."},
+    {"q":"What happens if the insured survives an increasing term-to-age-65 policy to age 65?","choices":["The policy terminates with no death benefit","The highest face amount is paid automatically","It converts to an annuity automatically","All premiums are returned automatically"],"answer":0,"why":"It remains term insurance; survival to the termination age means the coverage expires without a death benefit."},
+    {"q":"Which need is increasing term particularly suited to address?","choices":["Protection needs expected to grow with income or inflation","A loan balance that steadily declines","Permanent cash-value accumulation","A fixed funeral expense only"],"answer":0,"why":"Increasing term can keep the death benefit aligned with anticipated growth in income or living costs."},
 ]
 
 LIGHTNING = [
@@ -62,4 +75,9 @@ LIGHTNING = [
     ("Typical credit life beneficiary", "Lender / creditor"),
     ("Maximum credit life benefit", "Amount of indebtedness"),
     ("Force borrower to buy from specific insurer", "Illegal coercion"),
+    ("Death benefit rises periodically", "Increasing term"),
+    ("Another name for increasing term", "Incremental term"),
+    ("Increasing benefit tied to inflation", "Cost-of-living / CPI adjustment"),
+    ("Increasing term common use", "Anticipated income or protection-need growth"),
+    ("Survive term-to-age policy", "Coverage terminates; no death benefit"),
 ]
