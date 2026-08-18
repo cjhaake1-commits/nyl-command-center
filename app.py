@@ -2,7 +2,11 @@ from __future__ import annotations
 
 import streamlit as st
 
-st.set_page_config(page_title="Advisor Growth OS", page_icon="📈", layout="wide")
+from core.branding import apply_brand_theme, sidebar_brand
+
+st.set_page_config(page_title="Chris Haake Command Center", page_icon="◆", layout="wide")
+apply_brand_theme()
+sidebar_brand()
 
 executive = st.Page("pages/0_Executive_Command_Center.py", title="COMMAND CENTER", icon="📈", default=True)
 war_room = st.Page("pages/1_Daily_War_Room.py", title="Daily War Room", icon="🎯")
@@ -18,6 +22,7 @@ first_sale = st.Page("pages/5_First_Sale_Program.py", title="First-Sale Program"
 autopilot = st.Page("pages/7_Autopilot.py", title="Sales Autopilot", icon="⚡")
 marketing = st.Page("pages/3_Marketing.py", title="Marketing Command Center", icon="📣")
 influencer_network = st.Page("pages/3A_Influencer_Network.py", title="Influencer & Referral Network", icon="📱")
+linkedin_network = st.Page("pages/3B_LinkedIn_Network.py", title="LinkedIn Network", icon="🔗")
 interview = st.Page("pages/8_Interview_Ace.py", title="Interview / Presentation", icon="🃏")
 
 navigation = st.navigation(
@@ -36,6 +41,7 @@ navigation = st.navigation(
         autopilot,
         marketing,
         influencer_network,
+        linkedin_network,
         interview,
     ],
     position="sidebar",
