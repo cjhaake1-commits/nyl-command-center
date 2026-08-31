@@ -62,7 +62,7 @@ war_room = st.Page("pages/1_Daily_War_Room.py", title="Daily War Room", icon="�
 lead_lists = st.Page("pages/9_Lead_Lists.py", title="Lead Lists & Export", icon="📋")
 mailing = st.Page("pages/11_Mailing_Targeting.py", title="Mailing & Targeting", icon="📬")
 opportunity = st.Page("pages/12_Opportunity_Radar.py", title="Opportunity Radar", icon="📡")
-prospect_intel = st.Page("pages/6_Prospect_Intelligence.py", title="Prospect Intelligence", icon="🔎")
+prospect_intel = st.Page("pages/13_Prospect_Intelligence.py", title="Prospect Intelligence", icon="🔎")
 meeting_intel = st.Page("pages/10_Meeting_Intelligence.py", title="Meeting Intelligence", icon="🎙️")
 prospecting = st.Page("pages/2_Prospecting.py", title="Prospecting & Pipeline", icon="🧭")
 prospect_discovery = st.Page("pages/2A_Prospect_Discovery.py", title="Prospect Discovery", icon="🎯")
