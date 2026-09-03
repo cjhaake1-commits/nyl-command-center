@@ -5,6 +5,8 @@ from datetime import date, timedelta
 import pandas as pd
 import streamlit as st
 
+from core.branding import brand_hero
+from core.rep_profile import REP_NAME, TERRITORY_LABEL
 from core.planner import FunnelAssumptions, build_plan, pace_status
 from core.war_room import (
     adaptive_assumptions,
@@ -23,25 +25,31 @@ from data.db import (
     upsert_daily_activity,
 )
 
-BUILD_VERSION = "2026-08-15 • Orlando Prospecting + Marketing"
+BUILD_VERSION = "2026-09-03 • Simi Valley Advisor Growth OS"
 
-st.set_page_config(page_title="NYL Command Center", page_icon="🎯", layout="wide")
+st.set_page_config(page_title=f"Daily War Room | {REP_NAME}", page_icon="🎯", layout="wide")
 init_db()
 
-st.title("NYL Command Center")
-st.caption("Daily War Room for turning a commission goal into an exact execution plan. Keep compensation assumptions editable until verified against your official NYL plan.")
-st.caption(f"Build: {BUILD_VERSION}")
+brand_hero(
+    "Daily War Room",
+    "Turn the production goal into today's exact mission, track the funnel, and keep execution focused on the few actions that move revenue forward.",
+    f"{REP_NAME} • {TERRITORY_LABEL}",
+)
+
+s1, s2, s3 = st.columns([1, 1, 2])
+s1.success("WAR ROOM • ONLINE")
+s2.info("PACE ENGINE • ACTIVE")
+s3.caption(f"Build {BUILD_VERSION} • Compensation assumptions remain editable until verified against the official NYL plan.")
 
 if persistent_storage_enabled():
-    st.success("Storage: PostgreSQL connected — activity history is using persistent cloud storage.")
+    st.success("Activity storage is connected to persistent cloud storage.")
 else:
     st.warning(
-        f"Storage: {storage_backend()}. The Command Center is online, but activity history is not yet on persistent cloud storage. "
-        "Do not rely on this as the permanent record until this banner turns green."
+        f"Activity storage: {storage_backend()}. The War Room is operational, but history is not yet on persistent cloud storage."
     )
 
 with st.sidebar:
-    st.header("Mission Setup")
+    st.markdown("### 🎯 Mission Setup")
     commission_goal = st.number_input("Commission goal ($)", min_value=0.0, value=3000.0, step=250.0)
     goal_end_date = st.date_input("Goal deadline", value=date.today() + timedelta(days=29))
     selling_days = st.multiselect(
@@ -53,7 +61,7 @@ with st.sidebar:
     period_days = max(1, (goal_end_date - date.today()).days + 1)
 
     st.divider()
-    st.subheader("Record Mode")
+    st.markdown("### ⚡ Performance Mode")
     execution_buffer_pct = st.slider("Execution buffer above minimum", 0, 50, 10, step=5)
     execution_buffer = 1 + execution_buffer_pct / 100
     record_multiplier = st.select_slider(
@@ -64,7 +72,7 @@ with st.sidebar:
     )
 
     st.divider()
-    st.subheader("Baseline Funnel Assumptions")
+    st.markdown("### 📊 Funnel Assumptions")
     avg_commission = st.number_input("Avg. commission per placed sale ($)", min_value=1.0, value=750.0, step=50.0)
     close_rate = st.slider("Held appointment → sale", 1, 100, 30) / 100
     show_rate = st.slider("Booked → held", 1, 100, 75) / 100
@@ -102,7 +110,7 @@ c5.metric("Pace", str(pace["status"]).title(), f"${float(pace['pace_delta']):,.0
 
 st.progress(min(1.0, earned / primary_goal) if primary_goal else 1.0)
 
-st.subheader("Today’s Mission")
+st.markdown("### Today's Mission")
 t1, t2, t3, t4, t5, t6 = st.columns(6)
 t1.metric("Commission", f"${daily.commission:,.0f}")
 t2.metric("Sales", daily.sales)
@@ -112,12 +120,12 @@ t5.metric("Conversations", daily.conversations)
 t6.metric("Outreach", daily.outreach_attempts)
 
 st.success(
-    f"Minimum winning mission today: {daily.outreach_attempts} outreach attempts, {daily.conversations} conversations, "
-    f"{daily.booked_appointments} booked appointments, {daily.held_appointments} held appointments, and {daily.sales} placed sale(s). "
-    f"Commission pace target: ${daily.commission:,.0f}."
+    f"WINNING MISSION • {daily.outreach_attempts} outreach attempts → {daily.conversations} conversations → "
+    f"{daily.booked_appointments} booked → {daily.held_appointments} held → {daily.sales} placed sale(s) • "
+    f"Commission pace target ${daily.commission:,.0f}."
 )
 
-st.subheader("This Week’s Mission")
+st.markdown("### This Week's Mission")
 w1, w2, w3, w4, w5, w6 = st.columns(6)
 w1.metric("Commission", f"${weekly.commission:,.0f}")
 w2.metric("Sales", weekly.sales)
@@ -133,7 +141,7 @@ a2.metric("Close rate", f"{adaptive.close_rate:.0%}")
 a3.metric("Show rate", f"{adaptive.show_rate:.0%}")
 a4.metric("Booking rate", f"{adaptive.booking_rate:.0%}")
 a5.metric("Contact rate", f"{adaptive.contact_rate:.0%}")
-st.caption("The adaptive forecast blends your actual performance with your baseline assumptions so early results do not cause wild swings.")
+st.caption("The forecast blends actual performance with baseline assumptions so early results do not create wild swings.")
 
 health = funnel_health(activity_totals, baseline)
 weak = weakest_link(health)
@@ -150,7 +158,7 @@ for m in health:
     })
 st.dataframe(pd.DataFrame(health_rows), width="stretch", hide_index=True)
 if weak:
-    st.warning(f"Current weakest link: {weak.stage}. Improve this stage first because it is furthest below its target relative to the rest of the funnel.")
+    st.warning(f"Current weakest link: {weak.stage}. Attack this stage first because it is furthest below target.")
 else:
     st.info("Log activity to activate the weakest-link detector.")
 
@@ -179,7 +187,7 @@ for label, multiplier in [("Gate", 1.0), ("1.5× Goal", 1.5), ("2× Goal", 2.0),
     })
 st.dataframe(pd.DataFrame(scenario_rows), width="stretch", hide_index=True)
 
-st.subheader("Log Today’s Actuals")
+st.subheader("Log Today's Actuals")
 with st.form("daily_activity"):
     activity_date = st.date_input("Date", value=date.today())
     a1, a2, a3 = st.columns(3)
@@ -191,13 +199,13 @@ with st.form("daily_activity"):
     sales = a5.number_input("Placed sales", min_value=0, value=0, step=1)
     commission = a6.number_input("Commission credited ($)", min_value=0.0, value=0.0, step=50.0)
     notes = st.text_area("Notes / lessons")
-    submitted = st.form_submit_button("Save day")
+    submitted = st.form_submit_button("Save Day", type="primary")
     if submitted:
         upsert_daily_activity(
             str(activity_date), int(outreach), int(conversations), int(booked),
             int(held), int(sales), float(commission), notes
         )
-        st.success("Daily activity saved. Your remaining mission will recalculate using your updated results.")
+        st.success("Daily activity saved. The remaining mission has been recalculated.")
         st.rerun()
 
 history = get_activity()
@@ -212,11 +220,10 @@ if history:
     st.line_chart(chart_df.set_index("activity_date")[["cumulative_commission"]])
 
     csv = df.drop(columns=["id"]).to_csv(index=False).encode("utf-8")
-    st.download_button("Export activity CSV", csv, "nyl_activity.csv", "text/csv")
+    st.download_button("Export Activity CSV", csv, "paul_deck_activity.csv", "text/csv")
 
 st.divider()
 st.caption(
-    "Boundary: this tool is for personal productivity, goal planning, and performance tracking. "
-    "Do not store client SSNs, account numbers, medical information, or other sensitive client data here. "
-    "Keep product recommendations and regulated client communications in approved NYL systems and workflows."
+    f"{REP_NAME} Daily War Room • Personal productivity and production planning only. "
+    "Keep regulated client information, recommendations, and communications in approved NYL systems and workflows."
 )
