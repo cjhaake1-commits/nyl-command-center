@@ -2,171 +2,254 @@ from __future__ import annotations
 
 from datetime import datetime
 from io import BytesIO
+import html
+
 import pandas as pd
 import streamlit as st
 
-from data.public_leads import PUBLIC_LEADS
+from core.rep_profile import REP_NAME, TERRITORY_LABEL
 
-st.set_page_config(page_title="Lead Lists", page_icon="📋", layout="wide")
-st.title("Lead Lists + Opportunity Match")
-st.caption("Independent public-source prospecting lane with multi-service opportunity matching, ranking, provenance, and export tools.")
+st.set_page_config(page_title="Lead Delivery", page_icon="📋", layout="wide")
+st.title("Lead Delivery")
+st.caption(f"{REP_NAME} • {TERRITORY_LABEL} • research-only until separately authorized for outreach")
 
-st.info("A lead can match multiple planning categories. Matches are prospecting hypotheses based on public business/professional signals—not product recommendations or proof of need. Confirm needs through approved fact-finding and only discuss services you are licensed/authorized to offer.")
-
-SERVICE_CATALOG = [
-    "Personal life protection", "Business-owner life protection", "Key-person protection",
-    "Buy-sell / succession planning", "Business-owner retirement planning", "Retirement income / annuity conversation",
-    "Executive benefits", "Employee life/disability benefits", "Disability planning", "Long-term care planning",
-    "Estate / legacy planning coordination", "Investment / advisory conversation", "COI / referral relationship"
+SALESFORCE_COLUMNS = [
+    "First Name",
+    "Middle Name",
+    "Last Name",
+    "Source",
+    "Sub-Source",
+    "Target Segment",
+    "Home Phone",
+    "Mobile Phone",
+    "Work Phone",
+    "Personal Email",
+    "Work Email",
+    "Other Email",
+    "Date Of Birth",
+    "Gender",
+    "Street",
+    "City",
+    "State",
+    "Postal Code",
 ]
 
-LEAD_COLUMNS = [
-    "Lead type", "Name", "Company", "Role", "Industry", "Area", "Business age years", "Employees",
-    "Business email", "Business phone", "Opportunity score", "Warmth score", "Warmth", "Trigger", "Warm path", "Why now",
-    "Service matches", "Primary opportunity", "Opportunity count", "Source URL", "Verified date", "Next action", "Status"
+SCRIPT_COLUMNS = [
+    "First Name",
+    "Last Name",
+    "Company",
+    "Role",
+    "Selection Rationale",
+    "Cold Call Introduction",
+    "Introduction Email Subject",
+    "Introduction Email",
+    "Compliance Status",
 ]
 
 
-def service_matches(row: pd.Series) -> list[str]:
-    lead_type = str(row.get("Lead type", "")).lower()
-    role = str(row.get("Role", "")).lower()
-    industry = str(row.get("Industry", "")).lower()
-    trigger = str(row.get("Trigger", "")).lower()
-    why = str(row.get("Why now", "")).lower()
-    text = " ".join([role, industry, trigger, why])
-    try: employees = int(float(row.get("Employees", 0) or 0))
-    except (ValueError, TypeError): employees = 0
-    try: age = float(row.get("Business age years", 99) or 99)
-    except (ValueError, TypeError): age = 99
-    matches = []
-    owner = any(k in role for k in ["owner", "founder", "partner", "president", "ceo", "principal"])
-    executive = owner or any(k in role for k in ["executive", "chief", "vp", "vice president", "director"])
-    professional = any(k in text for k in ["physician", "medical", "dental", "veterinary", "attorney", "law", "cpa", "accounting", "architect", "engineer", "consulting"])
-    coi = any(k in text for k in ["cpa", "accounting", "attorney", "law", "bank", "commercial real estate", "realtor", "real estate", "mortgage", "title", "benefits", "local media", "publishing"])
-    retirement_signal = any(k in text for k in ["retirement", "succession", "transition", "exit", "estate", "legacy"])
-    growth = any(k in text for k in ["new business", "new registration", "hiring", "growth", "expansion", "new location", "acquisition", "opening", "contract"])
-
-    if "business" in lead_type or owner or executive:
-        matches.append("Business-owner life protection" if owner else "Personal life protection")
-    else:
-        matches.append("Personal life protection")
-    if owner:
-        matches += ["Business-owner retirement planning", "Disability planning"]
-    if owner and ("partner" in role or any(k in text for k in ["partner", "multi-owner", "succession"])):
-        matches.append("Buy-sell / succession planning")
-    if owner or executive:
-        matches.append("Key-person protection")
-    if employees >= 10:
-        matches.append("Employee life/disability benefits")
-    if employees >= 10 and (executive or employees >= 25):
-        matches.append("Executive benefits")
-    if retirement_signal:
-        matches += ["Retirement income / annuity conversation", "Estate / legacy planning coordination"]
-    if professional or owner:
-        matches.append("Estate / legacy planning coordination")
-    if any(k in text for k in ["retirement", "wealth", "investment", "executive", "owner", "founder", "partner"]):
-        matches.append("Investment / advisory conversation")
-    if any(k in text for k in ["long-term care", "ltc", "retirement"]):
-        matches.append("Long-term care planning")
-    if coi or "coi" in lead_type:
-        matches.append("COI / referral relationship")
-    if age <= 10 and owner and growth:
-        matches += ["Key-person protection", "Business-owner retirement planning"]
-    return list(dict.fromkeys(matches))
+def blank_salesforce_df() -> pd.DataFrame:
+    return pd.DataFrame(columns=SALESFORCE_COLUMNS)
 
 
-def enrich_matches(df: pd.DataFrame) -> pd.DataFrame:
+def ensure_salesforce_columns(df: pd.DataFrame) -> pd.DataFrame:
     out = df.copy()
-    if out.empty: return out
-    matches = out.apply(service_matches, axis=1)
-    out["Service matches"] = matches.apply(lambda x: " | ".join(x))
-    out["Opportunity count"] = matches.apply(len)
-    out["Primary opportunity"] = matches.apply(lambda x: x[0] if x else "Human review")
-    return out
-
-if "lead_list_master" not in st.session_state:
-    seeded = pd.DataFrame(PUBLIC_LEADS)
-    for col in LEAD_COLUMNS:
-        if col not in seeded.columns: seeded[col] = ""
-    st.session_state.lead_list_master = enrich_matches(seeded[LEAD_COLUMNS])
-
-with st.sidebar:
-    st.header("Lead List Filters")
-    lead_type = st.multiselect("Lead type", ["Business", "Individual / professional", "COI"], default=["Business", "Individual / professional", "COI"])
-    service_filter = st.multiselect("Opportunity / service match", SERVICE_CATALOG)
-    min_matches = st.slider("Minimum matched opportunities", 0, 8, 0)
-    min_opportunity = st.slider("Minimum opportunity score", 0, 100, 0)
-    min_warmth = st.slider("Minimum warmth score", 0, 100, 0)
-    search_text = st.text_input("Search name / company / industry / area")
-
-st.subheader("Master Lead List")
-st.caption("Seeded with verified Greater Orlando public-source records; you can edit, add, score, and export from here.")
-master = st.data_editor(st.session_state.lead_list_master, num_rows="dynamic", width="stretch", hide_index=True, key="master_lead_editor")
-master = enrich_matches(master)
-if st.button("Save + Recalculate Opportunity Matches", type="primary"):
-    st.session_state.lead_list_master = master
-    st.success("Lead list saved and every record was re-evaluated across all opportunity categories.")
-
-filtered = master.copy()
-if not filtered.empty:
-    if lead_type: filtered = filtered[filtered["Lead type"].isin(lead_type)]
-    for col, threshold in [("Opportunity score", min_opportunity), ("Warmth score", min_warmth), ("Opportunity count", min_matches)]:
-        vals = pd.to_numeric(filtered.get(col, 0), errors="coerce").fillna(0)
-        filtered = filtered[vals >= threshold]
-    if service_filter:
-        filtered = filtered[filtered["Service matches"].fillna("").apply(lambda x: any(s in x for s in service_filter))]
-    if search_text.strip():
-        q = search_text.strip().lower(); searchable = filtered.astype(str).apply(lambda col: col.str.lower())
-        filtered = filtered[searchable.apply(lambda row: row.str.contains(q, regex=False).any(), axis=1)]
-
-st.subheader("Filtered / Exportable Leads")
-m1,m2,m3,m4 = st.columns(4)
-m1.metric("Leads", len(filtered))
-m2.metric("Multi-opportunity leads", int((pd.to_numeric(filtered.get("Opportunity count", 0), errors="coerce").fillna(0) >= 2).sum()) if not filtered.empty else 0)
-m3.metric("Business", int((filtered.get("Lead type", pd.Series(dtype=str)) == "Business").sum()) if not filtered.empty else 0)
-m4.metric("COI", int((filtered.get("Lead type", pd.Series(dtype=str)) == "COI").sum()) if not filtered.empty else 0)
-st.dataframe(filtered, width="stretch", hide_index=True)
-
-st.subheader("Opportunity Coverage")
-if not filtered.empty:
-    counts = []
-    for service in SERVICE_CATALOG:
-        n = int(filtered["Service matches"].fillna("").str.contains(service, regex=False).sum())
-        if n: counts.append({"Opportunity category": service, "Matched leads": n})
-    st.dataframe(pd.DataFrame(counts).sort_values("Matched leads", ascending=False) if counts else pd.DataFrame(columns=["Opportunity category","Matched leads"]), width="stretch", hide_index=True)
+    for col in SALESFORCE_COLUMNS:
+        if col not in out.columns:
+            out[col] = ""
+    return out[SALESFORCE_COLUMNS]
 
 
-def excel_bytes(df: pd.DataFrame) -> bytes:
-    output = BytesIO()
-    with pd.ExcelWriter(output, engine="openpyxl") as writer:
-        df.to_excel(writer, index=False, sheet_name="Leads")
-        ws = writer.book["Leads"]; ws.freeze_panes = "A2"; ws.auto_filter.ref = ws.dimensions
+def split_name(first: str, last: str) -> str:
+    return " ".join(x for x in [str(first).strip(), str(last).strip()] if x)
+
+
+def make_script_record(row: pd.Series) -> dict[str, str]:
+    first = str(row.get("First Name", "")).strip()
+    last = str(row.get("Last Name", "")).strip()
+    name = split_name(first, last) or "there"
+    company = str(row.get("Company", "")).strip()
+    role = str(row.get("Role", "")).strip()
+    rationale = str(row.get("Sub-Source", "")).strip() or str(row.get("Selection Rationale", "")).strip()
+
+    context_bits = []
+    if company:
+        context_bits.append(company)
+    if role:
+        context_bits.append(role)
+    context = " / ".join(context_bits)
+
+    call = (
+        f"Hi {first or name}, this is {REP_NAME}. I’ll keep this brief. "
+        + (f"I came across you through your work with {company}. " if company else "I came across your professional background locally. ")
+        + (f"What caught my attention was {rationale.rstrip('.')} . " if rationale else "I’m making a point of getting to know more business owners and professionals in the area. ")
+        + "I’m not calling to pitch you anything today. I work with New York Life and spend a lot of time getting to know local owners and professionals around long-term planning, protection, and business continuity. "
+        + "I thought it would be worthwhile to introduce myself and learn a little more about what you’re working on. Would you be open to a short coffee or introductory conversation sometime in the next couple of weeks?"
+    )
+
+    subject = f"Introduction — {REP_NAME} / New York Life"
+    email_body = (
+        f"Hi {first or name},\n\n"
+        + (f"I came across your work with {company}" + (f" as {role}" if role else "") + ". " if company else "I came across your professional background in the Simi Valley area. ")
+        + (f"{rationale.rstrip('.')} stood out to me. " if rationale else "I’ve been making a point of getting to know more owners and professionals in the area. ")
+        + "I’m not reaching out to turn this into an insurance presentation. I work with New York Life and focus on building relationships with business owners and professionals around long-term planning, protection, business continuity, succession, executive and employee benefits, and broader financial planning when appropriate.\n\n"
+        + "I’d enjoy introducing myself and learning more about what you’re working on. If you’re open to it, perhaps we could grab coffee or have a brief introductory call sometime in the next couple of weeks.\n\n"
+        + f"Best,\n{REP_NAME}\nNew York Life"
+    )
+
+    return {
+        "First Name": first,
+        "Last Name": last,
+        "Company": company,
+        "Role": role,
+        "Selection Rationale": rationale,
+        "Cold Call Introduction": call,
+        "Introduction Email Subject": subject,
+        "Introduction Email": email_body,
+        "Compliance Status": "HOLD — RESEARCH ONLY / COMPLIANCE REVIEW",
+    }
+
+
+def xlsx_bytes(df: pd.DataFrame, sheet_name: str) -> bytes:
+    out = BytesIO()
+    with pd.ExcelWriter(out, engine="openpyxl") as writer:
+        df.to_excel(writer, index=False, sheet_name=sheet_name)
+        ws = writer.book[sheet_name]
+        ws.freeze_panes = "A2"
+        ws.auto_filter.ref = ws.dimensions
         for cells in ws.columns:
-            max_len = max((len(str(c.value)) if c.value is not None else 0) for c in cells)
-            ws.column_dimensions[cells[0].column_letter].width = min(max(max_len + 2, 12), 50)
+            width = max((len(str(c.value)) if c.value is not None else 0) for c in cells)
+            ws.column_dimensions[cells[0].column_letter].width = min(max(width + 2, 12), 48)
+    return out.getvalue()
+
+
+def scripts_pdf_bytes(df: pd.DataFrame) -> bytes:
+    from reportlab.lib.pagesizes import letter
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.enums import TA_LEFT
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
+
+    output = BytesIO()
+    doc = SimpleDocTemplate(output, pagesize=letter, leftMargin=42, rightMargin=42, topMargin=42, bottomMargin=42)
+    styles = getSampleStyleSheet()
+    body = ParagraphStyle("Body2", parent=styles["BodyText"], leading=15, spaceAfter=8, alignment=TA_LEFT)
+    story = [Paragraph(f"{REP_NAME} — Personalized Prospect Scripts", styles["Title"]), Spacer(1, 10)]
+
+    for i, row in df.iterrows():
+        full_name = split_name(row.get("First Name", ""), row.get("Last Name", "")) or "Prospect"
+        company = str(row.get("Company", "")).strip()
+        story.append(Paragraph(html.escape(full_name + (f" — {company}" if company else "")), styles["Heading2"]))
+        story.append(Paragraph("<b>Why selected</b>", styles["Heading3"]))
+        story.append(Paragraph(html.escape(str(row.get("Selection Rationale", ""))), body))
+        story.append(Paragraph("<b>Cold-call introduction</b>", styles["Heading3"]))
+        story.append(Paragraph(html.escape(str(row.get("Cold Call Introduction", ""))), body))
+        story.append(Paragraph("<b>Introduction email</b>", styles["Heading3"]))
+        story.append(Paragraph(html.escape(str(row.get("Introduction Email Subject", ""))), body))
+        story.append(Paragraph(html.escape(str(row.get("Introduction Email", ""))).replace("\n", "<br/>"), body))
+        story.append(Paragraph("<b>Status:</b> HOLD — research only / compliance review", body))
+        if i < len(df) - 1:
+            story.append(PageBreak())
+
+    doc.build(story)
     return output.getvalue()
 
 
-def pdf_bytes(df: pd.DataFrame) -> bytes:
-    from reportlab.lib import colors
-    from reportlab.lib.pagesizes import landscape, letter
-    from reportlab.lib.styles import getSampleStyleSheet
-    from reportlab.lib.units import inch
-    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-    output = BytesIO(); doc = SimpleDocTemplate(output, pagesize=landscape(letter), leftMargin=.2*inch, rightMargin=.2*inch, topMargin=.25*inch, bottomMargin=.25*inch)
-    styles = getSampleStyleSheet(); story=[Paragraph("NYL Command Center - Opportunity-Matched Lead List", styles["Title"]), Paragraph(f"Exported {datetime.now().strftime('%Y-%m-%d %H:%M')} | {len(df)} leads", styles["Normal"]), Spacer(1,8)]
-    preferred=["Lead type","Name","Company","Role","Industry","Area","Business email","Business phone","Opportunity score","Warmth score","Primary opportunity","Opportunity count","Service matches","Trigger","Next action"]
-    cols=[c for c in preferred if c in df.columns]; printable=df[cols].fillna("").astype(str) if cols else df.fillna("").astype(str)
-    data=[list(printable.columns)]+printable.values.tolist(); table=Table(data, repeatRows=1, hAlign="LEFT")
-    table.setStyle(TableStyle([("BACKGROUND",(0,0),(-1,0),colors.lightgrey),("FONTNAME",(0,0),(-1,0),"Helvetica-Bold"),("FONTSIZE",(0,0),(-1,-1),5),("VALIGN",(0,0),(-1,-1),"TOP"),("GRID",(0,0),(-1,-1),.25,colors.grey),("LEFTPADDING",(0,0),(-1,-1),2),("RIGHTPADDING",(0,0),(-1,-1),2)])); story.append(table); doc.build(story); return output.getvalue()
+if "paul_salesforce_ready" not in st.session_state:
+    st.session_state.paul_salesforce_ready = blank_salesforce_df()
 
-st.markdown("#### Export")
-if filtered.empty:
-    st.warning("No leads match the current filters.")
-else:
-    e1,e2=st.columns(2)
-    with e1: st.download_button("⬇️ Export Lead List to Excel", excel_bytes(filtered), f"nyl_leads_{datetime.now().strftime('%Y%m%d')}.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True)
-    with e2: st.download_button("⬇️ Export Lead List to PDF", pdf_bytes(filtered), f"nyl_leads_{datetime.now().strftime('%Y%m%d')}.pdf", "application/pdf", use_container_width=True)
+if "paul_script_context" not in st.session_state:
+    st.session_state.paul_script_context = pd.DataFrame(columns=["First Name", "Last Name", "Company", "Role", "Sub-Source"])
+
+salesforce_tab, scripts_tab = st.tabs(["Salesforce Ready Import", "Personalized Scripts"])
+
+with salesforce_tab:
+    st.subheader("Salesforce Ready Import")
+    st.caption("Only net-new, verified, import-ready contacts should be placed here. The table preserves the same 18-column Salesforce import structure used in the original NYL Command Center.")
+    st.info("Unknown fields stay blank. Public/professional contact routes only. Do not use home-address-derived personal outreach data. Outreach remains HOLD unless separately authorized.")
+
+    edited = st.data_editor(
+        ensure_salesforce_columns(st.session_state.paul_salesforce_ready),
+        num_rows="dynamic",
+        width="stretch",
+        hide_index=True,
+        key="paul_salesforce_editor",
+    )
+
+    c1, c2, c3 = st.columns([1, 1, 1])
+    with c1:
+        if st.button("Save Salesforce List", type="primary", use_container_width=True):
+            st.session_state.paul_salesforce_ready = ensure_salesforce_columns(edited)
+            st.success("Salesforce-ready list saved for this session.")
+    with c2:
+        st.metric("Import-ready rows", len(edited))
+    with c3:
+        contactable = 0
+        if not edited.empty:
+            contactable = int(
+                edited[["Home Phone", "Mobile Phone", "Work Phone", "Personal Email", "Work Email", "Other Email"]]
+                .fillna("")
+                .astype(str)
+                .apply(lambda r: any(v.strip() for v in r), axis=1)
+                .sum()
+            )
+        st.metric("With contact route", contactable)
+
+    if not edited.empty:
+        st.download_button(
+            "Download Salesforce Ready Import (.xlsx)",
+            xlsx_bytes(ensure_salesforce_columns(edited), "Salesforce Import"),
+            f"Paul_Deck_Salesforce_Ready_{datetime.now().strftime('%Y-%m-%d')}.xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            use_container_width=True,
+        )
+
+with scripts_tab:
+    st.subheader("Personalized Scripts")
+    st.caption("One-to-one relationship-first call and email language for the exact contacts in the Salesforce-ready block.")
+
+    source = ensure_salesforce_columns(st.session_state.paul_salesforce_ready)
+    if source.empty:
+        st.info("No Salesforce-ready contacts have been loaded yet. Once leads are added, this tab will create a matched script package for the same people.")
+    else:
+        extra = st.session_state.paul_script_context.copy()
+        scripts = []
+        for _, row in source.iterrows():
+            first = str(row.get("First Name", "")).strip()
+            last = str(row.get("Last Name", "")).strip()
+            match = pd.DataFrame()
+            if not extra.empty:
+                match = extra[
+                    extra["First Name"].astype(str).str.strip().str.casefold().eq(first.casefold())
+                    & extra["Last Name"].astype(str).str.strip().str.casefold().eq(last.casefold())
+                ]
+            combined = row.copy()
+            if not match.empty:
+                m = match.iloc[0]
+                combined["Company"] = m.get("Company", "")
+                combined["Role"] = m.get("Role", "")
+                if not str(combined.get("Sub-Source", "")).strip():
+                    combined["Sub-Source"] = m.get("Sub-Source", "")
+            scripts.append(make_script_record(combined))
+
+        scripts_df = pd.DataFrame(scripts, columns=SCRIPT_COLUMNS)
+
+        for _, row in scripts_df.iterrows():
+            full_name = split_name(row["First Name"], row["Last Name"])
+            with st.expander(full_name or "Prospect"):
+                st.markdown(f"**Why selected:** {row['Selection Rationale'] or 'Rationale pending research enrichment.'}")
+                st.markdown("**Cold-call introduction**")
+                st.write(row["Cold Call Introduction"])
+                st.markdown("**Introduction email**")
+                st.write(row["Introduction Email Subject"])
+                st.text(row["Introduction Email"])
+                st.caption(row["Compliance Status"])
+
+        st.download_button(
+            "Download Personalized Scripts (.pdf)",
+            scripts_pdf_bytes(scripts_df),
+            f"Paul_Deck_Personalized_Scripts_{datetime.now().strftime('%Y-%m-%d')}.pdf",
+            "application/pdf",
+            use_container_width=True,
+        )
 
 st.divider()
-st.caption("Opportunity matching is intentionally many-to-many: one lead may map to several planning conversations. Actual recommendations require approved discovery, licensing/registration where applicable, suitability, and NYL compliance.")
+st.caption("This page is a delivery surface. Prospect research, source verification, duplicate control, suitability, licensing, and NYL compliance review remain separate controls.")
