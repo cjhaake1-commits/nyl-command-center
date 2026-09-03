@@ -5,16 +5,17 @@ from datetime import date
 import streamlit as st
 
 from core.branding import brand_hero
+from core.rep_profile import REP_NAME, TERRITORY_LABEL, TERRITORY_GROWTH_LABEL
 from data.hnw_leads import HNW_LEADS
 from data.marketing_network_leads import MARKETING_NETWORK_LEADS
 from data.public_leads import PUBLIC_LEADS
 
-st.set_page_config(page_title="Command Center | Chris Haake", page_icon="◆", layout="wide")
+st.set_page_config(page_title=f"Command Center | {REP_NAME}", page_icon="◆", layout="wide")
 
 brand_hero(
     "Growth Command Center",
-    "Your operating cockpit for Central Florida prospect discovery, relationship development, marketing reach, pipeline execution and production discipline.",
-    "Chris Haake • Advisor Growth OS",
+    f"Your operating cockpit for {TERRITORY_LABEL} prospect discovery, relationship development, marketing reach, pipeline execution and production discipline.",
+    f"{REP_NAME} • Advisor Growth OS",
 )
 
 business_count = len(PUBLIC_LEADS)
@@ -37,13 +38,16 @@ c3.metric("HNW / COI", hnw_count, f"{high_hnw} priority")
 c4.metric("Referral Network", network_count, f"{high_fit_network} fit 95+")
 c5.metric("Daily Priority", "20", "relationship actions")
 
+if total_discovery == 0:
+    st.info("Paul's California prospect universe is isolated and ready for verified 93065 + 20-mile lead loading. Central Florida data has been removed from this tenant.")
+
 st.subheader("Today's Operating Priorities")
 left, center, right = st.columns([1.15, 1, 1])
 with left:
     st.markdown("### 01 • Build Pipeline")
     st.write("Work the highest-scoring business and household prospects first. Prioritize fresh triggers and credible warm paths over generic cold volume.")
     st.progress(0.72, text="Discovery engine coverage")
-    st.caption("Hourly research feeds Business, HNW/COI and Marketing/Referral discovery lanes.")
+    st.caption("Research feeds Business, HNW/COI and Marketing/Referral discovery lanes.")
 with center:
     st.markdown("### 02 • Build Relationships")
     st.write("Develop COIs, influencers, Realtors, attorneys, CPAs, bankers and community connectors who can compound access to the right households.")
@@ -85,7 +89,7 @@ with t1:
     c.markdown("**Lead Lists**\n\nTurn research into controlled, source-aware working lists and exports.")
 with t2:
     a, b, c = st.columns(3)
-    a.markdown("**Influencer Network**\n\nReal-estate, home, design and lifestyle relationships ranked by audience fit.")
+    a.markdown("**Influencer Network**\n\nLocal relationships ranked by audience fit and referral relevance.")
     b.markdown("**LinkedIn Network**\n\nVerify professional identity, mutual context and warm paths before connecting.")
     c.markdown("**Marketing Command Center**\n\nPlan compliant local visibility, events, content and relationship campaigns.")
 with t3:
@@ -95,4 +99,4 @@ with t3:
     c.markdown("**Sales Autopilot**\n\nKeep follow-up, stale opportunities and execution discipline visible.")
 
 st.divider()
-st.caption(f"Chris Haake Command Center • {date.today().isoformat()} • Central Florida Growth OS • Research signals are not financial recommendations.")
+st.caption(f"{REP_NAME} Command Center • {date.today().isoformat()} • {TERRITORY_GROWTH_LABEL} • Research signals are not financial recommendations.")
