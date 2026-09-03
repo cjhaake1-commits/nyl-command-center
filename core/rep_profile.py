@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-REP_NAME = "David Beck"
-REP_INITIALS = "DB"
+REP_NAME = "Paul Deck"
+REP_INITIALS = "PD"
 COMPANY_NAME = "New York Life"
-APP_TITLE = "David Beck Command Center"
-STREAMLIT_APP_NAME = "david-beck-command-center"
+APP_TITLE = "Paul Deck Command Center"
+STREAMLIT_APP_NAME = "paul-deck-command-center"
 
 TERRITORY_ZIP = "93065"
 TERRITORY_CITY = "Simi Valley"
@@ -15,8 +15,6 @@ TERRITORY_GROWTH_LABEL = "SIMI VALLEY GROWTH OS"
 
 USER_EMAIL = "pdavidbeck@gmail.com"
 
-# Keep the same operating model as the original NYL Command Center while
-# making geography and identity tenant-specific.
 PROFILE = {
     "rep_name": REP_NAME,
     "rep_initials": REP_INITIALS,
