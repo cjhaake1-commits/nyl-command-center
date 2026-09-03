@@ -71,13 +71,6 @@ def make_script_record(row: pd.Series) -> dict[str, str]:
     role = str(row.get("Role", "")).strip()
     rationale = str(row.get("Sub-Source", "")).strip() or str(row.get("Selection Rationale", "")).strip()
 
-    context_bits = []
-    if company:
-        context_bits.append(company)
-    if role:
-        context_bits.append(role)
-    context = " / ".join(context_bits)
-
     call = (
         f"Hi {first or name}, this is {REP_NAME}. I’ll keep this brief. "
         + (f"I came across you through your work with {company}. " if company else "I came across your professional background locally. ")
@@ -109,17 +102,9 @@ def make_script_record(row: pd.Series) -> dict[str, str]:
     }
 
 
-def xlsx_bytes(df: pd.DataFrame, sheet_name: str) -> bytes:
-    out = BytesIO()
-    with pd.ExcelWriter(out, engine="openpyxl") as writer:
-        df.to_excel(writer, index=False, sheet_name=sheet_name)
-        ws = writer.book[sheet_name]
-        ws.freeze_panes = "A2"
-        ws.auto_filter.ref = ws.dimensions
-        for cells in ws.columns:
-            width = max((len(str(c.value)) if c.value is not None else 0) for c in cells)
-            ws.column_dimensions[cells[0].column_letter].width = min(max(width + 2, 12), 48)
-    return out.getvalue()
+def csv_bytes(df: pd.DataFrame) -> bytes:
+    # UTF-8 with BOM helps Excel/Salesforce preserve punctuation and names reliably.
+    return df.to_csv(index=False, encoding="utf-8-sig").encode("utf-8-sig")
 
 
 def scripts_pdf_bytes(df: pd.DataFrame) -> bytes:
@@ -194,11 +179,12 @@ with salesforce_tab:
         st.metric("With contact route", contactable)
 
     if not edited.empty:
+        export_df = ensure_salesforce_columns(edited)
         st.download_button(
-            "Download Salesforce Ready Import (.xlsx)",
-            xlsx_bytes(ensure_salesforce_columns(edited), "Salesforce Import"),
-            f"Paul_Deck_Salesforce_Ready_{datetime.now().strftime('%Y-%m-%d')}.xlsx",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "Download Salesforce Ready Import (.csv)",
+            csv_bytes(export_df),
+            f"Paul_Deck_Salesforce_Ready_{datetime.now().strftime('%Y-%m-%d')}.csv",
+            "text/csv",
             use_container_width=True,
         )
 
