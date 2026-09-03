@@ -2,60 +2,13 @@ from __future__ import annotations
 
 import streamlit as st
 
-from core.branding import apply_brand_theme, sidebar_brand
+from core.branding import apply_brand_theme
+from core.rep_branding import sidebar_brand
+from core.rep_profile import APP_TITLE
 
-st.set_page_config(page_title="Chris Haake Command Center", page_icon="📈", layout="wide")
+st.set_page_config(page_title=APP_TITLE, page_icon="📈", layout="wide")
 apply_brand_theme()
 sidebar_brand()
-
-# Streamlit's multipage navigation is rendered ahead of normal sidebar content by
-# default. Force the Chris Haake identity block above navigation on both desktop
-# and the mobile sidebar drawer so branding is visible immediately, not below the fold.
-st.markdown(
-    """
-    <style>
-    section[data-testid="stSidebar"] [data-testid="stSidebarContent"] {
-        display: flex !important;
-        flex-direction: column !important;
-    }
-
-    section[data-testid="stSidebar"] [data-testid="stSidebarUserContent"] {
-        order: -100 !important;
-        flex: 0 0 auto !important;
-        padding-top: 0.35rem !important;
-    }
-
-    section[data-testid="stSidebar"] [data-testid="stSidebarNav"] {
-        order: 10 !important;
-        flex: 1 1 auto !important;
-    }
-
-    /* Fallback for Streamlit builds where the user-content wrapper changes. */
-    section[data-testid="stSidebar"] [data-testid="stSidebarContent"] > div:has(.brand-lockup) {
-        order: -100 !important;
-    }
-
-    /* Keep the identity panel compact enough to remain visible on smaller phones. */
-    @media (max-width: 760px) {
-        section[data-testid="stSidebar"] [data-testid="stSidebarUserContent"] {
-            padding-top: 0.15rem !important;
-        }
-        section[data-testid="stSidebar"] .brand-lockup {
-            margin-bottom: 0.25rem !important;
-            padding-top: 0.25rem !important;
-            padding-bottom: 0.75rem !important;
-        }
-        section[data-testid="stSidebar"] .brand-person {
-            margin-top: 0.65rem !important;
-        }
-        section[data-testid="stSidebar"] .brand-sidebar-note {
-            margin-top: 0.6rem !important;
-        }
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
 
 executive = st.Page("pages/0_Executive_Command_Center.py", title="Command Center", icon="📈", default=True)
 war_room = st.Page("pages/1_Daily_War_Room.py", title="Daily War Room", icon="🎯")
@@ -73,6 +26,7 @@ marketing = st.Page("pages/3_Marketing.py", title="Marketing Command Center", ic
 influencer_network = st.Page("pages/3A_Influencer_Network.py", title="Influencer & Referral Network", icon="📱")
 linkedin_network = st.Page("pages/3B_LinkedIn_Network.py", title="LinkedIn Network", icon="🔗")
 interview = st.Page("pages/8_Interview_Ace.py", title="Interview / Presentation", icon="🃏")
+make_request = st.Page("pages/14_Make_A_Request.py", title="Make a Request", icon="📝")
 
 navigation = st.navigation(
     {
@@ -82,6 +36,7 @@ navigation = st.navigation(
         "INTELLIGENCE": [prospect_intel, meeting_intel],
         "EXECUTION": [first_sale, autopilot, interview],
         "PRACTICE": [my_strategy],
+        "SUPPORT": [make_request],
     },
     position="sidebar",
 )
