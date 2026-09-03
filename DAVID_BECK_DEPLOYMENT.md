@@ -1,13 +1,13 @@
-# David Beck Command Center
+# Paul Deck Command Center
 
-Clone profile for David Beck, New York Life.
+Clone profile for Paul Deck, New York Life.
 
 ## Streamlit deployment
 
-- App name: `david-beck-command-center`
+- App name: `paul-deck-command-center`
 - Branch: `david-beck-simi-valley`
-- Entry point: `app_david_beck.py`
-- Display title: `David Beck Command Center`
+- Entry point: `app_paul_deck.py`
+- Display title: `Paul Deck Command Center`
 
 ## Territory
 
@@ -18,6 +18,6 @@ Clone profile for David Beck, New York Life.
 
 ## Operating model
 
-Use the same NYL Command Center workflow and compliance controls as the Chris Haake instance, but keep David's prospect universe, exports, activity and authentication separate. Prospecting/research should be centered on the 20-mile territory around 93065 and use California/local public sources rather than Central Florida sources.
+Use the same NYL Command Center workflow and compliance controls as the Chris Haake instance, but keep Paul's prospect universe, exports, activity and authentication separate. Prospecting/research should be centered on the 20-mile territory around 93065 and use California/local public sources rather than Central Florida sources.
 
-Do not reuse Chris Haake prospect data in David's production pool. Shared code and scoring logic are permitted; tenant data must remain isolated.
+Do not reuse Chris Haake prospect data in Paul's production pool. Shared code and scoring logic are permitted; tenant data must remain isolated.
