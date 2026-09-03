@@ -26,6 +26,7 @@ marketing = st.Page("pages/3_Marketing.py", title="Marketing Command Center", ic
 influencer_network = st.Page("pages/3A_Influencer_Network.py", title="Influencer & Referral Network", icon="📱")
 linkedin_network = st.Page("pages/3B_LinkedIn_Network.py", title="LinkedIn Network", icon="🔗")
 interview = st.Page("pages/8_Interview_Ace.py", title="Interview / Presentation", icon="🃏")
+make_request = st.Page("pages/14_Make_A_Request.py", title="Make a Request", icon="📝")
 
 navigation = st.navigation(
     {
@@ -35,6 +36,7 @@ navigation = st.navigation(
         "INTELLIGENCE": [prospect_intel, meeting_intel],
         "EXECUTION": [first_sale, autopilot, interview],
         "PRACTICE": [my_strategy],
+        "SUPPORT": [make_request],
     },
     position="sidebar",
 )
