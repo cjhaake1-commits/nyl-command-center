@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-REP_NAME = "Paul Deck"
-REP_INITIALS = "PD"
+REP_NAME = "Paul Beck"
+REP_INITIALS = "PB"
 COMPANY_NAME = "New York Life"
-APP_TITLE = "Paul Deck Command Center"
-STREAMLIT_APP_NAME = "paul-deck-command-center"
+APP_TITLE = "Paul Beck Command Center"
+STREAMLIT_APP_NAME = "paul-beck-command-center"
 
 TERRITORY_ZIP = "93065"
 TERRITORY_CITY = "Simi Valley"
