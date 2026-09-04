@@ -5,8 +5,8 @@ from datetime import date, timedelta
 import pandas as pd
 import streamlit as st
 
-from core.branding import brand_hero
-from core.rep_profile import REP_NAME, TERRITORY_LABEL
+from core.branding import apply_brand_theme, brand_hero
+from core.rep_profile import REP_NAME, TERRITORY_LABEL, TERRITORY_GROWTH_LABEL
 from core.planner import FunnelAssumptions, build_plan, pace_status
 from core.war_room import (
     adaptive_assumptions,
@@ -28,7 +28,18 @@ from data.db import (
 BUILD_VERSION = "2026-09-03 • Simi Valley Advisor Growth OS"
 
 st.set_page_config(page_title=f"Daily War Room | {REP_NAME}", page_icon="🎯", layout="wide")
+apply_brand_theme()
 init_db()
+
+st.markdown(
+    f"""
+    <div style="margin-bottom:.75rem;padding:.65rem .9rem;border-left:3px solid #D7A449;background:rgba(215,164,73,.05);border-radius:0 10px 10px 0;">
+      <div style="color:#F0C36A;font-size:.72rem;letter-spacing:.16em;font-weight:800;">NEW YORK LIFE • {TERRITORY_GROWTH_LABEL}</div>
+      <div style="color:white;font-size:1.05rem;font-weight:700;margin-top:.15rem;">{REP_NAME} Daily War Room</div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 brand_hero(
     "Daily War Room",
@@ -44,19 +55,13 @@ s3.caption(f"Build {BUILD_VERSION} • Compensation assumptions remain editable 
 if persistent_storage_enabled():
     st.success("Activity storage is connected to persistent cloud storage.")
 else:
-    st.warning(
-        f"Activity storage: {storage_backend()}. The War Room is operational, but history is not yet on persistent cloud storage."
-    )
+    st.warning(f"Activity storage: {storage_backend()}. The War Room is operational, but history is not yet on persistent cloud storage.")
 
 with st.sidebar:
     st.markdown("### 🎯 Mission Setup")
     commission_goal = st.number_input("Commission goal ($)", min_value=0.0, value=3000.0, step=250.0)
     goal_end_date = st.date_input("Goal deadline", value=date.today() + timedelta(days=29))
-    selling_days = st.multiselect(
-        "Selling days",
-        ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        default=["Mon", "Tue", "Wed", "Thu", "Fri"],
-    )
+    selling_days = st.multiselect("Selling days", ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], default=["Mon", "Tue", "Wed", "Thu", "Fri"])
     active_days_remaining = max(1, count_selling_days(date.today(), goal_end_date, selling_days))
     period_days = max(1, (goal_end_date - date.today()).days + 1)
 
@@ -64,12 +69,7 @@ with st.sidebar:
     st.markdown("### ⚡ Performance Mode")
     execution_buffer_pct = st.slider("Execution buffer above minimum", 0, 50, 10, step=5)
     execution_buffer = 1 + execution_buffer_pct / 100
-    record_multiplier = st.select_slider(
-        "Primary target mode",
-        options=[1.0, 1.25, 1.5, 2.0, 3.0],
-        value=1.0,
-        format_func=lambda x: "Gate" if x == 1.0 else f"{x:g}× Goal",
-    )
+    record_multiplier = st.select_slider("Primary target mode", options=[1.0, 1.25, 1.5, 2.0, 3.0], value=1.0, format_func=lambda x: "Gate" if x == 1.0 else f"{x:g}× Goal")
 
     st.divider()
     st.markdown("### 📊 Funnel Assumptions")
@@ -81,21 +81,13 @@ with st.sidebar:
 
 activity_totals = totals()
 earned = float(activity_totals["commission"])
-baseline = FunnelAssumptions(
-    avg_commission_per_sale=avg_commission,
-    close_rate=close_rate,
-    show_rate=show_rate,
-    booking_rate=booking_rate,
-    contact_rate=contact_rate,
-)
+baseline = FunnelAssumptions(avg_commission_per_sale=avg_commission, close_rate=close_rate, show_rate=show_rate, booking_rate=booking_rate, contact_rate=contact_rate)
 adaptive = adaptive_assumptions(activity_totals, baseline)
 primary_goal = commission_goal * record_multiplier
 plan = build_plan(primary_goal, earned, active_days_remaining, adaptive)
-
 elapsed_days = max(0, 30 - period_days) if commission_goal == 3000 and period_days <= 30 else 0
 pace = pace_status(primary_goal, earned, elapsed_days, max(1, elapsed_days + period_days))
 daily = build_daily_mission(plan, execution_buffer)
-
 week_end = min(goal_end_date, date.today() + timedelta(days=6))
 selling_days_this_week = count_selling_days(date.today(), week_end, selling_days)
 weekly = build_weekly_mission(plan, selling_days_this_week, execution_buffer)
@@ -107,10 +99,9 @@ c2.metric("Earned", f"${earned:,.0f}")
 c3.metric("Remaining", f"${plan.remaining_commission:,.0f}")
 c4.metric("Selling Days Left", active_days_remaining)
 c5.metric("Pace", str(pace["status"]).title(), f"${float(pace['pace_delta']):,.0f} vs pace")
-
 st.progress(min(1.0, earned / primary_goal) if primary_goal else 1.0)
 
-st.markdown("### Today's Mission")
+st.subheader("Today's Mission")
 t1, t2, t3, t4, t5, t6 = st.columns(6)
 t1.metric("Commission", f"${daily.commission:,.0f}")
 t2.metric("Sales", daily.sales)
@@ -118,14 +109,9 @@ t3.metric("Held", daily.held_appointments)
 t4.metric("Booked", daily.booked_appointments)
 t5.metric("Conversations", daily.conversations)
 t6.metric("Outreach", daily.outreach_attempts)
+st.success(f"Minimum winning mission today: {daily.outreach_attempts} outreach attempts, {daily.conversations} conversations, {daily.booked_appointments} booked appointments, {daily.held_appointments} held appointments, and {daily.sales} placed sale(s). Commission pace target: ${daily.commission:,.0f}.")
 
-st.success(
-    f"WINNING MISSION • {daily.outreach_attempts} outreach attempts → {daily.conversations} conversations → "
-    f"{daily.booked_appointments} booked → {daily.held_appointments} held → {daily.sales} placed sale(s) • "
-    f"Commission pace target ${daily.commission:,.0f}."
-)
-
-st.markdown("### This Week's Mission")
+st.subheader("This Week's Mission")
 w1, w2, w3, w4, w5, w6 = st.columns(6)
 w1.metric("Commission", f"${weekly.commission:,.0f}")
 w2.metric("Sales", weekly.sales)
@@ -141,7 +127,7 @@ a2.metric("Close rate", f"{adaptive.close_rate:.0%}")
 a3.metric("Show rate", f"{adaptive.show_rate:.0%}")
 a4.metric("Booking rate", f"{adaptive.booking_rate:.0%}")
 a5.metric("Contact rate", f"{adaptive.contact_rate:.0%}")
-st.caption("The forecast blends actual performance with baseline assumptions so early results do not create wild swings.")
+st.caption("The adaptive forecast blends actual performance with baseline assumptions so early results do not cause wild swings.")
 
 health = funnel_health(activity_totals, baseline)
 weak = weakest_link(health)
@@ -149,16 +135,10 @@ st.subheader("Weakest-Link Detector")
 health_rows = []
 for m in health:
     is_money = "commission" in m.stage.lower()
-    health_rows.append({
-        "Stage": m.stage,
-        "Actual": "—" if m.actual is None else (f"${m.actual:,.0f}" if is_money else f"{m.actual:.1%}"),
-        "Target": f"${m.target:,.0f}" if is_money else f"{m.target:.1%}",
-        "Sample": m.sample_size,
-        "Status": m.status,
-    })
+    health_rows.append({"Stage": m.stage, "Actual": "—" if m.actual is None else (f"${m.actual:,.0f}" if is_money else f"{m.actual:.1%}"), "Target": f"${m.target:,.0f}" if is_money else f"{m.target:.1%}", "Sample": m.sample_size, "Status": m.status})
 st.dataframe(pd.DataFrame(health_rows), width="stretch", hide_index=True)
 if weak:
-    st.warning(f"Current weakest link: {weak.stage}. Attack this stage first because it is furthest below target.")
+    st.warning(f"Current weakest link: {weak.stage}. Improve this stage first because it is furthest below its target relative to the rest of the funnel.")
 else:
     st.info("Log activity to activate the weakest-link detector.")
 
@@ -169,23 +149,6 @@ p2.metric("Held appts", plan.held_appointments_needed)
 p3.metric("Booked appts", plan.booked_appointments_needed)
 p4.metric("Conversations", plan.conversations_needed)
 p5.metric("Outreach attempts", plan.outreach_attempts_needed)
-
-st.subheader("Record-Setting Scenarios")
-scenario_rows = []
-for label, multiplier in [("Gate", 1.0), ("1.5× Goal", 1.5), ("2× Goal", 2.0), ("3× Goal", 3.0)]:
-    sp = build_plan(commission_goal * multiplier, earned, active_days_remaining, adaptive)
-    dm = build_daily_mission(sp, execution_buffer)
-    scenario_rows.append({
-        "Scenario": label,
-        "Commission target": commission_goal * multiplier,
-        "Sales needed": sp.sales_needed,
-        "Held appts": sp.held_appointments_needed,
-        "Conversations": sp.conversations_needed,
-        "Outreach attempts": sp.outreach_attempts_needed,
-        "Outreach/day": dm.outreach_attempts,
-        "Conversations/day": dm.conversations,
-    })
-st.dataframe(pd.DataFrame(scenario_rows), width="stretch", hide_index=True)
 
 st.subheader("Log Today's Actuals")
 with st.form("daily_activity"):
@@ -199,13 +162,10 @@ with st.form("daily_activity"):
     sales = a5.number_input("Placed sales", min_value=0, value=0, step=1)
     commission = a6.number_input("Commission credited ($)", min_value=0.0, value=0.0, step=50.0)
     notes = st.text_area("Notes / lessons")
-    submitted = st.form_submit_button("Save Day", type="primary")
+    submitted = st.form_submit_button("Save day")
     if submitted:
-        upsert_daily_activity(
-            str(activity_date), int(outreach), int(conversations), int(booked),
-            int(held), int(sales), float(commission), notes
-        )
-        st.success("Daily activity saved. The remaining mission has been recalculated.")
+        upsert_daily_activity(str(activity_date), int(outreach), int(conversations), int(booked), int(held), int(sales), float(commission), notes)
+        st.success("Daily activity saved. Your remaining mission will recalculate using your updated results.")
         st.rerun()
 
 history = get_activity()
@@ -213,17 +173,12 @@ if history:
     df = pd.DataFrame(history)
     st.subheader("Performance History")
     st.dataframe(df.drop(columns=["id"]), width="stretch", hide_index=True)
-
     chart_df = df[["activity_date", "commission"]].copy()
     chart_df["activity_date"] = pd.to_datetime(chart_df["activity_date"])
     chart_df["cumulative_commission"] = chart_df["commission"].cumsum()
     st.line_chart(chart_df.set_index("activity_date")[["cumulative_commission"]])
-
     csv = df.drop(columns=["id"]).to_csv(index=False).encode("utf-8")
-    st.download_button("Export Activity CSV", csv, "paul_deck_activity.csv", "text/csv")
+    st.download_button("Export activity CSV", csv, "paul_deck_activity.csv", "text/csv")
 
 st.divider()
-st.caption(
-    f"{REP_NAME} Daily War Room • Personal productivity and production planning only. "
-    "Keep regulated client information, recommendations, and communications in approved NYL systems and workflows."
-)
+st.caption("Paul Deck Daily War Room • Personal productivity and performance tracking only. Keep regulated recommendations and client communications in approved NYL systems and workflows.")
