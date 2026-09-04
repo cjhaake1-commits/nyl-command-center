@@ -6,6 +6,8 @@ from core.branding import apply_brand_theme
 from core.rep_branding import sidebar_brand
 from core.rep_profile import APP_TITLE
 
+BUILD_STAMP = "2026-09-03 20:38 ET"
+
 st.set_page_config(page_title=APP_TITLE, page_icon="📈", layout="wide", initial_sidebar_state="expanded")
 apply_brand_theme()
 sidebar_brand()
@@ -26,6 +28,8 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+st.sidebar.caption(f"Build {BUILD_STAMP}")
 
 executive = st.Page("pages/0_Executive_Command_Center.py", title="Command Center", icon="📈", default=True)
 war_room = st.Page("pages/1_Daily_War_Room.py", title="Daily War Room", icon="🎯")
