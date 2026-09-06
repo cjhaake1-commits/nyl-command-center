@@ -5,8 +5,9 @@ import streamlit as st
 from core.branding import apply_brand_theme
 from core.rep_branding import sidebar_brand
 from core.rep_profile import APP_TITLE
+from data.paul_market import HNW_LEADS, PUBLIC_LEADS
 
-BUILD_STAMP = "2026-09-03 20:38 ET"
+BUILD_STAMP = "2026-09-06 13:55 ET"
 
 st.set_page_config(page_title=APP_TITLE, page_icon="📈", layout="wide", initial_sidebar_state="expanded")
 apply_brand_theme()
@@ -29,6 +30,8 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+st.sidebar.success(f"LEADS LOADED • {len(HNW_LEADS)} individuals • {len(PUBLIC_LEADS)} businesses")
+st.sidebar.caption("Paul Beck tenant • HOLD / RESEARCH ONLY / COMPLIANCE REVIEW")
 st.sidebar.caption(f"Build {BUILD_STAMP}")
 
 executive = st.Page("pages/0_Executive_Command_Center.py", title="Command Center", icon="📈", default=True)
