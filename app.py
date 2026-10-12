@@ -69,6 +69,7 @@ prospect_discovery = st.Page("pages/2A_Prospect_Discovery.py", title="Prospect D
 event_prospecting = st.Page("pages/15_Event_Prospecting.py", title="Event Prospecting", icon="🤝")
 group_affinity = st.Page("pages/14_Group_Affinity_Benefits.py", title="Group / Affinity Benefits", icon="🤝")
 my_strategy = st.Page("pages/4_My_Strategy.py", title="Practice Strategy", icon="💎")
+rollover_playbook = st.Page("pages/16_Rollover_Playbook.py", title="401(k) Rollover Playbook", icon="📘")
 first_sale = st.Page("pages/5_First_Sale_Program.py", title="First-Sale Program", icon="🚀")
 autopilot = st.Page("pages/7_Autopilot.py", title="Sales Autopilot", icon="⚡")
 marketing = st.Page("pages/3_Marketing.py", title="Marketing Command Center", icon="📣")
@@ -82,7 +83,7 @@ navigation = st.navigation(
         "PROSPECTING": [prospect_discovery, prospecting, lead_lists, opportunity, event_prospecting, group_affinity],
         "MARKETING & NETWORK": [marketing, influencer_network, linkedin_network, mailing],
         "INTELLIGENCE": [prospect_intel, meeting_intel],
-        "EXECUTION": [first_sale, autopilot, interview],
+        "EXECUTION": [rollover_playbook, first_sale, autopilot, interview],
         "PRACTICE": [my_strategy],
     },
     position="sidebar",
