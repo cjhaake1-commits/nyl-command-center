@@ -66,6 +66,7 @@ prospect_intel = st.Page("pages/13_Prospect_Intelligence.py", title="Prospect In
 meeting_intel = st.Page("pages/10_Meeting_Intelligence.py", title="Meeting Intelligence", icon="🎙️")
 prospecting = st.Page("pages/2_Prospecting.py", title="Prospecting & Pipeline", icon="🧭")
 prospect_discovery = st.Page("pages/2A_Prospect_Discovery.py", title="Prospect Discovery", icon="🎯")
+event_prospecting = st.Page("pages/15_Event_Prospecting.py", title="Event Prospecting", icon="🤝")
 group_affinity = st.Page("pages/14_Group_Affinity_Benefits.py", title="Group / Affinity Benefits", icon="🤝")
 my_strategy = st.Page("pages/4_My_Strategy.py", title="Practice Strategy", icon="💎")
 first_sale = st.Page("pages/5_First_Sale_Program.py", title="First-Sale Program", icon="🚀")
@@ -78,7 +79,7 @@ interview = st.Page("pages/8_Interview_Ace.py", title="Interview / Presentation"
 navigation = st.navigation(
     {
         "COMMAND": [executive, war_room],
-        "PROSPECTING": [prospect_discovery, prospecting, lead_lists, opportunity, group_affinity],
+        "PROSPECTING": [prospect_discovery, prospecting, lead_lists, opportunity, event_prospecting, group_affinity],
         "MARKETING & NETWORK": [marketing, influencer_network, linkedin_network, mailing],
         "INTELLIGENCE": [prospect_intel, meeting_intel],
         "EXECUTION": [first_sale, autopilot, interview],
