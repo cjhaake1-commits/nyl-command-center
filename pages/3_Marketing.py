@@ -227,6 +227,18 @@ else:
     st.page_link("pages/15_Event_Prospecting.py", label="Open Event Prospecting research tracker", icon="🤝")
 st.caption("Freshness policy: event dates roll forward automatically. New discoveries require a verified source update; a weekly research check is scheduled separately. Never assume an event is still open for registration.")
 
+st.subheader("Booth & Exhibitor Opportunities — Rolling 60 Days")
+from booth_opportunities import BOOTH_OPPORTUNITIES
+booths = [dict(e) for e in BOOTH_OPPORTUNITIES if today <= datetime.strptime(e["date"], "%Y-%m-%d").date() <= horizon]
+booths.sort(key=lambda e: e["date"])
+st.caption("Potential booths and sponsorships, not booked spaces. Financial-services eligibility and NYL event/marketing approval must be confirmed before applying or paying. Research dated October 12, 2026.")
+if booths:
+    st.dataframe(pd.DataFrame(booths)[["date", "event", "location", "priority", "objective", "application_status", "fit", "url"]], hide_index=True, width="stretch", column_config={"url": st.column_config.LinkColumn("Application / organizer")})
+    st.metric("Potential booth opportunities (next 60 days)", len(booths))
+else:
+    st.info("No researched booth opportunities in the next 60 days. Refresh vendor/exhibitor research.")
+st.markdown("**Booth action plan:** Contact organizers to verify that an insurance/financial-services educational booth is allowed; request exhibitor kit, fees, foot-traffic estimates and deadlines; obtain NYL approval for branding, materials and any lead capture; record only permission-based follow-ups in approved systems.")
+
 st.divider()
 st.subheader("Lead & Market Research Sources")
 for source in ORLANDO_PUBLIC_SOURCES:
