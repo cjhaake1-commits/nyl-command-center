@@ -196,28 +196,36 @@ for org in NETWORKING_ORGANIZATIONS:
     st.link_button(f"Open {org['organization']}", org["url"], width="stretch")
 
 st.subheader("Upcoming Networking Calendar")
+st.caption("Rolling 60-day event view, using dated organizer listings. Research refreshed October 12, 2026. The calendar filters out past events automatically; it does not claim live verification of ticket availability.")
+from pages_event_catalog import VERIFIED_NETWORKING_EVENTS
 today = date.today()
+horizon = today + timedelta(days=60)
 events = []
-for event in UPCOMING_NETWORKING_EVENTS:
+for event in VERIFIED_NETWORKING_EVENTS:
     event_date = datetime.strptime(event["date"], "%Y-%m-%d").date()
-    if event_date >= today:
+    if today <= event_date <= horizon:
         item = dict(event)
         item["days_away"] = (event_date - today).days
         events.append(item)
-events.sort(key=lambda x: (-x["importance"], x["date"]))
-
+events.sort(key=lambda x: (x["date"], -x["importance"]))
+st.metric("Upcoming researched events (next 60 days)", len(events))
+st.caption("Focus: introductions and referral partners · 401(k)/retirement planning · business-owner benefits. Source links are organizer listings; verify registration and attendance requirements.")
 if events:
     st.dataframe(
-        pd.DataFrame(events)[["importance", "date", "time", "event", "organization", "fit", "days_away"]],
+        pd.DataFrame(events)[["date", "time", "event", "organization", "objective", "importance", "fit", "days_away", "url"]],
         width="stretch",
         hide_index=True,
+        column_config={"url": st.column_config.LinkColumn("Organizer / RSVP")},
     )
-    top_event = events[0]
-    st.info(f"Highest-priority currently scheduled event: {top_event['event']} on {top_event['date']} ({top_event['importance']}/100).")
-    for event in events:
-        st.link_button(f"{event['date']} — {event['event']}", event["url"], width="stretch")
+    top_event = max(events, key=lambda x: x["importance"])
+    st.info(f"Highest-priority event: {top_event['event']} on {top_event['date']} ({top_event['importance']}/100).")
+    with st.expander("Event action plan — before, during, after", expanded=True):
+        st.markdown("**Before:** Confirm details and register. Identify three potential referral-partner roles and two planning questions. **During:** Target five substantive conversations, two permission-based introductions and one potential discovery appointment. **Within 48 hours:** Follow up individually through NYL-approved channels, document the next action in the approved system, and review conversion. Do not enter confidential client details in this calendar.")
+    st.page_link("pages/15_Event_Prospecting.py", label="Open Event Prospecting tracker", icon="🤝")
 else:
-    st.info("No future events remain in the current researched schedule. Refresh the event research before planning the next month.")
+    st.warning("No dated events in the next 60 days. The researched source list needs another refresh; this is not evidence that no local events exist.")
+    st.page_link("pages/15_Event_Prospecting.py", label="Open Event Prospecting research tracker", icon="🤝")
+st.caption("Freshness policy: event dates roll forward automatically. New discoveries require a verified source update; a weekly research check is scheduled separately. Never assume an event is still open for registration.")
 
 st.divider()
 st.subheader("Lead & Market Research Sources")
