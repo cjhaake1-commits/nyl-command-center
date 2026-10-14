@@ -9,17 +9,22 @@ from core.branding import apply_brand_theme
 
 apply_brand_theme()
 
-EVENTS = [
-    ("2026 Leadership Forum: Shaping Central Florida's Future","2026-10-13","18:00","Orlando","Introductions","High","Confirmed","https://www.orlandochamberofcommerce.com/events.php?cal_m=10&cal_y=2026","Executives and local business leaders"),
-    ("Pink Martini Party & Casino Night — American Cancer Society","2026-10-14","16:30","Orlando","Introductions","Medium","Confirmed","https://www.orlandochamberofcommerce.com/events.php?cal_m=10&cal_y=2026","Philanthropic connectors; relationship-building, not solicitation"),
-    ("Coldwell Banker Realty SW Orlando Grand Opening","2026-10-15","15:00","Orlando","Introductions","High","Confirmed","https://www.orlandochamberofcommerce.com/events.php?cal_m=10&cal_y=2026","Realtors, brokers, mortgage-related referral partners"),
-    ("Orlando Business Social at Bainbridge International","2026-10-15","18:00","Orlando","Introductions","High","Confirmed","https://my.orlandochamberofcommerce.com/event-6851746","Business owners, professionals and referral partners"),
-    ("The Road Ahead: A Town Hall with Chris Messina","2026-10-20","15:00","Orlando","Business-owner benefits","Medium","Confirmed","https://www.orlandochamberofcommerce.com/events.php?cal_m=10&cal_y=2026&lang=en","Business policy and community leadership contacts"),
-    ("Orlando Business Social at Red Bowl Asian Bistro","2026-10-22","18:00","Winter Park","Introductions","High","Confirmed","https://www.orlandochamberofcommerce.com/events.php?cal_m=10&cal_y=2026","Professional contacts and small business decision-makers"),
-    ("Orlando Business Social at Dick's Last Resort","2026-10-29","18:00","Orlando","Introductions","Medium","Confirmed","https://my.orlandochamberofcommerce.com/Events","Business network and professional introductions"),
-    ("Lunch and Learn: How Well Do You Know Your Bench?","2026-11-10","12:00","Orlando","Business-owner benefits","High","Confirmed","https://my.orlandochamberofcommerce.com/Events","Succession, leadership continuity and employer solutions"),
-    ("7 Brew Coffee Grand Opening","2026-11-17","10:30","Orlando","Business-owner benefits","Low","Confirmed","https://www.orlandochamberofcommerce.com/events.php?cal_m=10&cal_y=2026&lang=en","Franchise owners and local business relationships"),
-]
+from pages_event_catalog import VERIFIED_NETWORKING_EVENTS, RESEARCH_UPDATED as NETWORKING_RESEARCH_UPDATED
+from booth_opportunities import BOOTH_OPPORTUNITIES
+
+def upcoming_networking():
+    today = date.today()
+    end = today + timedelta(days=60)
+    unique = {}
+    for item in VERIFIED_NETWORKING_EVENTS:
+        d = date.fromisoformat(item["date"])
+        if today <= d <= end:
+            key = (item["date"], item["event"].strip().casefold())
+            if key not in unique or item.get("importance", 0) > unique[key].get("importance", 0):
+                unique[key] = item
+    return sorted(unique.values(), key=lambda e: (e["date"], -e.get("importance", 0)))
+
+EVENTS = upcoming_networking()
 # These are research targets, NOT invented dated events. Dates and registration must be confirmed.
 TARGETS = [
     ("Greater Orlando business chamber networking","Introductions","High"),
@@ -60,14 +65,14 @@ def save_action(key,status,conversations,introductions,followups,appointments,no
             appointments=EXCLUDED.appointments, notes=EXCLUDED.notes"""), dict(key=key,status=status,conversations=conversations,introductions=introductions,followups=followups,appointments=appointments,notes=notes))
 
 st.title("🤝 Event Prospecting & Introductions")
-st.caption("October 12 – December 12, 2026 · Central Florida · NYL-aligned prospecting research")
-st.info("9 source-listed events + 11 research targets. Research targets are **not confirmed events** and have no invented dates. Verify event status, details and RSVP before travel. Event times shown in local Eastern Time.")
-st.caption("Source-backed events use the Orlando Chamber calendar. Some provider listings conflict on venue details; confirm with the organizer.")
+st.caption(f"{date.today():%B %d, %Y} through {(date.today() + timedelta(days=60)):%B %d, %Y} · rolling 60-day window · Central Florida")
+st.info(f"{len(EVENTS)} organizer-sourced, dated networking opportunities; {len(TARGETS)} undated research targets. Organizer listing is not an RSVP or guarantee of eligibility.")
+st.caption(f"Networking and Marketing use the same shared source file (catalog maintained {NETWORKING_RESEARCH_UPDATED}). Confirm RSVP and NYL requirements before attending.")
 
 init_events()
 actions=get_actions()
 a,b,c,d=st.columns(4)
-a.metric("Confirmed event listings",len(EVENTS))
+a.metric("Upcoming organizer-listed events",len(EVENTS))
 b.metric("To verify",len(TARGETS))
 c.metric("Recorded introductions",sum(int(v["introductions"]) for v in actions.values()))
 d.metric("Appointments booked",sum(int(v["appointments"]) for v in actions.values()))
@@ -75,15 +80,25 @@ goal=st.multiselect("Prospecting objectives",["Introductions","401(k) rollovers"
 show_targets=st.toggle("Show unverified research targets",value=True)
 
 rows=[]
-for name,day,time_,city,category,priority,verification,url,audience in EVENTS:
-    if category in goal:
-        rows.append(dict(Event=name,Date=day,Time=time_,Area=city,Objective=category,Priority=priority,Verification=verification,Source=url,Target_audience=audience))
+for item in EVENTS:
+    if item["objective"] in goal:
+        priority = "High" if item["importance"] >= 90 else ("Medium" if item["importance"] >= 80 else "Low")
+        rows.append(dict(Event=item["event"],Date=item["date"],Time=item["time"],Area=item["location"],Objective=item["objective"],Priority=priority,Verification=item.get("verification","Organizer-listed; verify RSVP"),Source=item["url"],Target_audience=item["fit"],Access=item.get("access","Confirm with organizer")))
 for name,category,priority in TARGETS:
     if show_targets and category in goal:
-        rows.append(dict(Event=name,Date=None,Time=None,Area="Central Florida",Objective=category,Priority=priority,Verification="Research target — no date confirmed",Source="",Target_audience="Find a future scheduled event and verify details"))
+        rows.append(dict(Event=name,Date=None,Time=None,Area="Central Florida",Objective=category,Priority=priority,Verification="Research target — no date confirmed",Source="",Target_audience="Find a future scheduled event and verify details",Access="Not a scheduled event"))
 df=pd.DataFrame(rows)
 st.dataframe(df,hide_index=True,use_container_width=True,column_config={"Source":st.column_config.LinkColumn("Source / RSVP")})
-st.download_button("Download prospecting research CSV",df.to_csv(index=False).encode(),file_name="nyl_event_prospecting_oct_dec_2026.csv",mime="text/csv")
+st.download_button("Download prospecting research CSV",df.to_csv(index=False).encode(),file_name=f"nyl_event_prospecting_{date.today():%Y%m%d}.csv",mime="text/csv")
+
+st.subheader("Booth and Exhibitor Research - shared calendar")
+st.caption("Potential applications and sponsorship inquiries, not reservations. Financial-services eligibility and NYL compliance approval unconfirmed.")
+date_from, date_to = date.today(), date.today() + timedelta(days=60)
+booth_rows = [b for b in BOOTH_OPPORTUNITIES if date_from <= date.fromisoformat(b["date"]) <= date_to]
+booth_rows = sorted({(b["date"], b["event"].casefold()): b for b in booth_rows}.values(), key=lambda b: b["date"])
+if booth_rows:
+    st.dataframe(pd.DataFrame(booth_rows)[["date","event","location","participation_type","application_deadline","application_status","fit","url"]],hide_index=True,use_container_width=True,column_config={"url": st.column_config.LinkColumn("Official application / inquiry")})
+st.caption(f"{len(booth_rows)} dated booth/sponsorship leads. No insurance or financial-services vendor category has been approved.")
 
 st.subheader("Event action plan")
 st.markdown("""**Before:** Verify organizer details and NYL requirements; RSVP; identify 3–5 relevant professional or business-owner roles; prepare two non-product opening questions.
