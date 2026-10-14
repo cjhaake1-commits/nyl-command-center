@@ -225,15 +225,15 @@ if events:
 else:
     st.warning("No dated events in the next 60 days. The researched source list needs another refresh; this is not evidence that no local events exist.")
     st.page_link("pages/15_Event_Prospecting.py", label="Open Event Prospecting research tracker", icon="🤝")
-st.caption("Freshness policy: event dates roll forward automatically. New discoveries require a verified source update; a weekly research check is scheduled separately. Never assume an event is still open for registration.")
+st.caption("Freshness policy: event dates roll forward daily; research checks update source records separately. Never assume RSVP is open or a booth is booked.")
 
 st.subheader("Booth & Exhibitor Opportunities — Rolling 60 Days")
 from booth_opportunities import BOOTH_OPPORTUNITIES
 booths = [dict(e) for e in BOOTH_OPPORTUNITIES if today <= datetime.strptime(e["date"], "%Y-%m-%d").date() <= horizon]
 booths.sort(key=lambda e: e["date"])
-st.caption("Potential booths and sponsorships, not booked spaces. Financial-services eligibility and NYL event/marketing approval must be confirmed before applying or paying. Research dated October 12, 2026.")
+st.caption("Potential booths and sponsorships, not booked spaces. Event dates and organizer application routes were reviewed October 14, 2026. Financial-services vendor permission and NYL marketing/lead-capture approval are NOT confirmed.")
 if booths:
-    st.dataframe(pd.DataFrame(booths)[["date", "event", "location", "priority", "objective", "application_status", "fit", "url"]], hide_index=True, width="stretch", column_config={"url": st.column_config.LinkColumn("Application / organizer")})
+    st.dataframe(pd.DataFrame(booths)[["date", "event", "location", "priority", "participation_type", "application_deadline", "objective", "application_status", "fit", "financial_services", "url"]], hide_index=True, width="stretch", column_config={"url": st.column_config.LinkColumn("Application / organizer")})
     st.metric("Potential booth opportunities (next 60 days)", len(booths))
 else:
     st.info("No researched booth opportunities in the next 60 days. Refresh vendor/exhibitor research.")
