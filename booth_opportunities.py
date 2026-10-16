@@ -1,10 +1,8 @@
-"""Organizer-backed Central Florida booth and sponsorship prospects. Researched 2026-10-14.
-These are potential APPLICATIONS/INQUIRIES, not booth confirmations. Organizer must approve
-insurance/financial services; New York Life compliance must approve materials, branding and lead capture.
-Only event dates, not insurance category eligibility, have been confirmed from the sources.
+"""Potential Central Florida booth and sponsorship opportunities, reviewed 2026-10-16.
+Neither listed applications nor sponsor inquiries guarantee booths or eligibility.
+Verify insurance/financial-services permission and NYL compliance approval before paying or collecting leads.
 """
 
-RESEARCH_UPDATED = "2026-10-14"
 BOOTH_OPPORTUNITIES = [
   {
     "date": "2026-10-27",
@@ -13,7 +11,7 @@ BOOTH_OPPORTUNITIES = [
     "objective": "Referral partners / local business owners",
     "participation_type": "Business showcase booth",
     "application_status": "Organizer says tickets or booths can be purchased; confirm booth availability and eligibility",
-    "application_deadline": null,
+    "application_deadline": None,
     "url": "https://www.winterpark.org/best-of-winter-park/",
     "fit": "Chamber businesses and 50 award categories; membership rules may apply",
     "priority": "High",
@@ -40,13 +38,27 @@ BOOTH_OPPORTUNITIES = [
     "location": "Lake Eola Park (NE lawn), Orlando",
     "objective": "Family protection / introductions",
     "participation_type": "For-profit vendor booth",
-    "application_status": "10x10 for-profit vendor listed at $200; wellness-theme restriction; apply by Oct 25",
+    "application_status": "Organizer's 2026 vendor packet: for-profit wellness vendors 10x10, $200; Oct 25 application deadline. Ask if educational insurance booth meets wellness criteria.",
     "application_deadline": "2026-10-25",
-    "url": "https://heartfulness.us/orlando-yoga-fest/vendor-packet/",
+    "url": "https://www.heartfulnessinstitute.org/orlando-yoga-fest/vendor/vendor-packet/",
     "fit": "Organizer requires wellness alignment; NYL services may not qualify",
     "priority": "Medium",
     "financial_services": "Not confirmed. Obtain written organizer/category permission and NYL marketing approval before applying, paying, or exhibiting.",
-    "source_checked": "2026-10-14"
+    "source_checked": "2026-10-16"
+  },
+  {
+    "date": "2026-11-02",
+    "event": "2026 Orlando Senior Expo",
+    "location": "Orlando Museum of Art, 2416 N Mills Ave, Orlando",
+    "objective": "401(k) rollovers",
+    "participation_type": "Exhibitor / sponsorship",
+    "application_status": "Organizer explicitly lists financial planning as an exhibitor topic; Silver single-expo sponsorship $450 listed, certificate of insurance required. Confirm inventory.",
+    "application_deadline": None,
+    "url": "https://seniorexpousa.com/expos/florida/2026-orlando-senior-expo/",
+    "fit": "Retirement-age prospects, retirement income, beneficiary and legacy discussions",
+    "priority": "High",
+    "financial_services": "Organizer names financial planning as appropriate; individual NYL insurer approval, category exclusivity and compliance remain unconfirmed.",
+    "source_checked": "2026-10-16"
   },
   {
     "date": "2026-11-02",
@@ -55,9 +67,37 @@ BOOTH_OPPORTUNITIES = [
     "objective": "Business owners / referral partners",
     "participation_type": "Hole / event sponsorship inquiry",
     "application_status": "Sponsor-hole and other packages offered; contact info@wochamber.com or 407-656-1304; golf registration deadline Oct 24",
-    "application_deadline": null,
-    "url": "https://wochamber.com/wocc-annual-golf-classic/",
+    "application_deadline": None,
+    "url": "https://biz.wochamber.com/events/details/wocc-annual-golf-classic-11-02-2026-3200",
     "fit": "Business leaders; request exhibitor/activation terms, not just logo placement",
+    "priority": "High",
+    "financial_services": "Not confirmed. Obtain written organizer/category permission and NYL marketing approval before applying, paying, or exhibiting.",
+    "source_checked": "2026-10-16"
+  },
+  {
+    "date": "2026-11-05",
+    "event": "Good Morning Seminole! (November) Display Table",
+    "location": "Lake Mary Events Center, 260 N Country Club Rd, Lake Mary",
+    "objective": "Business-owner benefits",
+    "participation_type": "Chamber display table / sponsorship inquiry",
+    "application_status": "Seminole County Chamber event page invites display-table inquiries; contact eeble@seminolebusiness.org. Price, availability and insurance category must be confirmed.",
+    "application_deadline": None,
+    "url": "https://business.seminolebusiness.org/events/details/good-morning-seminole-41946",
+    "fit": "Business owners, chamber decision-makers and professional referral relationships",
+    "priority": "High",
+    "financial_services": "Not confirmed; obtain organizer's written financial-services/insurance vendor approval and NYL marketing/compliance approval before applying, paying or exhibiting.",
+    "source_checked": "2026-10-16"
+  },
+  {
+    "date": "2026-11-07",
+    "event": "Avalon Park Oktoberfest (rescheduled)",
+    "location": "Downtown Avalon Park, Orlando",
+    "objective": "Family protection / community introductions",
+    "participation_type": "Business / independent contractor vendor",
+    "application_status": "Organizer's NEW DATE listing says Nov 7 and business vendor application; confirm actual deadline/status because old listing showed Oct 10",
+    "application_deadline": "2026-11-07",
+    "url": "https://www.eventeny.com/events/oktoberfest-2026-24375/",
+    "fit": "Business vendor category specifically published; financial category still unconfirmed",
     "priority": "High",
     "financial_services": "Not confirmed. Obtain written organizer/category permission and NYL marketing approval before applying, paying, or exhibiting.",
     "source_checked": "2026-10-14"
@@ -78,26 +118,12 @@ BOOTH_OPPORTUNITIES = [
   },
   {
     "date": "2026-11-07",
-    "event": "Avalon Park Oktoberfest (rescheduled)",
-    "location": "Downtown Avalon Park, Orlando",
-    "objective": "Family protection / community introductions",
-    "participation_type": "Business / independent contractor vendor",
-    "application_status": "Organizer's NEW DATE listing says Nov 7 and business vendor application; confirm actual deadline/status because old listing showed Oct 10",
-    "application_deadline": "2026-11-07",
-    "url": "https://www.eventeny.com/events/oktoberfest-2026-24375/",
-    "fit": "Business vendor category specifically published; financial category still unconfirmed",
-    "priority": "High",
-    "financial_services": "Not confirmed. Obtain written organizer/category permission and NYL marketing approval before applying, paying, or exhibiting.",
-    "source_checked": "2026-10-14"
-  },
-  {
-    "date": "2026-11-07",
     "event": "Maker Faire Orlando (Nov 7-8)",
     "location": "Central Florida Fairgrounds, 4603 W Colonial Dr, Orlando",
     "objective": "Business owners / entrepreneur introductions",
     "participation_type": "Business sponsorship inquiry",
     "application_status": "Maker exhibit applications closed; organizer directs businesses and service providers to sponsorship inquiries",
-    "application_deadline": null,
+    "application_deadline": None,
     "url": "https://www.makerfaireorlando.com/exhibit-at-maker-faire-orlando/",
     "fit": "Not an open maker-vendor booth; ask if sponsor activation booth is available",
     "priority": "Medium",
@@ -111,7 +137,7 @@ BOOTH_OPPORTUNITIES = [
     "objective": "Small-business benefits / referral partners",
     "participation_type": "Exhibitor inquiry",
     "application_status": "Organizer confirms Expo with exhibitors; call 407-749-0333 for booth packages and availability; not yet verified",
-    "application_deadline": null,
+    "application_deadline": None,
     "url": "https://drphillipschamber.org/event/dr-phillips-chamber-of-commerce-business-expo/",
     "fit": "Strong owner and COI audience; attendance ticket alone is not booth acceptance",
     "priority": "High",
@@ -125,7 +151,7 @@ BOOTH_OPPORTUNITIES = [
     "objective": "Community / retirement conversations",
     "participation_type": "Event sponsorship inquiry",
     "application_status": "Winter Park Chamber lists sponsor opportunities; contact Stacey Cox at scox@winterpark.org / 407-599-3646",
-    "application_deadline": null,
+    "application_deadline": None,
     "url": "https://www.winterpark.org/aaf-home-page/",
     "fit": "Existing financial services sponsors; verify category exclusivity and onsite display rights",
     "priority": "Medium",
@@ -133,32 +159,32 @@ BOOTH_OPPORTUNITIES = [
     "source_checked": "2026-10-14"
   },
   {
+    "date": "2026-11-19",
+    "event": "Central Florida Estate Planning Council Sponsorship",
+    "location": "Citrus Club, Orlando",
+    "objective": "Introductions",
+    "participation_type": "Professional council sponsorship inquiry (not confirmed booth)",
+    "application_status": "Council offers 2026-27 event sponsorship; ask membership@cfepc.org whether November meeting is available and insurance professionals qualify. No booth or exhibit rights verified.",
+    "application_deadline": None,
+    "url": "https://www.cfepc.org/events/event/30356",
+    "fit": "Estate-planning attorneys, CPAs, wealth and retirement referral partners",
+    "priority": "Medium",
+    "financial_services": "Not confirmed; obtain organizer's written financial-services/insurance vendor approval and NYL marketing/compliance approval before applying, paying or exhibiting.",
+    "source_checked": "2026-10-16"
+  },
+  {
     "date": "2026-11-20",
     "event": "Classic Weekend Seafood Fest",
     "location": "Lake Lorna Doone Park, Orlando",
     "objective": "Community introductions / business owners",
     "participation_type": "Business sponsorship / activation inquiry",
-    "application_status": "Sponsor tiers and customized brand activations offered; request pricing and whether insurer booth allowed",
-    "application_deadline": null,
-    "url": "https://www.classicseafoodfest.com/sponsors",
+    "application_status": "Organizer has separate service-vendor and sponsor inquiry options; request pricing, availability and category acceptance.",
+    "application_deadline": None,
+    "url": "https://www.classicseafoodfest.com/vendors",
     "fit": "Organizer also publishes vendor form; choose sponsor route for financial-services exposure",
     "priority": "Medium",
     "financial_services": "Not confirmed. Obtain written organizer/category permission and NYL marketing approval before applying, paying, or exhibiting.",
-    "source_checked": "2026-10-14"
-  },
-  {
-    "date": "2026-11-28",
-    "event": "FusionFest (Nov 28-29)",
-    "location": "Loch Haven Park, 777 E Princeton St, Orlando",
-    "objective": "Small-business / multicultural community introductions",
-    "participation_type": "Commercial premium vendor application",
-    "application_status": "Eventeny lists $1,000 Premium Vendor for commercial services; deadline Oct 31; verify availability",
-    "application_deadline": "2026-10-31",
-    "url": "https://www.eventeny.com/events/copy-of-fusionfest-2025-31244/",
-    "fit": "Use COMMERCIAL Premium Vendor; cultural-display booths prohibit business promotion",
-    "priority": "High",
-    "financial_services": "Not confirmed. Obtain written organizer/category permission and NYL marketing approval before applying, paying, or exhibiting.",
-    "source_checked": "2026-10-14"
+    "source_checked": "2026-10-16"
   },
   {
     "date": "2026-12-05",
