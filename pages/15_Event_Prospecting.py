@@ -10,7 +10,7 @@ from core.branding import apply_brand_theme
 apply_brand_theme()
 
 from pages_event_catalog import VERIFIED_NETWORKING_EVENTS, RESEARCH_UPDATED as NETWORKING_RESEARCH_UPDATED
-from booth_opportunities import BOOTH_OPPORTUNITIES
+from booth_opportunities import BOOTH_OPPORTUNITIES, BOOTH_RESEARCH_UPDATED
 
 def upcoming_networking():
     today = date.today()
@@ -92,13 +92,13 @@ st.dataframe(df,hide_index=True,use_container_width=True,column_config={"Source"
 st.download_button("Download prospecting research CSV",df.to_csv(index=False).encode(),file_name=f"nyl_event_prospecting_{date.today():%Y%m%d}.csv",mime="text/csv")
 
 st.subheader("Booth and Exhibitor Research - shared calendar")
-st.caption("Potential applications and sponsorship inquiries, not reservations. Financial-services eligibility and NYL compliance approval unconfirmed.")
+st.caption(f"Potential applications and sponsor inquiries, not reservations. Booth sources reviewed {BOOTH_RESEARCH_UPDATED}; verify each deadline, category rules and NYL compliance approval.")
 date_from, date_to = date.today(), date.today() + timedelta(days=60)
 booth_rows = [b for b in BOOTH_OPPORTUNITIES if date_from <= date.fromisoformat(b["date"]) <= date_to]
 booth_rows = sorted({(b["date"], b["event"].casefold()): b for b in booth_rows}.values(), key=lambda b: b["date"])
 if booth_rows:
     st.dataframe(pd.DataFrame(booth_rows)[["date","event","location","participation_type","application_deadline","application_status","fit","url"]],hide_index=True,use_container_width=True,column_config={"url": st.column_config.LinkColumn("Official application / inquiry")})
-st.caption(f"{len(booth_rows)} dated booth/sponsorship leads. No insurance or financial-services vendor category has been approved.")
+st.caption(f"{len(booth_rows)} dated booth/sponsorship leads. Some organizers allow financial planning or commercial services in principle; no NYL-specific booth acceptance or compliance approval is confirmed.")
 
 st.subheader("Event action plan")
 st.markdown("""**Before:** Verify organizer details and NYL requirements; RSVP; identify 3–5 relevant professional or business-owner roles; prepare two non-product opening questions.
