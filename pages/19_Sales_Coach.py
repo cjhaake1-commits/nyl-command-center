@@ -29,8 +29,9 @@ week_start = date.fromordinal(now.date().toordinal() - now.weekday())
 st.info(
     "Use this page as your Monday check-in and return whenever a question comes up. Do not enter client names, "
     "contact details, account or policy numbers, health information, or confidential NYL material. Notes stay in "
-    "the active browser session only. If an AI API key is configured, chat text and selected public headlines are "
-    "sent to that configured provider to generate the response."
+    "the active browser session only. If an AI API key is configured and you confirm the per-message authorization, "
+    "your chat text, public headlines, session-added NYL updates, and aggregate trading observation are sent to the "
+    "configured OpenAI provider to generate the response."
 )
 
 agenda, resources, news, references = st.tabs(["🧭 Weekly Coach", "🌐 Public Intelligence", "📝 NYL Updates", "🔗 NYL Link Library"])
