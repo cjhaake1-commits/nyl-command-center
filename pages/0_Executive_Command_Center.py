@@ -46,10 +46,24 @@ st.success("COMMAND CENTER • RUNNING")
 if persistent_storage_enabled():
     st.success("ACTIVITY STORAGE • PERSISTENT")
 else:
+    backend = storage_backend()
     st.warning(
-        f"ACTIVITY STORAGE • {storage_backend()} — activity and pipeline records may not persist across app restarts. "
+        f"ACTIVITY STORAGE • {backend} — activity and pipeline records may not persist across app restarts. "
         "Confirm persistent storage before relying on saved history."
     )
+    if "connection failed" in backend.lower():
+        st.info(
+            "To restore durable history, check the managed database status, host/port, rotated credentials, "
+            "required SSL mode, and database network allow-list. In Streamlit Cloud, update the app's "
+            "DATABASE_URL secret with the working PostgreSQL connection string. Never put database credentials "
+            "in source code or commit them to GitHub."
+        )
+    else:
+        st.info(
+            "For durable history on Streamlit Cloud, configure a managed PostgreSQL database and add its "
+            "DATABASE_URL in the app's Streamlit secrets. The local SQLite fallback is temporary and may be "
+            "reset when the app restarts."
+        )
 st.caption(
     "Prospect catalogs on this page are curated research files, not live data feeds or a Salesforce connection. "
     "Verify source details and current NYL requirements before acting."
