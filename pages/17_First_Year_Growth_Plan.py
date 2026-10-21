@@ -8,12 +8,21 @@ import pandas as pd
 import streamlit as st
 
 from core.orlando_market import NETWORKING_ORGANIZATIONS, ORLANDO_PRIORITY_AREAS
+from data.db import (
+    get_activity,
+    get_weekly_plan,
+    init_db,
+    persistent_storage_enabled,
+    storage_backend,
+    upsert_weekly_plan,
+)
 
 st.set_page_config(page_title="First-Year $1M Growth Plan", page_icon="🏆", layout="wide")
 
 today = datetime.now(ZoneInfo("America/New_York")).date()
 anticipated_start = today + timedelta(days=10)
 goal = 1_000_000
+init_db()
 
 st.title("First-Year $1M Growth Plan")
 st.caption(
@@ -98,6 +107,50 @@ st.caption(
     "commission credited. Confirm commission basis, timing, chargebacks, persistency rules, and case credit with your "
     "official contract and field leadership. Measure paid/credited results against the official report."
 )
+
+st.subheader("Year-one progress from your activity log")
+activity_rows = get_activity()
+window_rows = [
+    row for row in activity_rows
+    if start_date.isoformat() <= str(row.get("activity_date", "")) < first_year_end.isoformat()
+]
+commission_logged = sum(float(row.get("commission", 0) or 0) for row in window_rows)
+window_days = max((first_year_end - start_date).days, 1)
+elapsed_days = max(0, min((today - start_date).days, window_days))
+elapsed_fraction = elapsed_days / window_days
+expected_to_date = goal * elapsed_fraction
+pace_gap = commission_logged - expected_to_date
+weeks_remaining = max(0.0, production_weeks * (1 - elapsed_fraction))
+remaining_target = max(0.0, goal - commission_logged)
+revised_weekly_pace = remaining_target / weeks_remaining if weeks_remaining > 0 else 0.0
+
+p1, p2, p3, p4 = st.columns(4)
+p1.metric("Commission logged in app", f"${commission_logged:,.0f}", f"{len(window_rows)} logged days")
+p2.metric("Remaining to target", f"${remaining_target:,.0f}")
+p3.metric(
+    "Required pace for remaining weeks",
+    f"${revised_weekly_pace:,.0f}" if weeks_remaining > 0 else "Window ended",
+    f"{weeks_remaining:.1f} active weeks left" if weeks_remaining > 0 else None,
+)
+p4.metric(
+    "Logged vs straight-line pace",
+    f"${pace_gap:+,.0f}" if window_rows and today >= start_date else "Awaiting entries",
+    "manual activity entries; no NYL data feed",
+)
+st.caption(
+    f"Goal window: {start_date:%b %d, %Y}–{first_year_end:%b %d, %Y}. Amounts above come only from manual "
+    "Daily War Room entries; they are not synchronized with or verified against NYL production reports. "
+    "Reconcile the official credited-commission report every Monday before adjusting the plan."
+)
+if today < start_date:
+    st.info("Your planned contract trigger date is still ahead. The year-one pace comparison starts on that date.")
+elif not window_rows:
+    st.info("No commission entries are logged in this goal window yet. Do not interpret an empty log as a verified production result.")
+if not persistent_storage_enabled():
+    st.warning(
+        f"Saved activity and weekly plans may not survive app restarts because storage is {storage_backend()}. "
+        "Confirm persistent storage before relying on saved history."
+    )
 
 st.subheader("Weekly funnel model")
 st.caption(
@@ -287,6 +340,96 @@ st.info(
     f"Default weekly commission pace: ${weekly_goal:,.0f}. Each Monday, reconcile the actual pace in the official "
     "compensation report, then set the week's case and activity targets from your realized case economics and conversion data."
 )
+
+st.subheader("Set and review this week's commitments")
+st.caption(
+    "Choose measurable activity targets and one focus lane. This saved plan contains structured work goals only—"
+    "do not enter client names, identifiers, account details, health information, or confidential case facts."
+)
+saved_plan = get_weekly_plan(week_start.isoformat()) or {}
+focus_options = [
+    "Warm introductions",
+    "Business owners and professional practices",
+    "Retirement-transition discovery",
+    "Individual protection conversations",
+    "COI relationship development",
+    "Employer / group-benefits introductions",
+    "Case follow-through and service",
+]
+action_options = [
+    "Ask for permitted introductions",
+    "Verify cause-based public research",
+    "Schedule qualified discovery meetings",
+    "Develop one professional relationship",
+    "Attend one approved networking event",
+    "Practice one conversation skill",
+    "Reconcile production and pending-case status",
+]
+manager_options = [
+    "No manager question queued",
+    "Confirm contract trigger and commission-credit rules",
+    "Confirm active registrations, appointments, and product access",
+    "Confirm an NYL process or compliance requirement",
+    "Coordinate with the appointed business / benefits specialist",
+    "Clarify case ownership, handoff, or production credit",
+]
+review_options = [
+    "Not reviewed",
+    "Met",
+    "Partially met",
+    "Missed — carry forward or revise",
+]
+with st.form("weekly_operating_plan"):
+    g1, g2 = st.columns(2)
+    target_default = float(saved_plan.get("weekly_commission_target") or weekly_goal)
+    held_default = int(saved_plan.get("held_appointment_target") or 0)
+    conversation_default = int(saved_plan.get("conversation_target") or 0)
+    outreach_default = int(saved_plan.get("outreach_target") or 0)
+    target_input = g1.number_input(
+        "Weekly credited-commission target ($)",
+        min_value=0.0,
+        max_value=1_000_000.0,
+        value=target_default,
+        step=500.0,
+        help="Planning input only. Reconcile actual credit with the official NYL report.",
+    )
+    focus_default = saved_plan.get("focus_lane") if saved_plan.get("focus_lane") in focus_options else focus_options[0]
+    focus_input = g2.selectbox("Primary focus lane", focus_options, index=focus_options.index(focus_default))
+    a1, a2, a3 = st.columns(3)
+    held_input = a1.number_input("Held-appointment target", min_value=0, value=held_default, step=1)
+    conversation_input = a2.number_input("Conversation target", min_value=0, value=conversation_default, step=1)
+    outreach_input = a3.number_input("Outreach target", min_value=0, value=outreach_default, step=1)
+    action_default = saved_plan.get("primary_action") if saved_plan.get("primary_action") in action_options else action_options[0]
+    manager_default = saved_plan.get("manager_topic") if saved_plan.get("manager_topic") in manager_options else manager_options[0]
+    review_default = saved_plan.get("friday_review") if saved_plan.get("friday_review") in review_options else review_options[0]
+    a4, a5, a6 = st.columns(3)
+    action_input = a4.selectbox("One primary action", action_options, index=action_options.index(action_default))
+    manager_input = a5.selectbox("Internal question to resolve", manager_options, index=manager_options.index(manager_default))
+    review_input = a6.selectbox("Friday review", review_options, index=review_options.index(review_default))
+    saved = st.form_submit_button("Save this week's plan", type="primary")
+if saved:
+    upsert_weekly_plan(
+        week_start.isoformat(),
+        float(target_input),
+        int(held_input),
+        int(conversation_input),
+        int(outreach_input),
+        focus_input,
+        action_input,
+        manager_input,
+        review_input,
+    )
+    st.success("This week's structured operating plan is saved.")
+    st.rerun()
+
+if saved_plan:
+    st.caption(
+        f"Saved plan for the week of Monday {week_start:%B %d, %Y}: "
+        f"${float(saved_plan.get('weekly_commission_target') or weekly_goal):,.0f} target • "
+        f"{saved_plan.get('focus_lane', focus_options[0])} • "
+        f"{saved_plan.get('primary_action', action_options[0])} • "
+        f"Friday review: {saved_plan.get('friday_review', review_options[0])}"
+    )
 
 st.subheader("A strict lead gate: cause, contact, evidence, next action")
 lead_gate = [
