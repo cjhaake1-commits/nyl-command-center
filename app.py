@@ -79,6 +79,7 @@ linkedin_network = st.Page("pages/3B_LinkedIn_Network.py", title="LinkedIn Netwo
 interview = st.Page("pages/8_Interview_Ace.py", title="Interview / Presentation", icon="🃏")
 practice_lab = st.Page("pages/18_Practice_Process_Lab.py", title="Practice & Process Lab", icon="🎭")
 sales_coach = st.Page("pages/19_Sales_Coach.py", title="Sales Coach", icon="🧭")
+market_monitor = st.Page("pages/20_Market_Monitor.py", title="Market Monitor", icon="📊")
 
 navigation = st.navigation(
     {
