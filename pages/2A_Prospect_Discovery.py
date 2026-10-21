@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+from datetime import date
+
 import pandas as pd
 import streamlit as st
+
+from core.lead_readiness import evaluate_lead_readiness
 
 from core.branding import brand_hero
 from data.public_leads import PUBLIC_LEADS
@@ -22,6 +26,79 @@ hnw_df = pd.DataFrame(HNW_LEADS)
 marketing_df = pd.DataFrame(MARKETING_NETWORK_LEADS)
 rollover_df = pd.DataFrame(ROLLOVER_LEADS)
 
+# Readiness is separate from opportunity fit: it assesses public research completeness only.
+# It never infers private need, assets, suitability, or willingness to transact.
+_source_frames = [
+    ("Business", business_df),
+    ("HNW / COI", hnw_df),
+    ("Retirement transition", rollover_df),
+    ("Referral network", marketing_df),
+]
+def _norm(value):
+    return "".join(ch.lower() for ch in str(value or "") if ch.isalnum())
+
+_identity_rows = []
+for _lane, _frame in _source_frames:
+    for _, _row in _frame.iterrows():
+        _tokens = set()
+        _name = _norm(_row.get("Name", ""))
+        if _name:
+            _tokens.add("name:" + _name)
+        for _field in ("Business email", "Email", "Public Contact", "Contact"):
+            _v = _norm(_row.get(_field, ""))
+            if _v and "@" in _v:
+                _tokens.add("email:" + _v)
+        for _field in ("Business phone", "Phone", "Public phone"):
+            _v = "".join(ch for ch in str(_row.get(_field, "")) if ch.isdigit())
+            if len(_v) >= 10:
+                _tokens.add("phone:" + _v[-10:])
+        _identity_rows.append(_tokens)
+_token_counts = {}
+for _tokens in _identity_rows:
+    for _token in _tokens:
+        _token_counts[_token] = _token_counts.get(_token, 0) + 1
+_duplicate_tokens = {key for key, count in _token_counts.items() if count > 1}
+
+def _row_is_duplicate(row):
+    tokens = set()
+    name = _norm(row.get("Name", ""))
+    if name:
+        tokens.add("name:" + name)
+    for field in ("Business email", "Email", "Public Contact", "Contact"):
+        value = _norm(row.get(field, ""))
+        if value and "@" in value:
+            tokens.add("email:" + value)
+    for field in ("Business phone", "Phone", "Public phone"):
+        value = "".join(ch for ch in str(row.get(field, "")) if ch.isdigit())
+        if len(value) >= 10:
+            tokens.add("phone:" + value[-10:])
+    return bool(tokens & _duplicate_tokens)
+
+def _annotate(frame, lane):
+    rows = []
+    for _, row in frame.iterrows():
+        record = row.to_dict()
+        result = evaluate_lead_readiness(record, today=date.today(), duplicate_in_catalog=_row_is_duplicate(record))
+        record["Research lane"] = lane
+        record["Lead readiness"] = result["status"]
+        record["Readiness score"] = result["score"]
+        record["Missing gates"] = result["missing_gates"]
+        rows.append(record)
+    return pd.DataFrame(rows)
+
+business_df = _annotate(business_df, "Business / employer")
+hnw_df = _annotate(hnw_df, "HNW / COI")
+rollover_df = _annotate(rollover_df, "Retirement transition")
+marketing_df = _annotate(marketing_df, "Referral network")
+
+research_universe = pd.concat([frame for _, frame in _source_frames], ignore_index=True, sort=False) if _source_frames else pd.DataFrame()
+# Rebuild from annotated tables so the visible queue uses exactly the same gate.
+annotated_frames = [business_df, hnw_df, rollover_df, marketing_df]
+research_universe = pd.concat(annotated_frames, ignore_index=True, sort=False)
+prime_records = research_universe[research_universe["Lead readiness"].str.startswith("PRIME")] if not research_universe.empty else research_universe
+reverify_records = research_universe[research_universe["Lead readiness"].str.startswith("REVERIFY")] if not research_universe.empty else research_universe
+hold_records = research_universe[research_universe["Lead readiness"].str.startswith("HOLD")] if not research_universe.empty else research_universe
+
 def num_high(df: pd.DataFrame, col: str, threshold: float) -> int:
     if df.empty or col not in df.columns:
         return 0
@@ -32,9 +109,40 @@ c1.metric("Business Leads", len(business_df), f"{num_high(business_df, 'Opportun
 c2.metric("HNW / COI", len(hnw_df), f"{num_high(hnw_df, 'Opportunity score', 95)} score 95+")
 c3.metric("Rollover Signals", len(rollover_df), "former-employer career transitions")
 c4.metric("Referral Network", len(marketing_df), f"{num_high(marketing_df, 'Audience fit score', 95)} fit 95+")
-c5.metric("Research Cadence", "Hourly", "verified batches")
+c5.metric("Research Cadence", "On-demand", "source checks shown below")
 
 st.info("Evidence standard: public-source facts stay separate from planning hypotheses. Prefer warm introductions. Never infer private financial condition, retirement-plan participation, account balance, or rollover need from career or social-media signals.")
+
+st.subheader("Prime prospect gate — human review before Salesforce")
+st.caption(
+    "A high opportunity score is not readiness. PRIME requires a specific public cause, a dated source no more than 30 days old, "
+    "a current public contact route, an actionable next step, and no duplicate within these research catalogs. "
+    "This is research completeness only—not evidence of client need, suitability, intent, or Salesforce clearance."
+)
+rc1, rc2, rc3 = st.columns(3)
+rc1.metric("PRIME • review", len(prime_records), "passes current research gates")
+rc2.metric("REVERIFY", len(reverify_records), "source date needs refresh")
+rc3.metric("HOLD", len(hold_records), "missing evidence / contact / action / unique record")
+st.caption(
+    "Priority sourcing lanes: business owners and employers (key-person, continuity, executive and employee protection discovery; "
+    "route group benefits and any worksite program through the approved NYL team); public career transitions for retirement-plan reviews; "
+    "and HNW / COI introductions where protection, brokerage-eligible investments, or annuity conversations emerge from documented needs."
+)
+if len(prime_records):
+    st.markdown("#### PRIME — ready for your review")
+    prime_cols = ["Research lane", "Name", "Company", "Role", "Opportunity score", "Trigger", "Signal", "Warm path", "Business email", "Business phone", "Source URL", "Verified date", "Next action"]
+    st.dataframe(prime_records[[col for col in prime_cols if col in prime_records.columns]], width="stretch", hide_index=True)
+else:
+    st.warning("No candidate currently passes every PRIME gate. Do not treat a high fit/opportunity score or a public wealth signal as a ready lead.")
+if len(reverify_records):
+    with st.expander(f"Reverify source dates ({len(reverify_records)})"):
+        review_cols = ["Research lane", "Name", "Company", "Role", "Opportunity score", "Trigger", "Signal", "Business email", "Business phone", "Source URL", "Verified date", "Next action", "Missing gates"]
+        ordered = reverify_records.sort_values(["Readiness score", "Opportunity score"], ascending=[False, False], kind="stable")
+        st.dataframe(ordered[[col for col in review_cols if col in ordered.columns]].head(25), width="stretch", hide_index=True)
+st.caption(
+    "Before Salesforce upload, separately deduplicate against current CRM records and the complete Created / Updated / Rejected import history, "
+    "confirm the required import schema, and use only NYL-approved outreach and review steps."
+)
 
 tab_business, tab_hnw, tab_rollover, tab_marketing = st.tabs(["Business Prospects", "HNW / Households & COIs", "401(k) / Former Employer", "Marketing / Referral Network"])
 
@@ -50,7 +158,7 @@ with tab_business:
         mask = view.astype(str).apply(lambda col: col.str.contains(q, case=False, na=False)).any(axis=1)
         view = view[mask]
     if not view.empty and "Opportunity score" in view.columns:
-        view = view.sort_values(["Opportunity score", "Warmth score"], ascending=[False, False], kind="stable")
+        view = view.sort_values(["Readiness score", "Opportunity score", "Warmth score"], ascending=[False, False, False], kind="stable")
     if view.empty:
         st.info("No business prospects match this view.")
     else:
@@ -64,7 +172,7 @@ with tab_business:
                 b.write(f"**Next action:** {row.get('Next action','')}")
                 if row.get("Source URL"):
                     st.caption(f"Source: {row.get('Source URL')}")
-        preferred = ["Name", "Company", "Role", "Industry", "Area", "Opportunity score", "Warmth score", "Trigger", "Warm path", "Next action", "Verified date"]
+        preferred = ["Lead readiness", "Readiness score", "Missing gates", "Name", "Company", "Role", "Industry", "Area", "Opportunity score", "Warmth score", "Trigger", "Warm path", "Next action", "Verified date"]
         st.dataframe(view[[c for c in preferred if c in view.columns]], width="stretch", hide_index=True)
 
 with tab_hnw:
@@ -83,7 +191,7 @@ with tab_hnw:
         mask = view.astype(str).apply(lambda col: col.str.contains(q, case=False, na=False)).any(axis=1)
         view = view[mask]
     if not view.empty and "Opportunity score" in view.columns:
-        view = view.sort_values(["Opportunity score", "Warmth score"], ascending=[False, False], kind="stable")
+        view = view.sort_values(["Readiness score", "Opportunity score", "Warmth score"], ascending=[False, False, False], kind="stable")
     if view.empty:
         st.info("No HNW / COI records match this view.")
     else:
@@ -93,7 +201,7 @@ with tab_hnw:
             with cards[i]:
                 st.metric(str(row.get("Name", "Prospect")), f"{row.get('Opportunity score','—')}/100", str(row.get("Lead type", "")))
                 st.caption(str(row.get("Signal", "")))
-        preferred = ["Lead type", "Name", "Company", "Role", "Area", "Signal", "Signal strength", "Opportunity score", "Warmth score", "Warm path", "Next action", "Verified date"]
+        preferred = ["Lead readiness", "Readiness score", "Missing gates", "Lead type", "Name", "Company", "Role", "Area", "Signal", "Signal strength", "Opportunity score", "Warmth score", "Warm path", "Next action", "Verified date"]
         st.dataframe(view[[c for c in preferred if c in view.columns]], width="stretch", hide_index=True)
 
 with tab_rollover:
@@ -116,7 +224,7 @@ with tab_rollover:
     if view.empty:
         st.info("No verified rollover-signal leads have been added yet. Research uses public LinkedIn/Facebook professional information, company bios and career announcements; private social content is excluded.")
     else:
-        preferred = ["Name", "Current Company", "Current Role", "Former Employer", "Former Role", "Former Employer Size", "Tenure Years", "Change Date", "Area", "Public Contact", "Signal", "Source URL", "Verified Date"]
+        preferred = ["Lead readiness", "Readiness score", "Missing gates", "Name", "Current Company", "Current Role", "Former Employer", "Former Role", "Former Employer Size", "Tenure Years", "Change Date", "Area", "Public Contact", "Signal", "Source URL", "Verified Date"]
         st.dataframe(view[[c for c in preferred if c in view.columns]], width="stretch", hide_index=True)
 
     st.markdown("#### Dossier review points")
@@ -139,7 +247,7 @@ with tab_marketing:
         mask = view.astype(str).apply(lambda col: col.str.contains(q, case=False, na=False)).any(axis=1)
         view = view[mask]
     if not view.empty and "Audience fit score" in view.columns:
-        view = view.sort_values(["Audience fit score", "Reach score"], ascending=[False, False], kind="stable")
+        view = view.sort_values(["Readiness score", "Audience fit score", "Reach score"], ascending=[False, False, False], kind="stable")
     if view.empty:
         st.info("No marketing/referral records match this view.")
     else:
@@ -149,7 +257,7 @@ with tab_marketing:
             with cards[i]:
                 st.metric(str(row.get("Name", "Creator")), f"{row.get('Audience fit score','—')}/100", str(row.get("Audience size", "")))
                 st.caption(str(row.get("Why fit", "")))
-        preferred = ["Name", "Brand", "Category", "Area", "Audience size", "Audience fit score", "Reach score", "Referral potential", "Why fit", "Best angle", "Verified date"]
+        preferred = ["Lead readiness", "Readiness score", "Missing gates", "Name", "Brand", "Category", "Area", "Audience size", "Audience fit score", "Reach score", "Referral potential", "Why fit", "Best angle", "Verified date"]
         st.dataframe(view[[c for c in preferred if c in view.columns]], width="stretch", hide_index=True)
 
 st.divider()
