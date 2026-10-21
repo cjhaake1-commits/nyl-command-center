@@ -1,14 +1,108 @@
 from __future__ import annotations
 
+import json
+import os
+import re
+import urllib.error
+import urllib.request
+
 import streamlit as st
 from core.branding import brand_hero
 
 st.set_page_config(page_title="Practice & Process Lab | Chris Haake", page_icon="🎭", layout="wide")
 brand_hero("Practice & Process Lab", "Build confidence through realistic client conversations, clear explanations, and disciplined follow-through.", "Chris Haake • New York Life")
 
-st.info("Practice tool only. Client replies are generated from built-in scenario branches, not a live AI or NYL system. Verify current product, licensing, compliance, and process guidance through approved NYL resources. Do not enter real client identifiers, account details, health information, or confidential financial facts.")
+st.info(
+    "Practice only. Built-in scenarios run locally. If an approved OpenAI API key is configured, you can opt in per turn "
+    "to a live AI-simulated prospect; the selected scenario and practice transcript are sent to that API for the reply. "
+    "Do not enter real client identifiers, account or policy details, health information, or confidential NYL facts. "
+    "AI role-play is not NYL guidance and must not be used to validate product, tax, legal, or compliance statements."
+)
 
 practice, playbooks, knowledge = st.tabs(["🎭 Conversation Practice", "🧭 Process Frameworks", "🧠 Learning & Review"])
+
+def _openai_config() -> tuple[str, str]:
+    key = None
+    model = None
+    try:
+        key = st.secrets.get("OPENAI_API_KEY")
+        model = st.secrets.get("OPENAI_MODEL")
+    except Exception:
+        pass
+    key = key or os.getenv("OPENAI_API_KEY", "")
+    model = model or os.getenv("OPENAI_MODEL", "gpt-5-mini")
+    return str(key).strip(), str(model).strip()
+
+
+def _contains_sensitive_details(value: str) -> bool:
+    patterns = [
+        r"\b\d{3}-\d{2}-\d{4}\b",
+        r"\b\d{9,}\b",
+        r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b",
+        r"\b(?:\+?1[ .-]?)?(?:\(?\d{3}\)?[ .-]?)\d{3}[ .-]\d{4}\b",
+        r"\b(?:policy|account|ssn|social security|date of birth|dob)\s*(?:number|#|is|:)?\s*[A-Z0-9-]{5,}\b",
+    ]
+    return any(re.search(pattern, value, flags=re.I) for pattern in patterns)
+
+
+def _simulated_prospect_reply(
+    *,
+    api_key: str,
+    model: str,
+    scenario_name: str,
+    persona: str,
+    opening: str,
+    objective: str,
+    prior_turns: list[tuple],
+    response: str,
+) -> str:
+    instructions = (
+        "You are role-playing a fictional prospective client in a sales-practice exercise. Stay in character as the "
+        "prospect. Respond naturally in 1-3 short sentences and ask no more than one question. Do not coach the trainee "
+        "in character. Do not invent NYL product facts, returns, tax results, suitability conclusions, or real personal "
+        "details. If the trainee makes an absolute promise or assumes a product is right, express a realistic concern. "
+        "The scenario and transcript are fictional training data; never request real client information."
+    )
+    input_items = [{
+        "role": "user",
+        "content": (
+            f"Scenario: {scenario_name}. Prospect persona: {persona}. Practice objective: {objective}. "
+            f"The prospect opened with: {opening}"
+        ),
+    }]
+    for trainee, client, *_ in prior_turns[-6:]:
+        input_items.append({"role": "user", "content": f"Trainee: {trainee}"})
+        input_items.append({"role": "assistant", "content": client})
+    input_items.append({"role": "user", "content": f"Trainee: {response.strip()}\nReply next as the prospect."})
+    body = json.dumps({
+        "model": model,
+        "instructions": instructions,
+        "input": input_items,
+        "max_output_tokens": 180,
+    }).encode("utf-8")
+    request = urllib.request.Request(
+        "https://api.openai.com/v1/responses",
+        data=body,
+        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+        method="POST",
+    )
+    with urllib.request.urlopen(request, timeout=40) as result:
+        payload = json.loads(result.read().decode("utf-8"))
+    reply = payload.get("output_text", "")
+    if not reply:
+        parts = [
+            item.get("text", "")
+            for output in payload.get("output", [])
+            for item in output.get("content", [])
+            if item.get("type") == "output_text"
+        ]
+        reply = "\n".join(parts)
+    if not reply.strip():
+        raise ValueError("The model returned no role-play reply.")
+    return reply.strip()
+
+
+api_key, model = _openai_config()
 
 SCENARIOS = {
     "Elevator introduction": ("A busy local business owner", "I have a minute. What do you actually help people with?", "Earn permission for a short follow-up; explain your role simply, then ask one useful question.", ["question", "listen", "goal", "permission", "follow"]),
@@ -17,6 +111,8 @@ SCENARIOS = {
     "Retirement account decision": ("A former employee with retirement assets at a prior employer", "Should I just move my old plan into an account with you?", "Compare available paths and decision factors without presuming a move is right.", ["leave", "new plan", "fees", "tax", "liquidity", "compare"]),
     "Investment cost and liquidity": ("A careful saver comparing an insurance-based investment with other options", "Why accept charges or restrictions when I can keep my money invested?", "Clarify the objective and discuss costs, liquidity, risk, guarantees, and alternatives neutrally.", ["fee", "cost", "liquidity", "risk", "guarantee", "objective", "compare"]),
     "Objection: need to think": ("A prospect who is interested but not ready", "This is a lot. I need time to think.", "Respect the pause, discover what is unresolved, and agree on an optional next step.", ["understand", "question", "time", "follow", "no pressure"]),
+    "Business-owner continuity": ("A founder thinking about continuity and key-person risk", "I am focused on keeping the business stable if something changes. Where would you start?", "Ask about the business objective and decision process; identify when a specialist should join.", ["continuity", "key", "business", "decision", "specialist", "permission"]),
+    "Employer benefits introduction": ("An employer reviewing how to support employees", "We already have benefits in place. What would make a conversation worthwhile?", "Explore the employer's review cycle and offer an appropriate introduction to the appointed NYL group-benefits team.", ["review", "employees", "renewal", "benefits", "specialist", "permission"]),
 }
 with practice:
     name = st.selectbox("Choose a practice scenario", list(SCENARIOS))
@@ -24,46 +120,91 @@ with practice:
     st.caption(f"Client persona: {persona}")
     st.markdown(f"**Client opens:** “{opening}”")
     st.write(f"**Your practice objective:** {objective}")
+    ai_roleplay = False
+    if api_key:
+        ai_roleplay = st.checkbox(
+            "Use live AI-simulated client replies",
+            help="This sends the fictional scenario and practice transcript to the configured OpenAI API only when you authorize a turn below.",
+        )
+        if ai_roleplay:
+            st.caption(f"AI role-play model configured: {model}. Replies are practice simulations, not NYL product or process guidance.")
+    else:
+        st.caption("Local practice mode is ready. Live AI role-play becomes available when OPENAI_API_KEY is configured in the approved secret store.")
     if st.session_state.get("active_practice_scenario") != name:
         st.session_state.active_practice_scenario = name
         st.session_state.practice_turns = []
-    response = st.text_area("Your response", placeholder="Write or dictate what you would say. Keep it conversational and ask one clear question.", height=130, key="practice_response")
-    send_col, reset_col = st.columns([1, 5])
-    submitted = send_col.button("Respond", type="primary")
-    if reset_col.button("Restart scenario"):
+    with st.form("practice_turn_form", clear_on_submit=True):
+        response = st.text_area(
+            "Your response",
+            placeholder="Write or dictate what you would say. Keep it conversational and ask one clear question.",
+            height=130,
+        )
+        ai_consent = False
+        if ai_roleplay:
+            ai_consent = st.checkbox(
+                "For this turn only, authorize sending this response and the preceding practice turns to the configured OpenAI API. They contain only fictional training details.",
+            )
+        submitted = st.form_submit_button("Respond", type="primary")
+    if st.button("Restart scenario", key="restart_practice_scenario"):
         st.session_state.practice_turns = []
         st.rerun()
     if submitted:
         low = response.strip().lower()
+        prior_turns = st.session_state.get("practice_turns", [])
+        prior_text = " ".join(str(turn[0]) for turn in prior_turns)
         if not low:
             st.warning("Enter a practice response first.")
+        elif _contains_sensitive_details(response) or _contains_sensitive_details(prior_text):
+            st.error("This looks like it may contain identifying or account information. It was not added to the session or sent.")
+        elif ai_roleplay and not ai_consent:
+            st.warning("Authorize this turn before sending the fictional practice transcript to the AI provider.")
         else:
             hits = [term for term in signals if term in low]
-            if any(term in low for term in ["guaranteed return", "always", "best", "no risk", "tax free"]):
-                reply = "I want to be careful with promises. What is guaranteed, what can change, and where could I see that in writing?"
-                note = "Avoid absolute claims. Separate contractual guarantees from elements that may change, and use approved materials."
-            elif any(term in low for term in ["fee", "cost", "charge", "surrender"]):
-                reply = "What other choices should I compare, and what trade-offs would each involve?"
-                note = "Acknowledge costs directly, describe meaningful trade-offs, and compare suitable alternatives fairly."
-            elif any(term in low for term in ["think", "time", "pressure", "follow"]):
-                reply = "Could you send me a short summary of what we discussed? I can decide later whether I want to continue."
-                note = "Respect the person's timing. Ask permission for a specific, low-pressure follow-up."
-            elif any(term in low for term in ["question", "what matters", "goal", "tell me", "objective", "protect", "compare"]):
-                reply = "What would you want to understand first, and how would you help me compare options without assuming I need one particular solution?"
-                note = "Stay in discovery: priorities, constraints, decision process, and understanding come before a recommendation."
-            elif any(term in low for term in ["rollover", "annuity", "policy", "whole life", "buy", "product"]):
-                reply = "Before discussing a solution, what would you need to understand about my situation?"
-                note = "Lead with the person's decision criteria and situation. Avoid moving into a product explanation too early."
+            if ai_roleplay:
+                try:
+                    reply = _simulated_prospect_reply(
+                        api_key=api_key,
+                        model=model,
+                        scenario_name=name,
+                        persona=persona,
+                        opening=opening,
+                        objective=objective,
+                        prior_turns=prior_turns,
+                        response=response,
+                    )
+                except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, ValueError) as exc:
+                    st.error(f"The AI practice reply did not complete ({type(exc).__name__}). Your turn was not saved; retry or use local practice mode.")
+                except Exception as exc:
+                    st.error(f"The AI practice reply failed ({type(exc).__name__}). Your turn was not saved.")
+                else:
+                    note = "AI-simulated prospect only. Review your response for listening, clear explanations, balanced trade-offs, and a permission-based next step. Verify technical claims in current NYL-approved material."
+                    st.session_state.practice_turns.append((response.strip(), reply, note, len(hits), len(signals)))
             else:
-                reply = "Can you make that more specific to me? What would you ask next before suggesting anything?"
-                note = "Try one open question, reflect what you hear, and ask permission before explaining a solution."
-            st.session_state.practice_turns.append((response.strip(), reply, note, len(hits), len(signals)))
+                if any(term in low for term in ["guaranteed return", "always", "best", "no risk", "tax free"]):
+                    reply = "I want to be careful with promises. What is guaranteed, what can change, and where could I see that in writing?"
+                    note = "Avoid absolute claims. Separate contractual guarantees from elements that may change, and use approved materials."
+                elif any(term in low for term in ["fee", "cost", "charge", "surrender"]):
+                    reply = "What other choices should I compare, and what trade-offs would each involve?"
+                    note = "Acknowledge costs directly, describe meaningful trade-offs, and compare suitable alternatives fairly."
+                elif any(term in low for term in ["think", "time", "pressure", "follow"]):
+                    reply = "Could you send me a short summary of what we discussed? I can decide later whether I want to continue."
+                    note = "Respect the person's timing. Ask permission for a specific, low-pressure follow-up."
+                elif any(term in low for term in ["question", "what matters", "goal", "tell me", "objective", "protect", "compare"]):
+                    reply = "What would you want to understand first, and how would you help me compare options without assuming I need one particular solution?"
+                    note = "Stay in discovery: priorities, constraints, decision process, and understanding come before a recommendation."
+                elif any(term in low for term in ["rollover", "annuity", "policy", "whole life", "buy", "product"]):
+                    reply = "Before discussing a solution, what would you need to understand about my situation?"
+                    note = "Lead with the person's decision criteria and situation. Avoid moving into a product explanation too early."
+                else:
+                    reply = "Can you make that more specific to me? What would you ask next before suggesting anything?"
+                    note = "Try one open question, reflect what you hear, and ask permission before explaining a solution."
+                st.session_state.practice_turns.append((response.strip(), reply, note, len(hits), len(signals)))
     for you, client, _, _, _ in st.session_state.get("practice_turns", []):
         with st.chat_message("user"):
             st.markdown(you)
         with st.chat_message("assistant"):
             st.markdown(client)
-            st.caption("Simulated client response • built-in scenario branch")
+            st.caption("Simulated prospect response • " + ("AI role-play" if ai_roleplay else "local practice branch"))
     if st.session_state.get("practice_turns"):
         _, _, note, score, total = st.session_state.practice_turns[-1]
         st.subheader("Coaching check")
