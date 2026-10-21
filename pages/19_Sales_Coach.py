@@ -83,7 +83,7 @@ with agenda:
     except Exception:
         model = None
     model = model or os.getenv("OPENAI_MODEL", "gpt-5-mini")
-    consent = st.checkbox("I confirm my notes contain no client information or confidential NYL material.", key="coach_safe_input")
+    consent = st.checkbox("I authorize sending this coach message, my session NYL updates, and aggregate trading observation to the configured OpenAI API. They contain no client identifiers or confidential NYL information.", key="coach_safe_input")
     if not api_key:
         st.warning("Guided mode is active. Configure OPENAI_API_KEY in the app's approved secret store to enable natural-language AI replies.")
     messages = st.session_state.setdefault("sales_coach_messages", [])
@@ -121,8 +121,10 @@ with agenda:
                 )
                 brief_text = json.dumps(st.session_state.get("coach_weekly_brief", {}), ensure_ascii=False)[:2500]
                 market_text = json.dumps(st.session_state.get("coach_market_headlines", []), ensure_ascii=False)[:5000]
+                nyl_updates = json.dumps(st.session_state.get("coach_nyl_updates", []), ensure_ascii=False)[:3000]
+                trading_context = str(st.session_state.get("coach_trading_observation", ""))[:1500]
                 input_items = [{"role": m["role"], "content": m["content"]} for m in messages[-12:]]
-                input_items.insert(0, {"role": "user", "content": f"Current week brief (non-client planning notes): {brief_text}\n\nSelected public headlines: {market_text}"})
+                input_items.insert(0, {"role": "user", "content": f"Current week brief (non-client planning notes): {brief_text}\\n\\nSelected public headlines: {market_text}\\n\\nUser-entered NYL updates (unverified; use as user-provided context): {nyl_updates}\\n\\nAggregate market context supplied by user (not independently verified): {trading_context}"})
                 body = json.dumps({"model": model, "instructions": system_instructions, "input": input_items, "max_output_tokens": 900}).encode("utf-8")
                 request = urllib.request.Request(
                     "https://api.openai.com/v1/responses", data=body,
@@ -255,7 +257,7 @@ with resources:
 
 with news:
     st.subheader("Add a public or approved NYL update")
-    st.caption("Use public announcements or non-confidential material that your firm permits you to discuss. This notebook stays in the active session, is not independently verified, and is not forwarded to the AI chat.")
+    st.caption("Use public announcements or non-confidential material that your firm permits you to discuss. This notebook stays in the active session and is not independently verified. When you send a coach prompt, its contents are included only after you confirm the per-message OpenAI sharing authorization.")
     with st.form("coach_news_update"):
         update = st.text_area("What changed, where was it published, and when?", height=130, placeholder="Headline + public URL + date, or a brief non-confidential update.")
         allowed = st.checkbox("I have removed client data and confidential/internal-only details.", key="coach_news_safe")
@@ -274,4 +276,4 @@ with news:
     if st.session_state.get("coach_trading_observation"):
         st.markdown("**Current trading-app observation**")
         st.write(st.session_state["coach_trading_observation"])
-    st.caption("This session notebook is separate from AI chat. Do not copy confidential material into chat. Do not treat a public announcement as a change to your license, appointment, product authority, or NYL process; verify those with current official systems and your manager.")
+    st.caption("This session notebook is sent with coach prompts only when you confirm the per-message OpenAI sharing authorization. Do not add client or confidential NYL information. Do not treat a public announcement as a change to your license, appointment, product authority, or NYL process; verify those with current official systems and your manager.")
