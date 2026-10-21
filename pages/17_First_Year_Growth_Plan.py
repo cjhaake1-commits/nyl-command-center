@@ -115,6 +115,23 @@ st.info(
     "attainable. Validate average credited commission and conversion rates with the office before treating this pace as a forecast."
 )
 
+st.subheader("Priority production lanes to test")
+st.markdown(
+    "**Business-owner path:** use warm introductions and specific business events to open continuity, key-person, owner protection, "
+    "executive, and employee-benefit discovery. Employer group benefits and any worksite program belong with the appropriately appointed NYL team; "
+    "employee-paid permanent/whole-life coverage is only a lane where current products and approved distribution rules allow it. "
+    "These accounts may have larger planning scope and longer decision cycles, so track introductions, decision-makers, timing, and next action—not presumed commission."
+)
+st.markdown(
+    "**Retirement-transition path:** public role changes can justify offering a neutral review, but do not prove plan participation or a need to move assets. "
+    "Compare the former plan, an eligible new employer plan, an IRA, and distribution options using actual facts and approved tools."
+)
+st.markdown(
+    "**High-net-worth relationship path:** earn a trusted introduction first. Explore the person's objectives, liquidity, costs, tax status, risk tolerance, "
+    "existing protection, and account features. Consider eligible securities, protection, and annuity options separately when they fit documented needs. "
+    "Tax deferral alone does not establish that an annuity, rollover, or product combination is appropriate; use current disclosures and NYL supervision."
+)
+
 st.subheader("Product and business lanes to focus")
 st.caption(
     "Based on your prior work on whole-life conversations, retirement/401(k) rollover analysis, annuity fee comparisons, "
@@ -144,7 +161,7 @@ product_lanes = [
     },
     {
         "Lane": "Business-owner and executive planning",
-        "NYL capabilities": "Protection, continuity, disability, retirement, and benefits discussions coordinated with qualified NYL specialists.",
+        "NYL capabilities": "Owner/key-person and succession protection, business continuity and disability planning; coordinate executive/employee protection with the approved individual, worksite, group, or institutional NYL team.",
         "Best-fit discovery": "Owner-led firms and professional practices with a public business event or a need the owner confirms in conversation.",
         "Access gate": "Coordinate with the office's advanced-planning, retirement, and benefits resources; confirm who owns the case and how credit is assigned.",
         "Role in plan": "Strong relationship lane for your business-operations background; build multi-person relationships instead of one-product pitches.",
