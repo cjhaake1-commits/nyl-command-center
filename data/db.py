@@ -113,6 +113,19 @@ def init_db() -> None:
                     notes TEXT DEFAULT ''
                 )
             """))
+        conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS weekly_operating_plan (
+                week_start VARCHAR(10) PRIMARY KEY,
+                weekly_commission_target DOUBLE PRECISION NOT NULL DEFAULT 0,
+                held_appointment_target INTEGER NOT NULL DEFAULT 0,
+                conversation_target INTEGER NOT NULL DEFAULT 0,
+                outreach_target INTEGER NOT NULL DEFAULT 0,
+                focus_lane TEXT NOT NULL DEFAULT '',
+                primary_action TEXT NOT NULL DEFAULT '',
+                manager_topic TEXT NOT NULL DEFAULT '',
+                friday_review TEXT NOT NULL DEFAULT ''
+            )
+        """))
 
 
 def upsert_daily_activity(
@@ -179,6 +192,62 @@ def get_activity() -> list[dict]:
     with engine().connect() as conn:
         rows = conn.execute(text("SELECT * FROM daily_activity ORDER BY activity_date ASC")).mappings().all()
         return [dict(row) for row in rows]
+
+
+def get_weekly_plan(week_start: str) -> dict | None:
+    """Return the non-client operating plan for a Monday, if one has been saved."""
+    with engine().connect() as conn:
+        row = conn.execute(
+            text("SELECT * FROM weekly_operating_plan WHERE week_start = :week_start"),
+            {"week_start": week_start},
+        ).mappings().first()
+        return dict(row) if row else None
+
+
+def upsert_weekly_plan(
+    week_start: str,
+    weekly_commission_target: float,
+    held_appointment_target: int,
+    conversation_target: int,
+    outreach_target: int,
+    focus_lane: str,
+    primary_action: str,
+    manager_topic: str,
+    friday_review: str = "Not reviewed",
+) -> None:
+    """Save structured, non-client weekly commitments."""
+    values = {
+        "week_start": week_start,
+        "weekly_commission_target": weekly_commission_target,
+        "held_appointment_target": held_appointment_target,
+        "conversation_target": conversation_target,
+        "outreach_target": outreach_target,
+        "focus_lane": focus_lane,
+        "primary_action": primary_action,
+        "manager_topic": manager_topic,
+        "friday_review": friday_review,
+    }
+    with engine().begin() as conn:
+        conn.execute(text("""
+            INSERT INTO weekly_operating_plan (
+                week_start, weekly_commission_target, held_appointment_target,
+                conversation_target, outreach_target, focus_lane, primary_action,
+                manager_topic, friday_review
+            ) VALUES (
+                :week_start, :weekly_commission_target, :held_appointment_target,
+                :conversation_target, :outreach_target, :focus_lane, :primary_action,
+                :manager_topic, :friday_review
+            )
+            ON CONFLICT (week_start) DO UPDATE SET
+                weekly_commission_target = EXCLUDED.weekly_commission_target,
+                held_appointment_target = EXCLUDED.held_appointment_target,
+                conversation_target = EXCLUDED.conversation_target,
+                outreach_target = EXCLUDED.outreach_target,
+                focus_lane = EXCLUDED.focus_lane,
+                primary_action = EXCLUDED.primary_action,
+                manager_topic = EXCLUDED.manager_topic,
+                friday_review = EXCLUDED.friday_review
+        """), values)
 
 
 def totals() -> dict:
