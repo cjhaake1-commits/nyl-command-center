@@ -1,5 +1,5 @@
 """Central Florida networking event catalog, rolling 60-day window.
-Current dated additions and selected corrections checked 2026-10-21 on organizer pages.
+Selected dated additions and corrections checked 2026-10-21 on official organizer pages.
 Older records retain individual source_checked dates; RSVP and venue details can change.
 No listing implies registration, prospect consent or NYL marketing approval.
 """
@@ -17,20 +17,6 @@ VERIFIED_NETWORKING_EVENTS = [
     "url": "https://business.winterpark.org/events/details/connections-10-19-2026-5048831",
     "location": "AJ's Chocolate House, Winter Park",
     "access": "Members $40; non-members $55",
-    "verification": "Organizer-published date; confirm current RSVP/status",
-    "source_checked": "2026-10-13"
-  },
-  {
-    "date": "2026-10-21",
-    "time": "7:30 AM - 9 AM",
-    "event": "South Seminole Business Networking",
-    "organization": "Seminole County Chamber",
-    "objective": "Introductions",
-    "importance": 92,
-    "fit": "Seminole business owners and professionals",
-    "url": "https://business.seminolebusiness.org/events/details/south-seminole-business-networking-42189",
-    "location": "Casselberry",
-    "access": "Member benefit; RSVP closes Oct 20 at 4 PM",
     "verification": "Organizer-published date; confirm current RSVP/status",
     "source_checked": "2026-10-13"
   },
@@ -256,6 +242,20 @@ VERIFIED_NETWORKING_EVENTS = [
     "location": "Lake Mary Events Center, 260 N Country Club Rd, Lake Mary",
     "access": "Members free; nonmembers $15; sponsor/display-table inquiries separately",
     "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
+  },
+  {
+    "date": "2026-11-05",
+    "time": "6 PM - 8 PM",
+    "event": "The Business Owner's Playbook - Presented by New York Life",
+    "organization": "West Orange Chamber / New York Life",
+    "objective": "Business-owner benefits",
+    "importance": 99,
+    "fit": "Owner introductions, succession and benefits referrals, local professional partners; contact organizer about NYL participation roles",
+    "url": "https://wochamber.com/event/the-business-owners-playbook-presented-by-new-york-life/",
+    "location": "New York Life Office Training Room, 495 N Keller Rd, Maitland (confirm suite/ZIP with organizer)",
+    "access": "Free; advance registration recommended. Attendance is not speaker/sponsor status.",
+    "verification": "Organizer page dated Nov 5, 6-8 PM; organizer postal ZIP differs from other listings, confirm venue details",
     "source_checked": "2026-10-21"
   },
   {
@@ -567,6 +567,20 @@ VERIFIED_NETWORKING_EVENTS = [
     "source_checked": "2026-10-13"
   },
   {
+    "date": "2026-12-07",
+    "time": "11:30 AM - 1 PM",
+    "event": "West Seminole Council Lunch & Learn (December)",
+    "organization": "Seminole County Chamber",
+    "objective": "Introductions",
+    "importance": 84,
+    "fit": "Apopka small-business owners, health practices and business referral partners",
+    "url": "https://business.seminolebusiness.org/events/details/west-seminole-council-lunch-learn-41885",
+    "location": "Bahia Shrine, 3101 E Semoran Blvd, Apopka",
+    "access": "$15 lunch; advance RSVP required by Dec 7 at 9:30 AM; no walk-ins.",
+    "verification": "Organizer event page checked; attendance and capacity may change",
+    "source_checked": "2026-10-21"
+  },
+  {
     "date": "2026-12-08",
     "time": "11:30 AM - 1 PM",
     "event": "Lunch & Learn: Navigating Business Valuations",
@@ -607,6 +621,20 @@ VERIFIED_NETWORKING_EVENTS = [
     "access": "Check visitor access",
     "verification": "Organizer-published date; confirm current RSVP/status",
     "source_checked": "2026-10-13"
+  },
+  {
+    "date": "2026-12-10",
+    "time": "5:30 PM - 7:30 PM",
+    "event": "Seminole County Chamber Holiday Party",
+    "organization": "Seminole County Chamber",
+    "objective": "Introductions",
+    "importance": 86,
+    "fit": "Local business owners, chamber member referral networks, attorneys and other centers of influence",
+    "url": "https://business.seminolebusiness.org/events/details/chamber-holiday-party-43104",
+    "location": "Cork & Olive, 1061 S Sun Dr Ste 1009, Lake Mary",
+    "access": "Member ticket $40; member bundle $85; limited availability, confirm guest eligibility.",
+    "verification": "Organizer event page checked; no booth/sponsor entitlement implied by an attendee ticket",
+    "source_checked": "2026-10-21"
   },
   {
     "date": "2026-12-11",
