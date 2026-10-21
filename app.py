@@ -88,6 +88,7 @@ navigation = st.navigation(
     {
         "COMMAND": [executive, growth_plan, war_room, quarterback],
         "COACHING": [sales_coach],
+        "MARKETS & ECONOMY": [market_monitor],
         "PROSPECTING": [prospect_discovery, prospecting, lead_lists, opportunity, event_prospecting, group_affinity],
         "MARKETING & NETWORK": [marketing, influencer_network, linkedin_network, mailing],
         "INTELLIGENCE": [prospect_intel, meeting_intel, subject_brief, business_desk],
