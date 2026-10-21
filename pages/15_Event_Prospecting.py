@@ -10,7 +10,9 @@ from core.branding import apply_brand_theme
 apply_brand_theme()
 
 from pages_event_catalog import VERIFIED_NETWORKING_EVENTS, RESEARCH_UPDATED as NETWORKING_RESEARCH_UPDATED
-from booth_opportunities import BOOTH_OPPORTUNITIES, BOOTH_RESEARCH_UPDATED
+import booth_opportunities as booth_catalog
+BOOTH_OPPORTUNITIES = booth_catalog.BOOTH_OPPORTUNITIES
+BOOTH_RESEARCH_UPDATED = getattr(booth_catalog, "BOOTH_RESEARCH_UPDATED", "2026-10-16")
 
 def upcoming_networking():
     today = date.today()
