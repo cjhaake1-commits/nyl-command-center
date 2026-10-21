@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-from datetime import date
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
+import pandas as pd
 import streamlit as st
 
 from core.branding import brand_hero
@@ -13,7 +15,7 @@ st.set_page_config(page_title="Command Center | Chris Haake", page_icon="◆", l
 
 brand_hero(
     "Growth Command Center",
-    "Your operating cockpit for Central Florida prospect discovery, relationship development, marketing reach, pipeline execution and production discipline.",
+    "A practical operating cockpit for building a focused Central Florida practice: discover, verify, connect, prepare, follow through, and improve.",
     "Chris Haake • Advisor Growth OS",
 )
 
@@ -25,47 +27,73 @@ high_fit_network = sum(1 for x in MARKETING_NETWORK_LEADS if float(x.get("Audien
 high_hnw = sum(1 for x in HNW_LEADS if float(x.get("Opportunity score", 0) or 0) >= 95)
 
 s1, s2, s3 = st.columns([1, 1, 2])
-s1.success("SYSTEM • ONLINE")
-s2.info("DISCOVERY ENGINE • ACTIVE")
-s3.caption("Public-source intelligence is kept traceable. Regulated recommendations, communications and advertising remain inside approved processes.")
+s1.info("DEMO WORKSPACE • ONLINE")
+s2.info("CURATED SEED DATA • LOADED")
+s3.caption(
+    "This workspace is a planning prototype, not connected to NYL production systems. "
+    "Verify current sources and use firm-approved systems and processes for prospect records, communications, and recommendations."
+)
 
 st.subheader("Executive Snapshot")
 c1, c2, c3, c4, c5 = st.columns(5)
-c1.metric("Discovery Universe", total_discovery, "live records")
+c1.metric("Research Records", total_discovery, "curated seed files")
 c2.metric("Business Prospects", business_count)
-c3.metric("HNW / COI", hnw_count, f"{high_hnw} priority")
-c4.metric("Referral Network", network_count, f"{high_fit_network} fit 95+")
-c5.metric("Daily Priority", "20", "relationship actions")
+c3.metric("HNW / COI", hnw_count, f"{high_hnw} high-score research records")
+c4.metric("Referral Network", network_count, f"{high_fit_network} high-fit research records")
+c5.metric("Daily Relationship Actions", "20", "planning target")
+
+st.subheader("Growth Priorities")
+st.caption(
+    "Targets describe the intended operating plan; this prototype does not claim they are completed or synced to Salesforce."
+)
+goals = [
+    {
+        "Goal": "Build a qualified prospect universe",
+        "Target": "5,000 validated net-new prospects",
+        "Proof": "Count only accepted Salesforce Created rows; deduplicate against existing records and retain source evidence.",
+        "Next action": "Verify identity, business fit, public source, and contact details before approved import or outreach.",
+    },
+    {
+        "Goal": "Earn the opportunity and ramp well",
+        "Target": "First 100 qualified accounts, then a consistent weekly rhythm",
+        "Proof": "Manager-confirmed onboarding, approved tools, dated next actions, and weekly activity/conversion review.",
+        "Next action": "Ask the office which measures and systems define a successful first 30, 60, and 90 days.",
+    },
+    {
+        "Goal": "Create a repeatable practice",
+        "Target": "A focused Central Florida acquisition and relationship plan",
+        "Proof": "Track conversations, held meetings, next steps, introductions, and conversion by source.",
+        "Next action": "Test a small number of owner, professional, COI, and event lanes; invest more time in what converts.",
+    },
+]
+st.dataframe(pd.DataFrame(goals), width="stretch", hide_index=True)
 
 st.subheader("Today's Operating Priorities")
 left, center, right = st.columns([1.15, 1, 1])
 with left:
-    st.markdown("### 01 • Build Pipeline")
-    st.write("Work the highest-scoring business and household prospects first. Prioritize fresh triggers and credible warm paths over generic cold volume.")
-    st.progress(0.72, text="Discovery engine coverage")
-    st.caption("Hourly research feeds Business, HNW/COI and Marketing/Referral discovery lanes.")
+    st.markdown("### 01 • Verify & Prioritize")
+    st.write("Start with a credible public signal, a verified identity, and a relevant reason to connect. Treat fit scores as research aids, not evidence of a person's needs.")
+    st.caption("Today: select a small, reviewable set of qualified accounts and confirm each source.")
 with center:
     st.markdown("### 02 • Build Relationships")
-    st.write("Develop COIs, influencers, Realtors, attorneys, CPAs, bankers and community connectors who can compound access to the right households.")
-    st.progress(0.58, text="Network development")
-    st.caption("Audience fit and relationship leverage matter more than raw follower count.")
+    st.write("Develop COI and community relationships through useful professional conversations. Earn trust before asking for introductions.")
+    st.caption("Today: choose a few meaningful relationship actions and record the next step.")
 with right:
-    st.markdown("### 03 • Execute")
-    st.write("Move research into dated next actions: introductions, calls, coffees, events, meeting preparation and disciplined follow-through.")
-    st.progress(0.45, text="Execution rhythm")
-    st.caption("Use Daily War Room for production math and activity tracking.")
+    st.markdown("### 03 • Learn & Improve")
+    st.write("Review activity and conversion by source. Adjust the plan from observed results instead of relying on fixed assumptions.")
+    st.caption("Today: use Daily War Room for editable goal math and activity tracking.")
 
 st.subheader("Growth Flywheel")
 cols = st.columns(4)
 modules = [
-    ("01", "Discover", "Public signals, referrals, events, creators and business triggers"),
-    ("02", "Prioritize", "Opportunity, warmth, timing, audience fit and strategic value"),
-    ("03", "Connect", "Warm paths, COIs, LinkedIn, events and relationship-first outreach"),
-    ("04", "Prepare", "Research, first-touch context and meeting intelligence"),
-    ("05", "Execute", "Touches, meetings, diagnostics and dated next actions"),
+    ("01", "Discover", "Public signals, referrals, events, and business triggers"),
+    ("02", "Prioritize", "Fit, warmth, timing, and a credible reason to connect"),
+    ("03", "Connect", "Warm paths, COIs, LinkedIn, and community relationships"),
+    ("04", "Prepare", "Public context, meeting goals, and thoughtful questions"),
+    ("05", "Execute", "Follow-up, meetings, dated next actions, and review"),
     ("06", "Coordinate", "Documented needs and approved specialist workflows"),
-    ("07", "Expand", "Reviews, introductions, community and additional relationships"),
-    ("08", "Learn", "Conversion data continuously improves prioritization"),
+    ("07", "Expand", "Service, reviews, introductions, and community"),
+    ("08", "Learn", "Conversion data improves where time is invested"),
 ]
 for i, (num, title, desc) in enumerate(modules):
     with cols[i % 4]:
@@ -80,19 +108,22 @@ st.subheader("Intelligence Stack")
 t1, t2, t3 = st.tabs(["Acquire", "Develop", "Execute"])
 with t1:
     a, b, c = st.columns(3)
-    a.markdown("**Prospect Discovery**\n\nBusiness owners, HNW households, COIs and public growth triggers.")
-    b.markdown("**Opportunity Radar**\n\nSurface timing signals and research-backed hypotheses without assuming private needs.")
-    c.markdown("**Lead Lists**\n\nTurn research into controlled, source-aware working lists and exports.")
+    a.markdown("**Prospect Discovery**\n\nBusiness owners, households, COIs, and public growth signals.")
+    b.markdown("**Opportunity Radar**\n\nResearch timing signals as hypotheses; confirm context in conversation.")
+    c.markdown("**Lead Lists**\n\nReview source-aware records and deduplication before any approved workflow.")
 with t2:
     a, b, c = st.columns(3)
-    a.markdown("**Influencer Network**\n\nReal-estate, home, design and lifestyle relationships ranked by audience fit.")
-    b.markdown("**LinkedIn Network**\n\nVerify professional identity, mutual context and warm paths before connecting.")
-    c.markdown("**Marketing Command Center**\n\nPlan compliant local visibility, events, content and relationship campaigns.")
+    a.markdown("**Influencer Network**\n\nEvaluate professional and community relationships by relevance.")
+    b.markdown("**LinkedIn Network**\n\nCheck professional identity, mutual context, and warm paths.")
+    c.markdown("**Marketing Command Center**\n\nPlan local visibility, events, and content for review through applicable firm processes.")
 with t3:
     a, b, c = st.columns(3)
-    a.markdown("**Daily War Room**\n\nReverse-engineer goals into today's exact activity mission.")
-    b.markdown("**Meeting Intelligence**\n\nPrepare for higher-quality conversations with public context and clear objectives.")
-    c.markdown("**Sales Autopilot**\n\nKeep follow-up, stale opportunities and execution discipline visible.")
+    a.markdown("**Daily War Room**\n\nTranslate an editable goal into activity assumptions.")
+    b.markdown("**Meeting Intelligence**\n\nPrepare for conversations and structure follow-up.")
+    c.markdown("**Sales Autopilot**\n\nReview due follow-up, stale opportunities, and execution discipline.")
 
 st.divider()
-st.caption(f"Chris Haake Command Center • {date.today().isoformat()} • Central Florida Growth OS • Research signals are not financial recommendations.")
+st.caption(
+    f"Chris Haake Command Center • {datetime.now(ZoneInfo('America/New_York')).date().isoformat()} • "
+    "Central Florida planning prototype • Research signals are not recommendations or proof of need."
+)
