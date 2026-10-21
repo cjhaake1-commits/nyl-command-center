@@ -1,21 +1,16 @@
 from __future__ import annotations
 
+import json
 import os
 import re
-from dataclasses import dataclass
-from urllib.parse import quote_plus
+import urllib.error
+import urllib.parse
+import urllib.request
+from datetime import datetime, timezone
 
-import requests
 import streamlit as st
 
-
-@dataclass
-class SearchItem:
-    title: str
-    url: str
-    snippet: str
-    source: str
-    published: str = ""
+USER_AGENT = "NYL-Command-Center/1.0 (public professional briefing)"
 
 
 def _search_config() -> tuple[str, str]:
@@ -27,112 +22,122 @@ def _search_config() -> tuple[str, str]:
     return str(key or os.getenv("TAVILY_API_KEY", "")).strip(), str(endpoint).strip()
 
 
-def search_public_web(query: str, max_results: int = 8) -> tuple[list[SearchItem], str]:
-    """Search public web through optional configured Tavily key; never fabricates fallback results."""
-    api_key, endpoint = _search_config()
-    if not api_key:
-        return [], "Public web search is not configured. Add an approved TAVILY_API_KEY secret to enable live subject research."
+def _web_search(query: str) -> tuple[list[dict], str]:
+    key, endpoint = _search_config()
+    if not key:
+        return [], "Search provider is not configured. Use the direct search links below, or configure an approved TAVILY_API_KEY in deployment secrets."
+    payload = {
+        "api_key": key,
+        "query": query,
+        "topic": "general",
+        "search_depth": "basic",
+        "max_results": 7,
+        "include_answer": False,
+        "include_raw_content": False,
+    }
+    request = urllib.request.Request(
+        endpoint,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"User-Agent": USER_AGENT, "Accept": "application/json", "Content-Type": "application/json"},
+        method="POST",
+    )
     try:
-        response = requests.post(
-            endpoint,
-            json={
-                "api_key": api_key,
-                "query": query,
-                "topic": "general",
-                "search_depth": "basic",
-                "max_results": max_results,
-                "include_answer": False,
-                "include_raw_content": False,
-            },
-            timeout=15,
-        )
-        response.raise_for_status()
-        payload = response.json()
+        with urllib.request.urlopen(request, timeout=15) as response:
+            result = json.loads(response.read().decode("utf-8"))
         items = []
-        for row in payload.get("results", []):
+        for row in result.get("results", []):
             title = str(row.get("title") or "").strip()
             url = str(row.get("url") or "").strip()
             snippet = re.sub(r"\s+", " ", str(row.get("content") or "")).strip()
             if title and url.startswith(("http://", "https://")):
-                items.append(SearchItem(
-                    title=title,
-                    url=url,
-                    snippet=snippet[:700],
-                    source=str(row.get("source") or ""),
-                    published=str(row.get("published_date") or ""),
-                ))
+                items.append({
+                    "title": title,
+                    "url": url,
+                    "snippet": snippet[:650],
+                    "source": str(row.get("source") or ""),
+                })
         if not items:
             return [], "Search completed but returned no usable public sources."
         return items, ""
-    except (requests.RequestException, ValueError) as exc:
-        return [], f"Search unavailable ({type(exc).__name__}). Check provider configuration and try again."
+    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, ValueError) as exc:
+        return [], f"Search unavailable ({type(exc).__name__})."
 
 
-def _subject_query(subject: str, kind: str, location: str) -> str:
-    suffix = f" {location}" if location.strip() else ""
-    kind_terms = {
+def _query(subject: str, kind: str, context: str) -> str:
+    suffix = f" {context.strip()}" if context.strip() else ""
+    scopes = {
         "Person / professional": " professional biography role employer public work",
         "Business / organization": " company services leadership news official",
-        "Industry / topic": " latest trends official data",
-    }[kind]
-    return f'"{subject.strip()}"{suffix}{kind_terms}'
+        "Industry / topic": " recent trends official data",
+    }
+    return f'"{subject.strip()}"{suffix}{scopes[kind]}'
+
+
+def _has_identifiers(text: str) -> bool:
+    patterns = [
+        r"\b\d{3}-\d{2}-\d{4}\b",
+        r"\b\d{9,}\b",
+        r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}",
+        r"\b(?:policy|account|ssn|dob|date of birth)\b",
+    ]
+    return any(re.search(p, text, re.I) for p in patterns)
 
 
 def render_subject_briefing() -> None:
     st.title("Quick Subject Briefing")
-    st.caption("Fast, source-linked public research for professional conversations. Search results can be wrong or outdated; verify them before relying on them.")
-
-    with st.form("quick_subject_brief"):
-        kind = st.selectbox("Subject type", ["Person / professional", "Business / organization", "Industry / topic"])
-        subject = st.text_input("Name or subject", placeholder="Person, firm, organization, or topic")
-        location = st.text_input("Location or industry context (optional)", placeholder="e.g. Orlando, FL • healthcare")
-        submitted = st.form_submit_button("Build public-source briefing", type="primary")
-
-    if submitted:
+    st.caption("Prepare with public professional information and source-linked talking points. Search results can be wrong, incomplete, or outdated; open the original source before relying on a fact.")
+    kind = st.selectbox("Briefing type", ["Person / professional", "Business / organization", "Industry / topic"])
+    subject = st.text_input("Name or subject", placeholder="Person, company, organization, or industry")
+    context = st.text_input("Location or professional context (optional)", placeholder="e.g., Orlando, FL • healthcare")
+    if st.button("Build briefing", type="primary"):
+        combined = f"{subject} {context}"
         if len(subject.strip()) < 2:
             st.warning("Enter a subject to search.")
-        elif re.search(r"\b\d{3}-\d{2}-\d{4}\b|\b\d{9,}\b|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|\b(?:policy|account|ssn|dob)\b", subject + " " + location, flags=re.I):
-            st.error("Remove identifiers or personal contact/account information. This tool accepts public professional search terms only.")
+        elif _has_identifiers(combined):
+            st.error("Remove personal identifiers, email addresses, phone numbers, and account or policy references. This is public professional research only.")
         else:
-            query = _subject_query(subject, kind, location)
-            with st.spinner("Searching public sources…"):
-                items, error = search_public_web(query)
+            query = _query(subject, kind, context)
+            with st.spinner("Searching public professional sources…"):
+                items, error = _web_search(query)
             if error:
                 st.warning(error)
             else:
+                st.session_state["subject_brief_items"] = items
                 st.session_state["subject_brief_query"] = query
-                st.session_state["subject_brief_items"] = [item.__dict__ for item in items]
-                st.session_state["subject_brief_created"] = __import__("datetime").datetime.now().astimezone().strftime("%Y-%m-%d %H:%M %Z")
-                st.session_state.pop("subject_brief_notes", None)
+                st.session_state["subject_brief_created"] = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
     items = st.session_state.get("subject_brief_items", [])
     query = st.session_state.get("subject_brief_query")
     if items and query:
         st.caption(f"Search run: {st.session_state.get('subject_brief_created', 'time unavailable')} • Query: {query}")
-        st.subheader("Verified talking-point workflow")
-        st.info("This page does not infer wealth, health, family status, financial need, or suitability. Treat every result as a lead for your own public-source verification.")
-        st.markdown("1. **What is confirmed?** Use only facts visible in a cited public source.\n2. **Why could it matter?** Connect the fact to a neutral business or industry question.\n3. **What remains unknown?** Ask rather than assume.\n4. **What is the natural opener?** Show curiosity and ask permission before discussing your work.")
-        for i, item in enumerate(items, start=1):
+        st.info("This tool does not infer wealth, health, family circumstances, financial need, suitability, or product fit. Treat results as research leads and verify the source and identity.")
+        st.subheader("Public-source briefing")
+        for i, item in enumerate(items, 1):
             with st.container(border=True):
                 st.markdown(f"**{i}. [{item['title']}]({item['url']})**")
-                source_meta = " · ".join(x for x in [item.get("source", ""), item.get("published", "")] if x)
-                if source_meta:
-                    st.caption(source_meta)
+                if item.get("source"):
+                    st.caption(item["source"])
                 if item.get("snippet"):
                     st.write(item["snippet"])
-                st.caption("Use as an unverified research lead. Open the source and confirm identity, date, and context.")
-        st.subheader("Conversation prep")
-        prep = st.columns(3)
-        prep[0].markdown("**Possible opener**\n\n“I saw your work on [confirmed public item]. What are you focused on next?”")
-        prep[1].markdown("**Business question**\n\n“What is changing in your industry or organization that is taking most of your attention?”")
-        prep[2].markdown("**Permission close**\n\n“If useful, would a brief conversation about how I work with people in this area be welcome?”")
-        if st.button("Clear briefing", key="clear_subject_brief"):
+                st.caption("Unverified until you open and review the source.")
+        st.subheader("Talking points")
+        a, b, c = st.columns(3)
+        a.markdown("**Curious opener**\n\n“I saw your work on [confirmed public item]. What are you focused on next?”")
+        b.markdown("**Discovery question**\n\n“What changes in your industry or organization are taking most of your attention?”")
+        c.markdown("**Permission-based next step**\n\n“If useful, would a short conversation about how I work with people in this area be welcome?”")
+        st.caption("Facts should lead to thoughtful questions, not assumptions about a person's finances or need for a product.")
+        if st.button("Clear briefing"):
             st.session_state.pop("subject_brief_items", None)
             st.session_state.pop("subject_brief_query", None)
             st.session_state.pop("subject_brief_created", None)
             st.rerun()
 
     st.divider()
-    st.subheader("Research gate")
-    st.markdown("- Use public professional or organizational sources only.\n- Confirm identity and recency directly in source material.\n- Keep notes out of this app if they contain client or prospect personal data; enter approved prospect records into Salesforce only after your firm’s rules permit.\n- A public business event can justify a question; it does not establish financial need or product fit.")
-    st.caption("Live search requires an approved search-provider key in deployment secrets. No results are synthesized when it is not configured.")
+    st.subheader("Use the lookup well")
+    st.markdown("- Search public professional, company, and industry sources only.\n- Confirm the identity, date, and context at the original source.\n- Use public events or business changes as a reason to ask a question, not as proof of financial need.\n- Keep personal prospect/client notes in firm-approved systems; this briefing is session-only.")
+    st.caption("Direct search options: " + " · ".join([
+        f"[Web search](https://www.google.com/search?q={urllib.parse.quote_plus(subject + ' ' + context)})",
+        f"[News search](https://news.google.com/search?q={urllib.parse.quote_plus(subject + ' ' + context)})",
+        f"[LinkedIn search](https://www.linkedin.com/search/results/people/?keywords={urllib.parse.quote_plus(subject)})",
+    ]))
+    st.caption("Automated source retrieval requires an approved search-provider key. The page never fabricates results when the key is missing.")
