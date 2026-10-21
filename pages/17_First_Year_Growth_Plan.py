@@ -167,16 +167,11 @@ with st.expander("Registration boundary to keep visible in every review"):
         "or product authorization. Confirm current status and scope in NYL/NYLIFE Securities systems before any securities activity."
     )
     st.markdown(
-        "- [FINRA Series 6 scope](https://www.finra.org/registration-exams-ce/qualification-exams/series6)  
-"
-        "- [FINRA Series 63 overview](https://www.finra.org/registration-exams-ce/qualification-exams/series63)  
-"
-        "- [NYLIFE Securities products and disclosures](https://www.newyorklife.com/securities/products)  
-"
-        "- [NYL protection products](https://www.newyorklife.com/products/insurance)  
-"
-        "- [NYL investments and annuities](https://www.newyorklife.com/products/investments)  
-"
+        "- [FINRA Series 6 scope](https://www.finra.org/registration-exams-ce/qualification-exams/series6)  \n"
+        "- [FINRA Series 63 overview](https://www.finra.org/registration-exams-ce/qualification-exams/series63)  \n"
+        "- [NYLIFE Securities products and disclosures](https://www.newyorklife.com/securities/products)  \n"
+        "- [NYL protection products](https://www.newyorklife.com/products/insurance)  \n"
+        "- [NYL investments and annuities](https://www.newyorklife.com/products/investments)  \n"
         "- [NYL Group Benefit Solutions](https://www.newyorklife.com/group-benefit-solutions)"
     )
 
