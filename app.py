@@ -83,6 +83,8 @@ market_monitor = st.Page("pages/20_Market_Monitor.py", title="Market Monitor", i
 subject_brief = st.Page("pages/21_Quick_Subject_Briefing.py", title="Quick Subject Briefing", icon="🔍")
 business_desk = st.Page("pages/22_Business_Networking_Desk.py", title="Business & Networking Desk", icon="🏢")
 quarterback = st.Page("pages/23_Relationship_Quarterback.py", title="Relationship Quarterback", icon="🏈")
+series_7 = st.Page("pages/24_Series_7_Study_Guide.py", title="Series 7 Study Guide", icon="📚")
+series_65 = st.Page("pages/25_Series_65_Study_Guide.py", title="Series 65 Study Guide", icon="📖")
 
 navigation = st.navigation(
     {
@@ -93,6 +95,7 @@ navigation = st.navigation(
         "MARKETING & NETWORK": [marketing, influencer_network, linkedin_network, mailing],
         "INTELLIGENCE": [prospect_intel, meeting_intel, subject_brief, business_desk],
         "EXECUTION": [rollover_playbook, first_sale, autopilot, interview, practice_lab],
+        "STUDY DESK": [series_7, series_65],
         "PRACTICE": [my_strategy],
     },
     position="sidebar",
