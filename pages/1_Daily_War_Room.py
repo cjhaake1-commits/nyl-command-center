@@ -23,7 +23,7 @@ from data.db import (
     upsert_daily_activity,
 )
 
-BUILD_VERSION = "2026-08-15 • Orlando Prospecting + Marketing"
+BUILD_VERSION = "2026-10-21 • Goal planning and activity tracking"
 
 st.set_page_config(page_title="NYL Command Center", page_icon="🎯", layout="wide")
 init_db()
