@@ -78,10 +78,12 @@ influencer_network = st.Page("pages/3A_Influencer_Network.py", title="Influencer
 linkedin_network = st.Page("pages/3B_LinkedIn_Network.py", title="LinkedIn Network", icon="🔗")
 interview = st.Page("pages/8_Interview_Ace.py", title="Interview / Presentation", icon="🃏")
 practice_lab = st.Page("pages/18_Practice_Process_Lab.py", title="Practice & Process Lab", icon="🎭")
+sales_coach = st.Page("pages/19_Sales_Coach.py", title="Sales Coach", icon="🧭")
 
 navigation = st.navigation(
     {
         "COMMAND": [executive, growth_plan, war_room],
+        "COACHING": [sales_coach],
         "PROSPECTING": [prospect_discovery, prospecting, lead_lists, opportunity, event_prospecting, group_affinity],
         "MARKETING & NETWORK": [marketing, influencer_network, linkedin_network, mailing],
         "INTELLIGENCE": [prospect_intel, meeting_intel],
