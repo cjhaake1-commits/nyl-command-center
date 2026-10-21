@@ -168,9 +168,28 @@ a {{ color: var(--brand-gold-soft); }}
     color: #F5F7FA !important;
     border-radius: 9px !important;
 }}
-[data-baseweb="textarea"] textarea {{ color: #F5F7FA !important; }}
+[data-baseweb="textarea"] textarea,
+[data-testid="stTextArea"] textarea {{
+    background: #0D1218 !important;
+    color: #F5F7FA !important;
+    border: 1px solid #2A333E !important;
+    border-radius: 9px !important;
+    caret-color: var(--brand-gold-soft);
+}}
+[data-baseweb="textarea"] textarea::placeholder,
+[data-testid="stTextArea"] textarea::placeholder {{ color: #8792A0 !important; opacity: 1; }}
+[data-baseweb="input"] input,
+[data-baseweb="select"] input,
+[data-testid="stTextInput"] input,
+[data-testid="stNumberInput"] input,
+[data-testid="stDateInput"] input {{
+    background: #0D1218 !important;
+    color: #F5F7FA !important;
+    caret-color: var(--brand-gold-soft);
+}}
 [data-baseweb="select"] > div:hover,
-[data-baseweb="input"]:hover {{ border-color: #46515E !important; }}
+[data-baseweb="input"]:hover,
+[data-baseweb="textarea"]:hover {{ border-color: #46515E !important; }}
 label, [data-testid="stWidgetLabel"] {{ color: #C7D0DB !important; font-weight: 560 !important; }}
 
 /* Buttons */
@@ -189,12 +208,32 @@ label, [data-testid="stWidgetLabel"] {{ color: #C7D0DB !important; font-weight: 
     color: var(--brand-gold-soft) !important;
     transform: translateY(-1px);
 }}
-.stButton > button[kind="primary"] {{
-    background: linear-gradient(135deg, #F0C36A, #C88B2F) !important;
+.stButton > button[kind="primary"],
+[data-testid="stBaseButton-primary"],
+[data-testid="stFormSubmitButton"] button,
+button[kind="primary"] {{
+    background: linear-gradient(135deg, #F0C36A 0%, #D7A449 58%, #BE8128 100%) !important;
+    background-color: #D7A449 !important;
     color: #17120A !important;
-    border-color: #E0AD52 !important;
+    border: 1px solid #E0AD52 !important;
     font-weight: 730 !important;
 }}
+.stButton > button[kind="primary"]:hover,
+[data-testid="stBaseButton-primary"]:hover,
+[data-testid="stFormSubmitButton"] button:hover,
+button[kind="primary"]:hover {{
+    background: linear-gradient(135deg, #F7D58E 0%, #E1B45F 58%, #CF9439 100%) !important;
+    border-color: #F0C36A !important;
+    color: #17120A !important;
+}}
+.stButton > button:focus-visible,
+.stLinkButton > a:focus-visible,
+[data-testid="stDownloadButton"] > button:focus-visible,
+[data-testid="stFormSubmitButton"] button:focus-visible {{
+    outline: 2px solid var(--brand-gold-soft) !important;
+    outline-offset: 2px !important;
+}});
+
 
 /* Alerts */
 [data-testid="stAlert"] {{
@@ -329,6 +368,12 @@ hr {{ border-color: #202832 !important; opacity: 1 !important; }}
     [data-testid="stMetric"] {{ min-height: 98px; padding: 14px; }}
     .brand-name {{ font-size: 1.2rem; }}
     .stTabs [data-baseweb="tab"] {{ padding: 10px 11px; font-size: .82rem; }}
+    [data-testid="stForm"] {{ padding: .85rem; }}
+    [data-testid="stFormSubmitButton"] button,
+    [data-testid="stBaseButton-primary"] {{ width: 100%; }}
+}}
+@media (prefers-reduced-motion: reduce) {{
+    *, *::before, *::after {{ scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }}
 }}
 </style>
 """
