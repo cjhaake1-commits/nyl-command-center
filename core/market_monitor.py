@@ -38,6 +38,7 @@ def fetch_market_quotes() -> tuple[list[dict], str]:
     }
     query = urllib.parse.urlencode({"symbols": ",".join(symbols.values()), "fields": "symbol,shortName,regularMarketPrice,regularMarketChange,regularMarketChangePercent,regularMarketTime,currency"})
     url = f"https://query1.finance.yahoo.com/v7/finance/quote?{query}"
+    bulk_error = ""
     try:
         payload = _fetch_json(url)
         results = payload.get("quoteResponse", {}).get("result", [])
@@ -57,9 +58,64 @@ def fetch_market_quotes() -> tuple[list[dict], str]:
                     int(item.get("regularMarketTime") or 0), tz=timezone.utc
                 ).strftime("%Y-%m-%d %H:%M UTC"),
             })
-        return rows, datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+        if rows:
+            return rows, datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+        bulk_error = "bulk endpoint returned no quotes"
     except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, ValueError, KeyError) as exc:
-        return [], f"Market feed unavailable ({type(exc).__name__})."
+        bulk_error = type(exc).__name__
+
+    rows = fetch_chart_quotes(symbols)
+    if rows:
+        fetched_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+        return rows, f"{fetched_at} • Yahoo Finance chart fallback"
+    return [], f"Market feeds unavailable (bulk: {bulk_error}; chart fallback: no quotes)."
+
+
+def _fetch_chart_quote(name: str, symbol: str) -> dict | None:
+    """Fetch one delayed quote from Yahoo's chart endpoint when bulk quotes are blocked."""
+    encoded_symbol = urllib.parse.quote(symbol, safe="")
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{encoded_symbol}?range=5d&interval=1d"
+    try:
+        payload = _fetch_json(url, timeout=6)
+        chart = payload.get("chart", {})
+        result = (chart.get("result") or [None])[0]
+        if not result:
+            return None
+        meta = result.get("meta", {})
+        price = meta.get("regularMarketPrice")
+        previous = meta.get("chartPreviousClose", meta.get("previousClose"))
+        if price is None or previous is None or float(previous) == 0:
+            return None
+        last = float(price)
+        previous = float(previous)
+        change = last - previous
+        quote_time = meta.get("regularMarketTime")
+        if not quote_time:
+            timestamps = result.get("timestamp") or []
+            quote_time = timestamps[-1] if timestamps else None
+        return {
+            "Market": name,
+            "Symbol": symbol,
+            "Last": last,
+            "Change": change,
+            "Change %": change / previous * 100,
+            "Quote time (UTC)": (
+                datetime.fromtimestamp(int(quote_time), tz=timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+                if quote_time else "Timestamp unavailable"
+            ),
+        }
+    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, ValueError, KeyError, TypeError):
+        return None
+
+
+def fetch_chart_quotes(symbols: dict[str, str]) -> list[dict]:
+    """Fetch chart quotes concurrently so fallback remains responsive."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    with ThreadPoolExecutor(max_workers=5) as pool:
+        rows = list(pool.map(lambda pair: _fetch_chart_quote(*pair), symbols.items()))
+    return [row for row in rows if row is not None]
+
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
