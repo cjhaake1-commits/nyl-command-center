@@ -362,16 +362,86 @@ hr {{ border-color: #202832 !important; opacity: 1 !important; }}
 }}
 .linkedin-badge {{ color: #6AB7FF; font-weight: 750; letter-spacing: .03em; }}
 
-/* Mobile */
+/* Mobile-first interaction and responsive layout */
 @media (max-width: 760px) {{
-    .block-container {{ padding-top: 1.15rem; padding-left: .8rem; padding-right: .8rem; }}
-    [data-testid="stMetric"] {{ min-height: 98px; padding: 14px; }}
-    .brand-name {{ font-size: 1.2rem; }}
-    .stTabs [data-baseweb="tab"] {{ padding: 10px 11px; font-size: .82rem; }}
-    [data-testid="stForm"] {{ padding: .85rem; }}
-    [data-testid="stFormSubmitButton"] button,
-    [data-testid="stBaseButton-primary"] {{ width: 100%; }}
+    .block-container {{
+        padding-top: .8rem !important;
+        padding-bottom: 2rem !important;
+        padding-left: .7rem !important;
+        padding-right: .7rem !important;
+        max-width: 100% !important;
+    }}
+    [data-testid="stHorizontalBlock"] {{
+        flex-wrap: wrap !important;
+        gap: .55rem !important;
+    }}
+    [data-testid="stHorizontalBlock"] > [data-testid="column"] {{
+        flex: 1 1 calc(50% - .55rem) !important;
+        min-width: calc(50% - .55rem) !important;
+    }}
+    [data-testid="stMetric"] {{
+        min-height: 86px;
+        padding: .7rem .75rem !important;
+        border-radius: 11px;
+    }}
+    [data-testid="stMetricLabel"] {{ font-size: .76rem !important; line-height: 1.2 !important; }}
+    [data-testid="stMetricValue"] {{
+        font-size: clamp(1.15rem, 6vw, 1.65rem) !important;
+        overflow-wrap: anywhere;
+    }}
+    [data-testid="stDataFrame"] {{
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }}
+    [data-testid="stDataFrame"] iframe {{ max-width: 100% !important; }}
+    .stTabs [data-baseweb="tab-list"] {{
+        overflow-x: auto !important;
+        flex-wrap: nowrap !important;
+        scrollbar-width: thin;
+        -webkit-overflow-scrolling: touch;
+    }}
+    .stTabs [data-baseweb="tab"] {{
+        flex: 0 0 auto !important;
+        white-space: nowrap !important;
+        padding: 9px 10px !important;
+        font-size: .78rem !important;
+    }}
+    .brand-hero {{
+        padding: 1rem !important;
+        margin-bottom: .85rem !important;
+        border-radius: 13px !important;
+    }}
+    .brand-hero-title {{ font-size: 1.25rem !important; line-height: 1.2 !important; }}
+    .brand-hero-copy {{ font-size: .9rem !important; }}
+    .brand-name {{ font-size: 1.15rem; }}
+    [data-testid="stForm"] {{ padding: .75rem !important; border-radius: 12px !important; }}
+    .stButton > button,
+    .stLinkButton > a,
+    [data-testid="stDownloadButton"] > button,
+    [data-testid="stFormSubmitButton"] button {{
+        min-height: 2.9rem !important;
+        width: 100%;
+    }}
+    input, textarea, [data-baseweb="select"] {{
+        font-size: 16px !important;
+    }}
+    [data-testid="stExpander"] summary {{
+        min-height: 2.9rem;
+        align-items: center;
+    }}
+    h1 {{ font-size: clamp(1.55rem, 7vw, 2rem) !important; }}
+    h2 {{ font-size: 1.25rem !important; }}
+    h3 {{ font-size: 1.08rem !important; }}
 }}
+@media (max-width: 430px) {{
+    [data-testid="stHorizontalBlock"] > [data-testid="column"] {{
+        flex: 1 1 100% !important;
+        min-width: 100% !important;
+    }}
+    .stTabs [data-baseweb="tab"] {{ padding: 8px 9px !important; font-size: .74rem !important; }}
+}}
+
 @media (prefers-reduced-motion: reduce) {{
     *, *::before, *::after {{ scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }}
 }}
