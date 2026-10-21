@@ -43,37 +43,37 @@ with tab_guide:
     st.subheader("Concept guide")
     with st.expander("1. Economics and business information", expanded=True):
         st.markdown(
-            "- Understand real versus nominal values, inflation, interest rates, monetary/fiscal policy, business cycles, and leading/coincident/lagging indicators.\\n"
-            "- Learn the broad meaning of yield-curve shapes and how rates, inflation, and growth can affect security prices; avoid turning relationships into certain forecasts.\\n"
-            "- Read income statements, balance sheets, and cash-flow statements at an introductory level; distinguish liquidity, leverage, profitability, and operating cash flow.\\n"
+            "- Understand real versus nominal values, inflation, interest rates, monetary/fiscal policy, business cycles, and leading/coincident/lagging indicators.\n"
+            "- Learn the broad meaning of yield-curve shapes and how rates, inflation, and growth can affect security prices; avoid turning relationships into certain forecasts.\n"
+            "- Read income statements, balance sheets, and cash-flow statements at an introductory level; distinguish liquidity, leverage, profitability, and operating cash flow.\n"
             "- Review time value of money, present/future value, return measures, and risk/return concepts."
         )
     with st.expander("2. Investment vehicles and risk"):
         st.markdown(
-            "- Compare equity, debt, government and municipal securities, mutual funds, ETFs, closed-end funds, UITs, REITs, private/alternative investments, options, and insurance products.\\n"
-            "- For each, identify ownership/claim, income source, liquidity, pricing, costs, tax considerations, market/credit/inflation/interest-rate risk, and guarantees or their absence.\\n"
-            "- Understand diversification, correlation, systematic versus unsystematic risk, standard deviation, beta, duration, and the limits of historical performance.\\n"
+            "- Compare equity, debt, government and municipal securities, mutual funds, ETFs, closed-end funds, UITs, REITs, private/alternative investments, options, and insurance products.\n"
+            "- For each, identify ownership/claim, income source, liquidity, pricing, costs, tax considerations, market/credit/inflation/interest-rate risk, and guarantees or their absence.\n"
+            "- Understand diversification, correlation, systematic versus unsystematic risk, standard deviation, beta, duration, and the limits of historical performance.\n"
             "- Learn suitability-relevant features without treating any product's tax treatment or guarantee as a substitute for the full client picture."
         )
     with st.expander("3. Client profiles, portfolio construction, and planning"):
         st.markdown(
-            "- Collect goals, time horizon, liquidity needs, income/resources, obligations, experience, risk capacity and tolerance, tax context, and decision constraints.\\n"
-            "- Know asset-allocation, rebalancing, dollar-cost averaging, active/passive management, and basic portfolio theory. No strategy assures a gain or prevents loss.\\n"
-            "- Compare account types and planning contexts such as retirement, education, trusts, estates, business entities, and insurance needs.\\n"
+            "- Collect goals, time horizon, liquidity needs, income/resources, obligations, experience, risk capacity and tolerance, tax context, and decision constraints.\n"
+            "- Know asset-allocation, rebalancing, dollar-cost averaging, active/passive management, and basic portfolio theory. No strategy assures a gain or prevents loss.\n"
+            "- Compare account types and planning contexts such as retirement, education, trusts, estates, business entities, and insurance needs.\n"
             "- Evaluate recommendations in context, including fees, tax effects, liquidity, concentration, alternatives, and conflicts; ask what is missing before concluding."
         )
     with st.expander("4. State and federal securities law"):
         st.markdown(
-            "- Build a role map: investment adviser (IA) versus investment adviser representative (IAR); broker-dealer (BD) versus agent. Understand the distinction between firm and individual registration.\\n"
-            "- Study federal/state jurisdiction, registration and exemption concepts, notice filing, de minimis rules, custody, books and records, advertising, and advisory contracts.\\n"
-            "- Focus on definitions and fact patterns: who is acting, for what compensation, in which jurisdiction, for which client, and under which exemption or registration.\\n"
+            "- Build a role map: investment adviser (IA) versus investment adviser representative (IAR); broker-dealer (BD) versus agent. Understand the distinction between firm and individual registration.\n"
+            "- Study federal/state jurisdiction, registration and exemption concepts, notice filing, de minimis rules, custody, books and records, advertising, and advisory contracts.\n"
+            "- Focus on definitions and fact patterns: who is acting, for what compensation, in which jurisdiction, for which client, and under which exemption or registration.\n"
             "- Use NASAA's current study guide and the current statutes/rules reflected in your official materials. Legal details can change."
         )
     with st.expander("5. Fiduciary duty, ethics, and conflicts"):
         st.markdown(
-            "- Understand the fiduciary relationship and the duty to act in the client's best interest, disclose material conflicts, and avoid misleading claims.\\n"
-            "- Learn prohibited and unethical practices, principal/cross transactions, borrowing/lending, custody, discretion, performance advertising, testimonials, referrals, and recordkeeping as described in the current outline.\\n"
-            "- Ask: What conflict exists? Was it fully and clearly disclosed? Can it be eliminated or mitigated? Is the recommendation still in the client's best interest? What must be documented or escalated?\\n"
+            "- Understand the fiduciary relationship and the duty to act in the client's best interest, disclose material conflicts, and avoid misleading claims.\n"
+            "- Learn prohibited and unethical practices, principal/cross transactions, borrowing/lending, custody, discretion, performance advertising, testimonials, referrals, and recordkeeping as described in the current outline.\n"
+            "- Ask: What conflict exists? Was it fully and clearly disclosed? Can it be eliminated or mitigated? Is the recommendation still in the client's best interest? What must be documented or escalated?\n"
             "- Never use exam notes as authority for a real client situation; verify current policy and involve compliance/supervision."
         )
     st.subheader("Suggested leisurely path")
@@ -94,8 +94,8 @@ with tab_videos:
         "where discoverable. No video has a verified pass-rate advantage."
     )
     st.markdown(
-        "1. **[Series 65 free exam-prep playlist — Series 7 Guru / Dean Tinney](https://www.youtube.com/playlist?list=PLK1IazV_JQbGn7K_gBAD_TWW_TLrlRxA5)** — Long-form topic lectures and a large established exam-prep channel; search results surfaced individual lectures with tens of thousands of views. Select the full-length lectures rather than short quizzes.\\n"
-        "2. **[Series 65 complete study playlist — Focused Exam Strategy](https://www.youtube.com/playlist?list=PLT9ng_7TzM_jw9hgiUXXa-2b7-5OwLKs8)** — Recently assembled 43-video course with broad outline coverage; useful for a structured lecture path.\\n"
+        "1. **[Series 65 free exam-prep playlist — Series 7 Guru / Dean Tinney](https://www.youtube.com/playlist?list=PLK1IazV_JQbGn7K_gBAD_TWW_TLrlRxA5)** — Long-form topic lectures and a large established exam-prep channel; search results surfaced individual lectures with tens of thousands of views. Select the full-length lectures rather than short quizzes.\n"
+        "2. **[Series 65 complete study playlist — Focused Exam Strategy](https://www.youtube.com/playlist?list=PLT9ng_7TzM_jw9hgiUXXa-2b7-5OwLKs8)** — Recently assembled 43-video course with broad outline coverage; useful for a structured lecture path.\n"
         "3. **[Complete Series 65 investment adviser study playlist — Open Exam Prep](https://www.youtube.com/playlist?list=PLi1e52n1YnBSbRaGXzF_AnM05jzDSMDAN)** — A 75-episode structured lesson/podcast sequence. Episodes are shorter than the first option, but the complete playlist is a long-format course path."
     )
     st.caption("A single continuous, high-engagement full-length Series 65 lecture could not be confirmed with reliable public length/ratings signals. These playlist courses are the better-supported long-form options found. Verify each current playlist against NASAA's latest outline.")
