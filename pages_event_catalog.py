@@ -107,16 +107,16 @@ VERIFIED_NETWORKING_EVENTS = [
   {
     "date": "2026-10-29",
     "time": "5:30 PM - 7:30 PM",
-    "event": "West Orange Business After Hours",
+    "event": "Business After Hours at Orlando Health Horizon West",
     "organization": "West Orange Chamber",
     "objective": "Introductions",
     "importance": 92,
-    "fit": "Local business owners and community leaders",
+    "fit": "Orange County small-business owners, community leaders and local professionals",
     "url": "https://biz.wochamber.com/events/details/business-after-hours-10-29-2026-orlando-health-horizon-west-3195",
-    "location": "Orlando Health Horizon West",
-    "access": "RSVP; member $10, non-member $30",
-    "verification": "Organizer-published date; confirm current RSVP/status",
-    "source_checked": "2026-10-13"
+    "location": "Orlando Health - Horizon West Hospital, 17000 Porter Rd, Winter Garden, FL 34787",
+    "access": "Thursday, Oct 29, 5:30-7:30 PM EDT. RSVP required. Member advance rate $10; nonmember $30.",
+    "verification": "Official event page rechecked 2026-10-21; confirm registration availability",
+    "source_checked": "2026-10-21"
   },
   {
     "date": "2026-10-29",
@@ -125,12 +125,12 @@ VERIFIED_NETWORKING_EVENTS = [
     "organization": "Orlando Chamber",
     "objective": "Introductions",
     "importance": 86,
-    "fit": "Orlando business professionals",
+    "fit": "Orange County business professionals and local referral partners",
     "url": "https://my.orlandochamberofcommerce.com/event-6832869",
-    "location": "International Drive, Orlando",
-    "access": "RSVP required",
-    "verification": "Organizer-published date; confirm current RSVP/status",
-    "source_checked": "2026-10-13"
+    "location": "Dick's Last Resort, 9101 International Drive, Suite 1300, Orlando, FL 32819",
+    "access": "Thursday, Oct 29, 6-9 PM. RSVP required; free for members and prospective members.",
+    "verification": "Official event page rechecked 2026-10-21; confirm registration availability",
+    "source_checked": "2026-10-21"
   },
   {
     "date": "2026-10-30",
