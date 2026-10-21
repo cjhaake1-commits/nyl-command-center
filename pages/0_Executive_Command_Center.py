@@ -55,6 +55,9 @@ st.caption(
     "Verify source details and current NYL requirements before acting."
 )
 
+st.info("YEAR-ONE STRETCH TARGET • $1,000,000 credited commission • $20,000/week across 50 active production weeks. The First-Year Growth Plan shows editable assumptions and a Monday scorecard; this is an operating target, not a compensation forecast.")
+st.page_link("pages/17_First_Year_Growth_Plan.py", label="Open First-Year $1M Growth Plan", icon="🏆")
+
 st.subheader("Executive Snapshot")
 c1, c2, c3, c4, c5 = st.columns(5)
 c1.metric("Research Candidates", total_discovery, "curated records")
@@ -66,6 +69,12 @@ c5.metric("Referral Network", network_count, f"{high_fit_network} fit 95+")
 st.subheader("Growth Priorities")
 st.caption("Targets describe the intended operating plan. This prototype does not claim these goals are completed or synced to Salesforce.")
 goals = [
+    {
+        "Goal": "Reach the first-year commission stretch target",
+        "Target": "$1,000,000 credited commission; $20,000/week baseline over 50 active weeks",
+        "Proof": "NYL commission statements and confirmed contract, crediting, chargeback, and production rules.",
+        "Next action": "Confirm trigger date and case-credit rules with field leadership; review actuals every Monday.",
+    },
     {
         "Goal": "Build a qualified prospect universe",
         "Target": "5,000 validated, net-new leads",
