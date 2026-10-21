@@ -81,6 +81,7 @@ practice_lab = st.Page("pages/18_Practice_Process_Lab.py", title="Practice & Pro
 sales_coach = st.Page("pages/19_Sales_Coach.py", title="Sales Coach", icon="🧭")
 market_monitor = st.Page("pages/20_Market_Monitor.py", title="Market Monitor", icon="📊")
 subject_brief = st.Page("pages/21_Quick_Subject_Briefing.py", title="Quick Subject Briefing", icon="🔍")
+business_desk = st.Page("pages/22_Business_Networking_Desk.py", title="Business & Networking Desk", icon="🏢")
 
 navigation = st.navigation(
     {
@@ -88,7 +89,7 @@ navigation = st.navigation(
         "COACHING": [sales_coach],
         "PROSPECTING": [prospect_discovery, prospecting, lead_lists, opportunity, event_prospecting, group_affinity],
         "MARKETING & NETWORK": [marketing, influencer_network, linkedin_network, mailing],
-        "INTELLIGENCE": [prospect_intel, meeting_intel, subject_brief],
+        "INTELLIGENCE": [prospect_intel, meeting_intel, subject_brief, business_desk],
         "EXECUTION": [rollover_playbook, first_sale, autopilot, interview, practice_lab],
         "PRACTICE": [my_strategy],
     },
