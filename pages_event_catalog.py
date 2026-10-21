@@ -1,119 +1,22 @@
-"""Official-organizer listings checked 2026-10-13 for next 60 days.
-Dates and RSVP status can change; organizer access requirements may apply.
-No event listed here implies successful registration or permission to market.
+"""Central Florida networking event catalog, rolling 60-day window.
+Current dated additions and selected corrections checked 2026-10-21 on organizer pages.
+Older records retain individual source_checked dates; RSVP and venue details can change.
+No listing implies registration, prospect consent or NYL marketing approval.
 """
 
-RESEARCH_UPDATED = "2026-10-13"
+RESEARCH_UPDATED = "2026-10-21"
 VERIFIED_NETWORKING_EVENTS = [
   {
-    "date": "2026-10-13",
-    "time": "3:45 PM - 5 PM",
-    "event": "West Orange Chamber Connections",
-    "organization": "West Orange Chamber",
-    "objective": "Introductions",
-    "importance": 87,
-    "fit": "Business community and chamber relationships",
-    "url": "https://biz.wochamber.com/events/details/chamber-connections-10-13-2026-3206",
-    "location": "Winter Garden",
-    "access": "Members only; registration required",
-    "verification": "Organizer-published date; confirm current RSVP/status",
-    "source_checked": "2026-10-13"
-  },
-  {
-    "date": "2026-10-13",
-    "time": "6 PM - 9 PM",
-    "event": "Leadership Forum: Shaping Central Florida's Future",
-    "organization": "Orlando Chamber",
-    "objective": "Introductions",
-    "importance": 89,
-    "fit": "Executive and local business leadership",
-    "url": "https://orlandochamberofcommerce.com/",
-    "location": "Downtown Orlando",
-    "access": "Check RSVP",
-    "verification": "Organizer-published date; confirm current RSVP/status",
-    "source_checked": "2026-10-13"
-  },
-  {
-    "date": "2026-10-14",
-    "time": "3 PM - 5 PM",
-    "event": "Celebrating Extraordinary Women",
-    "organization": "West Orange Chamber",
-    "objective": "Introductions",
-    "importance": 87,
-    "fit": "Business owners and women leaders",
-    "url": "https://biz.wochamber.com/events/details/celebrating-extraordinary-women-10-14-2026-3204",
-    "location": "Winter Garden",
-    "access": "Member/non-member tickets",
-    "verification": "Organizer-published date; confirm current RSVP/status",
-    "source_checked": "2026-10-13"
-  },
-  {
-    "date": "2026-10-15",
-    "time": "6 PM - 9 PM",
-    "event": "Orlando Business Social at Bainbridge International",
-    "organization": "Orlando Chamber",
-    "objective": "Introductions",
-    "importance": 91,
-    "fit": "Local owners and professional referral partners",
-    "url": "https://my.orlandochamberofcommerce.com/event-6851746",
-    "location": "Bainbridge World Center, Orlando",
-    "access": "RSVP required; members/prospective members",
-    "verification": "Organizer-published date; confirm current RSVP/status",
-    "source_checked": "2026-10-13"
-  },
-  {
-    "date": "2026-10-20",
-    "time": "11:30 AM - 1:30 PM",
-    "event": "AI Risk: What Business Leaders Need to Know",
-    "organization": "ACG Orlando",
-    "objective": "Business-owner benefits",
-    "importance": 96,
-    "fit": "Middle-market executives, bankers, attorneys, advisors",
-    "url": "https://www.acg.org/orlando/events/ai-risk-what-business-leaders-need-know",
-    "location": "Citrus Club, Orlando",
-    "access": "Paid; ACG member/non-member pricing",
-    "verification": "Organizer-published date; confirm current RSVP/status",
-    "source_checked": "2026-10-13"
-  },
-  {
-    "date": "2026-10-20",
+    "date": "2026-10-21",
     "time": "11:30 AM - 1 PM",
-    "event": "Lunch & Learn: Charitable Planning",
-    "organization": "Central Florida Estate Planning Council",
+    "event": "Winter Park Chamber Connections",
+    "organization": "Winter Park Chamber",
     "objective": "Introductions",
     "importance": 94,
-    "fit": "Estate attorneys, CPAs, planned-giving advisors",
-    "url": "https://www.cfepc.org/events/event/30359",
-    "location": "Akerman LLP, Orlando",
-    "access": "Council membership/guest eligibility verify",
-    "verification": "Organizer-published date; confirm current RSVP/status",
-    "source_checked": "2026-10-13"
-  },
-  {
-    "date": "2026-10-20",
-    "time": "Noon - 1 PM",
-    "event": "Dr. Phillips Chamber Monthly Luncheon",
-    "organization": "Dr. Phillips Chamber",
-    "objective": "Introductions",
-    "importance": 86,
-    "fit": "Local business owners and referral partners",
-    "url": "https://drphillipschamber.org/event/dr-phillips-chamber-monthly-luncheon/2026-10-20/",
-    "location": "Burntwood Tavern, Dr. Phillips",
-    "access": "RSVP; meal at own cost",
-    "verification": "Organizer-published date; confirm current RSVP/status",
-    "source_checked": "2026-10-13"
-  },
-  {
-    "date": "2026-10-20",
-    "time": "3 PM - 5 PM",
-    "event": "The Road Ahead: Town Hall with Chris Messina",
-    "organization": "Orlando Chamber",
-    "objective": "Business-owner benefits",
-    "importance": 78,
-    "fit": "Regional business and civic stakeholders",
-    "url": "https://my.orlandochamberofcommerce.com/Events",
-    "location": "Orlando",
-    "access": "RSVP; civic event, no political outreach",
+    "fit": "Chamber member and professional relationships",
+    "url": "https://business.winterpark.org/events/details/connections-10-19-2026-5048831",
+    "location": "AJ's Chocolate House, Winter Park",
+    "access": "Members $40; non-members $55",
     "verification": "Organizer-published date; confirm current RSVP/status",
     "source_checked": "2026-10-13"
   },
@@ -132,20 +35,6 @@ VERIFIED_NETWORKING_EVENTS = [
     "source_checked": "2026-10-13"
   },
   {
-    "date": "2026-10-21",
-    "time": "11:30 AM - 1 PM",
-    "event": "Winter Park Chamber Connections",
-    "organization": "Winter Park Chamber",
-    "objective": "Introductions",
-    "importance": 94,
-    "fit": "Chamber member and professional relationships",
-    "url": "https://business.winterpark.org/events/details/connections-10-19-2026-5048831",
-    "location": "AJ's Chocolate House, Winter Park",
-    "access": "Members $40; non-members $55",
-    "verification": "Organizer-published date; confirm current RSVP/status",
-    "source_checked": "2026-10-13"
-  },
-  {
     "date": "2026-10-22",
     "time": "6 PM - 9 PM",
     "event": "Orlando Business Social at Red Bowl Asian Bistro",
@@ -158,6 +47,48 @@ VERIFIED_NETWORKING_EVENTS = [
     "access": "RSVP required; venue address inconsistent in listing",
     "verification": "Organizer-published date; confirm current RSVP/status",
     "source_checked": "2026-10-13"
+  },
+  {
+    "date": "2026-10-22",
+    "time": "3:30 PM - 5 PM",
+    "event": "IRL: The Holiday Issue - Less Stress, More Joy",
+    "organization": "Winter Park Chamber",
+    "objective": "Introductions",
+    "importance": 76,
+    "fit": "Young professional relationships and professional peers",
+    "url": "https://business.winterpark.org/events/details/irl-the-holiday-issue-less-stress-more-joy-5058062",
+    "location": "Winter Park Chamber, 155 W Lyman Ave, Winter Park",
+    "access": "Free, registration through Chamber; young professionals-focused",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
+  },
+  {
+    "date": "2026-10-23",
+    "time": "1 PM - 3 PM",
+    "event": "Business Alliance Council Lunch & Learn - Unmasking Your Brand",
+    "organization": "Seminole County Chamber",
+    "objective": "Business-owner benefits",
+    "importance": 90,
+    "fit": "Small-business owners, marketing and local community partners",
+    "url": "https://business.seminolebusiness.org/events/details/business-alliance-council-lunch-learn-42179",
+    "location": "Rock & Brews, 7131 Red Bug Lake Rd, Oviedo",
+    "access": "$15; registration closes Oct 23 at 11:30 AM, no walk-ins",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
+  },
+  {
+    "date": "2026-10-27",
+    "time": "7:30 AM - 9 AM",
+    "event": "Lake Mary Council Coffee Club (October)",
+    "organization": "Seminole County Chamber",
+    "objective": "Introductions",
+    "importance": 91,
+    "fit": "Small business and professional referral relationships",
+    "url": "https://business.seminolebusiness.org/events/details/lake-mary-council-coffee-club-42185",
+    "location": "Holy Cross Lutheran Church, 780 N Sun Dr, Lake Mary",
+    "access": "Chamber member benefit; RSVP by Oct 26, 4 PM",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
   },
   {
     "date": "2026-10-27",
@@ -216,6 +147,20 @@ VERIFIED_NETWORKING_EVENTS = [
     "source_checked": "2026-10-13"
   },
   {
+    "date": "2026-10-30",
+    "time": "8:30 AM - 10 AM",
+    "event": "Leadership Refresh - Practical AI Integration",
+    "organization": "Winter Park Chamber",
+    "objective": "Business-owner benefits",
+    "importance": 87,
+    "fit": "Owner and executive development, referral partners",
+    "url": "https://business.winterpark.org/events/details/leadership-refresh-5057080",
+    "location": "Winter Park Chamber, 151 W Lyman Ave, Winter Park",
+    "access": "Chamber member $15; nonmember $30; registration required",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
+  },
+  {
     "date": "2026-11-02",
     "time": "8:30 AM - 2:30 PM",
     "event": "West Orange Chamber Annual Golf Classic",
@@ -230,6 +175,62 @@ VERIFIED_NETWORKING_EVENTS = [
     "source_checked": "2026-10-13"
   },
   {
+    "date": "2026-11-02",
+    "time": "11:30 AM - 1 PM",
+    "event": "Winter Park Professional Women (November)",
+    "organization": "Winter Park Chamber",
+    "objective": "Introductions",
+    "importance": 83,
+    "fit": "Women business leaders and referral relationships",
+    "url": "https://business.winterpark.org/events/details/winter-park-professional-women-5055193",
+    "location": "Winter Park Chamber, 151 W Lyman Ave, Winter Park",
+    "access": "Members $35; nonmembers $50; check eligibility",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
+  },
+  {
+    "date": "2026-11-02",
+    "time": "11:30 AM - 1 PM",
+    "event": "West Seminole Council Lunch & Learn (November)",
+    "organization": "Seminole County Chamber",
+    "objective": "Introductions",
+    "importance": 83,
+    "fit": "Local business leadership, community and professional connections",
+    "url": "https://business.seminolebusiness.org/events/details/west-seminole-council-lunch-learn-41884",
+    "location": "Bahia Shrine, 3101 E Semoran Blvd, Apopka",
+    "access": "$15 lunch; advance RSVP, registration closes Nov 2 at 9:30 AM; no walk-ins",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
+  },
+  {
+    "date": "2026-11-03",
+    "time": "7:30 AM - 9 AM",
+    "event": "River Council Business Networking (November 3)",
+    "organization": "Seminole County Chamber",
+    "objective": "Introductions",
+    "importance": 94,
+    "fit": "Sanford business owners and COIs",
+    "url": "https://business.seminolebusiness.org/events/details/river-council-business-networking-42196",
+    "location": "Decision Tactical, 430 Towne Center Cir Ste A, Sanford",
+    "access": "Member benefit; RSVP by Nov 2 at 4 PM; venue changed",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
+  },
+  {
+    "date": "2026-11-04",
+    "time": "9:30 AM - 10:30 AM",
+    "event": "Virtually Seminole Council Networking (November)",
+    "organization": "Seminole County Chamber",
+    "objective": "Introductions",
+    "importance": 82,
+    "fit": "Seminole business referral contacts remotely",
+    "url": "https://business.seminolebusiness.org/events/details/virtually-seminole-council-networking-42166",
+    "location": "Zoom; link sent to registered attendees",
+    "access": "Members free; nonmembers $5; register by Nov 4 at 8:30 AM",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
+  },
+  {
     "date": "2026-11-04",
     "time": "See organizer",
     "event": "Unlocking Your Membership Potential",
@@ -242,6 +243,20 @@ VERIFIED_NETWORKING_EVENTS = [
     "access": "Confirm visitor/member access",
     "verification": "Organizer-published date; confirm current RSVP/status",
     "source_checked": "2026-10-13"
+  },
+  {
+    "date": "2026-11-05",
+    "time": "7:30 AM - 9 AM",
+    "event": "Good Morning Seminole! (November)",
+    "organization": "Seminole County Chamber",
+    "objective": "Business-owner benefits",
+    "importance": 96,
+    "fit": "Owners and executive contacts; Orlando Business Journal publisher speaks",
+    "url": "https://business.seminolebusiness.org/events/details/good-morning-seminole-41946",
+    "location": "Lake Mary Events Center, 260 N Country Club Rd, Lake Mary",
+    "access": "Members free; nonmembers $15; sponsor/display-table inquiries separately",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
   },
   {
     "date": "2026-11-06",
@@ -259,6 +274,20 @@ VERIFIED_NETWORKING_EVENTS = [
   },
   {
     "date": "2026-11-06",
+    "time": "7:30 AM - 9 AM",
+    "event": "Altamonte Small Business Networking (November 6)",
+    "organization": "Seminole County Chamber",
+    "objective": "Introductions",
+    "importance": 89,
+    "fit": "Altamonte area small-business owners",
+    "url": "https://business.seminolebusiness.org/events/details/altamonte-small-business-networking-42190",
+    "location": "Eastmonte Park, 830 Magnolia Dr, Altamonte Springs",
+    "access": "Member benefit; RSVP by Nov 5 at 4 PM",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
+  },
+  {
+    "date": "2026-11-06",
     "time": "See organizer",
     "event": "Good Morning Winter Park",
     "organization": "Winter Park Chamber",
@@ -268,6 +297,20 @@ VERIFIED_NETWORKING_EVENTS = [
     "url": "https://business.winterpark.org/events/catgid/5034397",
     "location": "Winter Park",
     "access": "Registration rules check",
+    "verification": "Organizer-published date; confirm current RSVP/status",
+    "source_checked": "2026-10-13"
+  },
+  {
+    "date": "2026-11-10",
+    "time": "4 PM - 5:30 PM",
+    "event": "ACG Orlando Members-Only Meetup (November)",
+    "organization": "ACG Orlando",
+    "objective": "Introductions",
+    "importance": 95,
+    "fit": "Bankers and middle-market executives",
+    "url": "https://www.acg.org/orlando/events/acg-orlando-members-only-meetup-november-2026",
+    "location": "Edgewater area (exact venue after RSVP)",
+    "access": "Members only, RSVP required",
     "verification": "Organizer-published date; confirm current RSVP/status",
     "source_checked": "2026-10-13"
   },
@@ -287,17 +330,17 @@ VERIFIED_NETWORKING_EVENTS = [
   },
   {
     "date": "2026-11-10",
-    "time": "4 PM - 5:30 PM",
-    "event": "ACG Orlando Members-Only Meetup (November)",
-    "organization": "ACG Orlando",
+    "time": "7:30 AM - 9 AM",
+    "event": "Lake Mary Council Coffee Club (November 10)",
+    "organization": "Seminole County Chamber",
     "objective": "Introductions",
-    "importance": 95,
-    "fit": "Bankers and middle-market executives",
-    "url": "https://www.acg.org/orlando/events/acg-orlando-members-only-meetup-november-2026",
-    "location": "Edgewater area (exact venue after RSVP)",
-    "access": "Members only, RSVP required",
-    "verification": "Organizer-published date; confirm current RSVP/status",
-    "source_checked": "2026-10-13"
+    "importance": 89,
+    "fit": "Local business owners and referral introductions",
+    "url": "https://business.seminolebusiness.org/events/details/lake-mary-council-coffee-club-42193",
+    "location": "Holy Cross Lutheran Church, 780 N Sun Dr, Lake Mary",
+    "access": "Member benefit; RSVP by Nov 9 at 4 PM",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
   },
   {
     "date": "2026-11-11",
@@ -314,6 +357,20 @@ VERIFIED_NETWORKING_EVENTS = [
     "source_checked": "2026-10-13"
   },
   {
+    "date": "2026-11-11",
+    "time": "7:30 AM - 9 AM",
+    "event": "Chamber U New Member Orientation",
+    "organization": "Seminole County Chamber",
+    "objective": "Introductions",
+    "importance": 78,
+    "fit": "Meet chamber contacts and prospective business-owner partners",
+    "url": "https://business.seminolebusiness.org/events/details/chamber-u-new-member-orientation-42198",
+    "location": "1055 AAA Dr, Room 138A, Heathrow",
+    "access": "Chamber member benefit; confirm guest eligibility",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
+  },
+  {
     "date": "2026-11-12",
     "time": "10:30 AM - 1:30 PM",
     "event": "2026 Doing Business in Orlando",
@@ -328,6 +385,20 @@ VERIFIED_NETWORKING_EVENTS = [
     "source_checked": "2026-10-13"
   },
   {
+    "date": "2026-11-12",
+    "time": "5:30 PM - 7 PM",
+    "event": "Business After Hours - The Hangar Experience",
+    "organization": "Seminole County Chamber",
+    "objective": "Introductions",
+    "importance": 93,
+    "fit": "Business-owner and community professional network",
+    "url": "https://business.seminolebusiness.org/events/details/business-after-hours-the-hangar-experience-39623",
+    "location": "Aviation Institute of Maintenance, 2725 S US Hwy 17-92, Casselberry",
+    "access": "Members free; nonmembers $20; RSVP",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
+  },
+  {
     "date": "2026-11-13",
     "time": "7:30 AM - 9:10 AM",
     "event": "Brewing Up Business: Horizon West",
@@ -340,6 +411,20 @@ VERIFIED_NETWORKING_EVENTS = [
     "access": "Registration required; member free, non-member $10",
     "verification": "Organizer-published date; confirm current RSVP/status",
     "source_checked": "2026-10-13"
+  },
+  {
+    "date": "2026-11-16",
+    "time": "11:30 AM - 1 PM",
+    "event": "Longwood Council Lunch & Learn (November)",
+    "organization": "Seminole County Chamber",
+    "objective": "Business-owner benefits",
+    "importance": 86,
+    "fit": "Longwood owners, executives and professional contacts",
+    "url": "https://business.seminolebusiness.org/events/details/longwood-council-lunch-learn-42195",
+    "location": "Longwood Community Building, 200 W Warren Ave, Longwood",
+    "access": "$15; advance RSVP by Nov 16 at 9:30 AM, no walk-ins",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
   },
   {
     "date": "2026-11-17",
@@ -357,6 +442,20 @@ VERIFIED_NETWORKING_EVENTS = [
   },
   {
     "date": "2026-11-18",
+    "time": "11:30 AM - 1 PM",
+    "event": "Winter Park Chamber Connections (November)",
+    "organization": "Winter Park Chamber",
+    "objective": "Introductions",
+    "importance": 93,
+    "fit": "Professional and business-owner relationships",
+    "url": "https://business.winterpark.org/events/details/connections-11-19-2026-5048832",
+    "location": "Tabla Winter Park, Winter Park",
+    "access": "Paid chamber networking; check RSVP",
+    "verification": "Date and restaurant verified on organizer's event page Oct 21; RSVP separately",
+    "source_checked": "2026-10-21"
+  },
+  {
+    "date": "2026-11-18",
     "time": "7:30 AM - 9 AM",
     "event": "South Seminole Business Networking (November)",
     "organization": "Seminole County Chamber",
@@ -371,17 +470,17 @@ VERIFIED_NETWORKING_EVENTS = [
   },
   {
     "date": "2026-11-18",
-    "time": "11:30 AM - 1 PM",
-    "event": "Winter Park Chamber Connections (November)",
-    "organization": "Winter Park Chamber",
+    "time": "4 PM - 6 PM",
+    "event": "Brewing Up Business - Ocoee",
+    "organization": "West Orange Chamber",
     "objective": "Introductions",
-    "importance": 93,
-    "fit": "Professional and business-owner relationships",
-    "url": "https://business.winterpark.org/events/details/connections-11-19-2026-5048832",
-    "location": "Winter Park",
-    "access": "Paid chamber networking; check RSVP",
-    "verification": "Organizer-published date; confirm current RSVP/status",
-    "source_checked": "2026-10-13"
+    "importance": 92,
+    "fit": "West Orange business owners and referral partners",
+    "url": "https://biz.wochamber.com/events/details/brewing-up-business-11-18-2026-the-backyard-ocoee-3197",
+    "location": "The Backyard, 2214 West Rd, Ocoee",
+    "access": "Registration limited; members free; nonmembers $10",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
   },
   {
     "date": "2026-11-19",
@@ -398,6 +497,34 @@ VERIFIED_NETWORKING_EVENTS = [
     "source_checked": "2026-10-13"
   },
   {
+    "date": "2026-12-02",
+    "time": "9:30 AM - 10:30 AM",
+    "event": "Virtually Seminole Council Networking (December)",
+    "organization": "Seminole County Chamber",
+    "objective": "Introductions",
+    "importance": 80,
+    "fit": "Remote Seminole business network and referral introductions",
+    "url": "https://business.seminolebusiness.org/events/details/virtually-seminole-council-networking-42205",
+    "location": "Zoom; link sent after registration",
+    "access": "Members free; nonmembers $5; registration closes Dec 2 at 8:30 AM",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
+  },
+  {
+    "date": "2026-12-03",
+    "time": "7:30 AM - 9 AM",
+    "event": "Good Morning Seminole! (December)",
+    "organization": "Seminole County Chamber",
+    "objective": "Business-owner benefits",
+    "importance": 95,
+    "fit": "Business leaders, executive and owner relationships",
+    "url": "https://business.seminolebusiness.org/events/details/good-morning-seminole-41947",
+    "location": "Lake Mary Events Center, 260 N Country Club Rd, Lake Mary",
+    "access": "Members free; nonmembers $15; corporate tables are attendance packages",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
+  },
+  {
     "date": "2026-12-03",
     "time": "See organizer",
     "event": "Member Celebration Brunch & Passing of the Gavel",
@@ -410,6 +537,20 @@ VERIFIED_NETWORKING_EVENTS = [
     "access": "Check membership/ticket rules",
     "verification": "Organizer-published date; confirm current RSVP/status",
     "source_checked": "2026-10-13"
+  },
+  {
+    "date": "2026-12-04",
+    "time": "7:30 AM - 9 AM",
+    "event": "Altamonte Small Business Networking (December 4)",
+    "organization": "Seminole County Chamber",
+    "objective": "Introductions",
+    "importance": 90,
+    "fit": "Altamonte area business network and community referrals",
+    "url": "https://business.seminolebusiness.org/events/details/altamonte-small-business-networking-42207",
+    "location": "Eastmonte Park, 830 Magnolia Dr, Altamonte Springs",
+    "access": "Member benefit; RSVP by Dec 3 at 4 PM",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
   },
   {
     "date": "2026-12-04",
@@ -475,10 +616,66 @@ VERIFIED_NETWORKING_EVENTS = [
     "objective": "Introductions",
     "importance": 85,
     "fit": "Local business and community leaders",
-    "url": "https://business.winterpark.org/events/catgid/5034397",
+    "url": "https://business.winterpark.org/events/details/good-morning-winter-park-12-09-2026-5051877",
     "location": "Winter Park",
     "access": "Check tickets and registration",
-    "verification": "Organizer-published date; confirm current RSVP/status",
-    "source_checked": "2026-10-13"
+    "verification": "Organizer confirms Friday Dec 11 despite URL slug",
+    "source_checked": "2026-10-21"
+  },
+  {
+    "date": "2026-12-14",
+    "time": "11:30 AM - 1 PM",
+    "event": "Winter Park Professional Women (December)",
+    "organization": "Winter Park Chamber",
+    "objective": "Introductions",
+    "importance": 83,
+    "fit": "Women-owned business and executive referral partners",
+    "url": "https://business.winterpark.org/events/details/winter-park-professional-women-5055194",
+    "location": "Winter Park Chamber, 151 W Lyman Ave, Winter Park",
+    "access": "Member $35; nonmember $50; verify guest eligibility",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
+  },
+  {
+    "date": "2026-12-15",
+    "time": "7:30 AM - 9 AM",
+    "event": "River Council Business Networking (December 15)",
+    "organization": "Seminole County Chamber",
+    "objective": "Introductions",
+    "importance": 94,
+    "fit": "Sanford owners, small-business and professional connections",
+    "url": "https://business.seminolebusiness.org/events/details/river-council-business-networking-42201",
+    "location": "Central Florida Zoo, 3755 W Seminole Blvd, Sanford",
+    "access": "Member benefit; RSVP by Dec 14, 4 PM",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
+  },
+  {
+    "date": "2026-12-16",
+    "time": "11:30 AM - 1 PM",
+    "event": "Winter Park Chamber Connections (December)",
+    "organization": "Winter Park Chamber",
+    "objective": "Introductions",
+    "importance": 93,
+    "fit": "Chamber business professionals and COIs",
+    "url": "https://business.winterpark.org/events/details/connections-12-19-2026-5048833",
+    "location": "Winter Park; host restaurant not posted by organizer",
+    "access": "Members $40; nonmembers $55; confirm venue before attending",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
+  },
+  {
+    "date": "2026-12-16",
+    "time": "7:30 AM - 9 AM",
+    "event": "South Seminole Business Networking (December)",
+    "organization": "Seminole County Chamber",
+    "objective": "Introductions",
+    "importance": 92,
+    "fit": "Casselberry business owners and professional introductions",
+    "url": "https://business.seminolebusiness.org/events/details/south-seminole-business-networking-42210",
+    "location": "Rhythm & Smooth Event Venue, 3950 S US Hwy 17-92 Ste 2000, Casselberry",
+    "access": "Chamber member benefit; RSVP by Dec 15, 4 PM",
+    "verification": "Official organizer page checked; RSVP and capacity may change",
+    "source_checked": "2026-10-21"
   }
 ]
