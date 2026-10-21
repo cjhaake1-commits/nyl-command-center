@@ -82,10 +82,11 @@ sales_coach = st.Page("pages/19_Sales_Coach.py", title="Sales Coach", icon="🧭
 market_monitor = st.Page("pages/20_Market_Monitor.py", title="Market Monitor", icon="📊")
 subject_brief = st.Page("pages/21_Quick_Subject_Briefing.py", title="Quick Subject Briefing", icon="🔍")
 business_desk = st.Page("pages/22_Business_Networking_Desk.py", title="Business & Networking Desk", icon="🏢")
+quarterback = st.Page("pages/23_Relationship_Quarterback.py", title="Relationship Quarterback", icon="🏈")
 
 navigation = st.navigation(
     {
-        "COMMAND": [executive, growth_plan, war_room],
+        "COMMAND": [executive, growth_plan, war_room, quarterback],
         "COACHING": [sales_coach],
         "PROSPECTING": [prospect_discovery, prospecting, lead_lists, opportunity, event_prospecting, group_affinity],
         "MARKETING & NETWORK": [marketing, influencer_network, linkedin_network, mailing],
