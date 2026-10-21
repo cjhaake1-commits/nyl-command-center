@@ -58,6 +58,7 @@ st.markdown(
 )
 
 executive = st.Page("pages/0_Executive_Command_Center.py", title="Command Center", icon="📈", default=True)
+growth_plan = st.Page("pages/17_First_Year_Growth_Plan.py", title="First-Year $1M Growth Plan", icon="🏆")
 war_room = st.Page("pages/1_Daily_War_Room.py", title="Daily War Room", icon="🎯")
 lead_lists = st.Page("pages/9_Lead_Lists.py", title="Lead Lists & Export", icon="📋")
 mailing = st.Page("pages/11_Mailing_Targeting.py", title="Mailing & Targeting", icon="📬")
@@ -79,7 +80,7 @@ interview = st.Page("pages/8_Interview_Ace.py", title="Interview / Presentation"
 
 navigation = st.navigation(
     {
-        "COMMAND": [executive, war_room],
+        "COMMAND": [executive, growth_plan, war_room],
         "PROSPECTING": [prospect_discovery, prospecting, lead_lists, opportunity, event_prospecting, group_affinity],
         "MARKETING & NETWORK": [marketing, influencer_network, linkedin_network, mailing],
         "INTELLIGENCE": [prospect_intel, meeting_intel],
