@@ -255,7 +255,7 @@ with resources:
 
 with news:
     st.subheader("Add a public or approved NYL update")
-    st.caption("Use public announcements or non-confidential material that your firm permits you to discuss. This note stays in the active session; it is not independently verified.")
+    st.caption("Use public announcements or non-confidential material that your firm permits you to discuss. This notebook stays in the active session, is not independently verified, and is not forwarded to the AI chat.")
     with st.form("coach_news_update"):
         update = st.text_area("What changed, where was it published, and when?", height=130, placeholder="Headline + public URL + date, or a brief non-confidential update.")
         allowed = st.checkbox("I have removed client data and confidential/internal-only details.", key="coach_news_safe")
@@ -268,10 +268,10 @@ with news:
             st.error("The update looks like it may contain identifying information and was not saved.")
         elif update.strip():
             st.session_state.setdefault("coach_nyl_updates", []).append({"text": update.strip(), "date": now.isoformat(timespec="minutes")})
-            st.success("Update added to this session. Ask about it in Weekly Coach.")
+            st.success("Update added to this session notebook. It is not included in AI chat.")
     for item in reversed(st.session_state.get("coach_nyl_updates", [])):
         st.markdown(f"- {item['text']}  \n  Added {item['date']} Eastern")
     if st.session_state.get("coach_trading_observation"):
         st.markdown("**Current trading-app observation**")
         st.write(st.session_state["coach_trading_observation"])
-    st.caption("Do not treat a public announcement as a change to your license, appointment, product authority, or NYL process. Verify those with current official systems and your manager.")
+    st.caption("This session notebook is separate from AI chat. Do not copy confidential material into chat. Do not treat a public announcement as a change to your license, appointment, product authority, or NYL process; verify those with current official systems and your manager.")
