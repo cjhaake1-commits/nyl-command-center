@@ -17,7 +17,7 @@ st.set_page_config(page_title="Prospect Discovery | Chris Haake", page_icon="�
 
 brand_hero(
     "Prospect Discovery",
-    "A continuously growing Central Florida intelligence layer: business triggers, HNW and household signals, centers of influence, career transitions, and high-fit referral networks — all tied back to public evidence.",
+    "A source-aware Central Florida research queue for business triggers, HNW/COI relationships, career transitions, and referral networks. Each record must pass a current evidence and contact review before it is treated as actionable.",
     "Chris Haake • Intelligence Engine",
 )
 
@@ -109,9 +109,10 @@ c1.metric("Business Leads", len(business_df), f"{num_high(business_df, 'Opportun
 c2.metric("HNW / COI", len(hnw_df), f"{num_high(hnw_df, 'Opportunity score', 95)} score 95+")
 c3.metric("Rollover Signals", len(rollover_df), "former-employer career transitions")
 c4.metric("Referral Network", len(marketing_df), f"{num_high(marketing_df, 'Audience fit score', 95)} fit 95+")
-c5.metric("Research Cadence", "On-demand", "source checks shown below")
+c5.metric("Research Mode", "Catalog only", "no background scraper active")
 
 st.info("Evidence standard: public-source facts stay separate from planning hypotheses. Prefer warm introductions. Never infer private financial condition, retirement-plan participation, account balance, or rollover need from career or social-media signals.")
+st.caption("This page scores the prospect records currently loaded in the app; it does not crawl public websites or connect to Salesforce in the background. A fresh source check is required before a candidate can pass the PRIME gate.")
 
 st.subheader("Prime prospect gate — human review before Salesforce")
 st.caption(
