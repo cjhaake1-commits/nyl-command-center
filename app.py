@@ -77,6 +77,7 @@ marketing = st.Page("pages/3_Marketing.py", title="Marketing Command Center", ic
 influencer_network = st.Page("pages/3A_Influencer_Network.py", title="Influencer & Referral Network", icon="📱")
 linkedin_network = st.Page("pages/3B_LinkedIn_Network.py", title="LinkedIn Network", icon="🔗")
 interview = st.Page("pages/8_Interview_Ace.py", title="Interview / Presentation", icon="🃏")
+practice_lab = st.Page("pages/18_Practice_Process_Lab.py", title="Practice & Process Lab", icon="🎭")
 
 navigation = st.navigation(
     {
@@ -84,7 +85,7 @@ navigation = st.navigation(
         "PROSPECTING": [prospect_discovery, prospecting, lead_lists, opportunity, event_prospecting, group_affinity],
         "MARKETING & NETWORK": [marketing, influencer_network, linkedin_network, mailing],
         "INTELLIGENCE": [prospect_intel, meeting_intel],
-        "EXECUTION": [rollover_playbook, first_sale, autopilot, interview],
+        "EXECUTION": [rollover_playbook, first_sale, autopilot, interview, practice_lab],
         "PRACTICE": [my_strategy],
     },
     position="sidebar",
