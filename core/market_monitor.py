@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import json
-import os
-import re
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -74,21 +72,28 @@ def fetch_treasury_yields() -> tuple[list[dict], str]:
         with urllib.request.urlopen(request, timeout=15) as response:
             raw = response.read()
         root = ElementTree.fromstring(raw)
-        entries = []
-        for entry in root.iter():
-            fields = {node.tag.split("}")[-1]: node.text for node in entry.iter()}
-            if fields.get("NEW_DATE"):
-                entries.append(fields)
-        if not entries:
+        observations = root.findall(".//{*}entry")
+        if not observations:
+            observations = root.findall(".//entry")
+        if not observations:
             return [], "Treasury yield data unavailable."
-        fields = entries[-1]
+        fields = {}
+        for node in observations[-1].iter():
+            name = node.tag.split("}")[-1]
+            if node.text and name not in fields:
+                fields[name] = node.text.strip()
+        date_value = fields.get("NEW_DATE")
+        if not date_value:
+            return [], "Treasury yield data unavailable."
         columns = [
             ("1 Mo", "BC_1MONTH"), ("3 Mo", "BC_3MONTH"), ("6 Mo", "BC_6MONTH"),
             ("1 Yr", "BC_1YEAR"), ("2 Yr", "BC_2YEAR"), ("5 Yr", "BC_5YEAR"),
             ("10 Yr", "BC_10YEAR"), ("20 Yr", "BC_20YEAR"), ("30 Yr", "BC_30YEAR"),
         ]
         rows = [{"Tenor": tenor, "Yield (%)": float(fields[key])} for tenor, key in columns if fields.get(key) not in (None, "", "N/A")]
-        return rows, fields["NEW_DATE"]
+        if not rows:
+            return [], "Treasury yield data unavailable."
+        return rows, date_value
     except (urllib.error.URLError, TimeoutError, ElementTree.ParseError, ValueError, KeyError) as exc:
         return [], f"Treasury feed unavailable ({type(exc).__name__})."
 
