@@ -33,7 +33,7 @@ st.info(
     "sent to that configured provider to generate the response."
 )
 
-agenda, resources, news = st.tabs(["🧭 Weekly Coach", "🌐 Public Intelligence", "📝 NYL Updates"])
+agenda, resources, news, references = st.tabs(["🧭 Weekly Coach", "🌐 Public Intelligence", "📝 NYL Updates", "🔗 NYL Link Library"])
 
 with agenda:
     st.subheader("Monday 10:00 AM weekly reset")
@@ -270,10 +270,60 @@ with news:
             st.error("The update looks like it may contain identifying information and was not saved.")
         elif update.strip():
             st.session_state.setdefault("coach_nyl_updates", []).append({"text": update.strip(), "date": now.isoformat(timespec="minutes")})
-            st.success("Update added to this session notebook. It is not included in AI chat.")
+            st.success("Update added to this session notebook. It will be shared with the next AI coach prompt only if you confirm the per-message authorization.")
     for item in reversed(st.session_state.get("coach_nyl_updates", [])):
         st.markdown(f"- {item['text']}  \n  Added {item['date']} Eastern")
     if st.session_state.get("coach_trading_observation"):
         st.markdown("**Current trading-app observation**")
         st.write(st.session_state["coach_trading_observation"])
     st.caption("This session notebook is sent with coach prompts only when you confirm the per-message OpenAI sharing authorization. Do not add client or confidential NYL information. Do not treat a public announcement as a change to your license, appointment, product authority, or NYL process; verify those with current official systems and your manager.")
+
+
+with references:
+    st.subheader("NYL Link Library")
+    st.caption("Public reference links gathered from the app’s existing planning resources. This is not yet a copy of your Chrome New York Life bookmark folder.")
+    starter_links = [
+        ("New York Life", "Newsroom", "https://www.newyorklife.com/newsroom"),
+        ("New York Life", "Insurance products", "https://www.newyorklife.com/products/insurance"),
+        ("New York Life", "Retirement products", "https://www.newyorklife.com/products/retirement"),
+        ("New York Life", "Investments", "https://www.newyorklife.com/products/investments"),
+        ("New York Life", "NYLIFE Securities products", "https://www.newyorklife.com/securities/products"),
+        ("Regulatory and market education", "FINRA Series 6 scope", "https://www.finra.org/registration-exams-ce/qualification-exams/series6"),
+        ("Regulatory and market education", "FINRA Series 63 overview", "https://www.finra.org/registration-exams-ce/qualification-exams/series63"),
+        ("Regulatory and market education", "FINRA investor insights", "https://www.finra.org/investors/insights"),
+        ("Regulatory and market education", "SEC investor resources", "https://www.investor.gov/"),
+        ("Regulatory and market education", "NAIC consumer resources", "https://content.naic.org/consumer"),
+    ]
+    for category in sorted({row[0] for row in starter_links}):
+        st.markdown("#### " + category)
+        for _, label, url in [row for row in starter_links if row[0] == category]:
+            st.markdown("- [" + label + "](" + url + ")")
+    st.markdown("#### Add your Chrome New York Life bookmarks")
+    st.info("The connected Chrome profile did not expose a readable New York Life bookmark folder to this app. Paste only the links from that folder below, one per line as Title | https://link. Do not paste or upload your full bookmarks export; it may contain unrelated personal links. These additions stay in this browser session.")
+    pasted = st.text_area("NYL bookmark links", key="nyl_bookmark_links_input", height=140, placeholder="Advisor portal | https://…\nProduct resource | https://…")
+    if st.button("Add links to this session", key="add_nyl_bookmarks"):
+        parsed = []
+        invalid = []
+        for raw_line in pasted.splitlines():
+            line = raw_line.strip()
+            if not line:
+                continue
+            if "|" in line:
+                label, url = [part.strip() for part in line.split("|", 1)]
+            else:
+                label, url = line, line
+            if url.startswith("https://"):
+                parsed.append({"label": label or url, "url": url})
+            else:
+                invalid.append(line)
+        if parsed:
+            st.session_state["nyl_extra_links"] = parsed
+            st.success(str(len(parsed)) + " links added to this session.")
+        if invalid:
+            st.warning(str(len(invalid)) + " line(s) were skipped because they did not contain an https:// link.")
+    extra_links = st.session_state.get("nyl_extra_links", [])
+    if extra_links:
+        st.markdown("#### Links from your bookmark folder")
+        for item in extra_links:
+            st.markdown("- [" + item["label"] + "](" + item["url"] + ")")
+    st.caption("The link library is session-only. It does not store client records and does not send bookmarks to the AI coach.")
