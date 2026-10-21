@@ -396,7 +396,7 @@ def sidebar_brand() -> None:
                 <div>
                   <div class="brand-person-name">Chris Haake</div>
                   <div class="brand-person-role">New York Life</div>
-                  <div class="brand-profile-status">Headshot placeholder</div>
+                  <div class="brand-profile-status">Registered Representative</div>
                 </div>
               </div>
               <div class="brand-sidebar-note">
