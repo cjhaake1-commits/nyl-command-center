@@ -91,8 +91,9 @@ with live_left:
     live_region = st.selectbox(
         "Search market",
         [
-            "Orlando and Winter Park",
+            "Orange County (home market): Orlando, Winter Park, Dr. Phillips, Winter Garden, Windermere, Horizon West",
             "West Orange: Winter Garden, Windermere, Horizon West",
+            "Orlando and Winter Park",
             "Seminole: Lake Mary, Sanford, Oviedo, Altamonte Springs",
             "Osceola: Kissimmee and Celebration",
             "Lake County: Clermont and Leesburg",
@@ -138,11 +139,15 @@ if live_rows:
         },
     )
 st.markdown(
-    "**Organizer calendars:** "
+    "**Orange County organizer calendars — check these first:** "
     "[West Orange Chamber](https://biz.wochamber.com/events/) · "
-    "[Winter Park Chamber](https://business.winterpark.org/events/) · "
-    "[Seminole County Chamber](https://business.seminolebusiness.org/events/) · "
     "[Orlando Chamber](https://my.orlandochamberofcommerce.com/events) · "
+    "[Winter Park Chamber](https://business.winterpark.org/events/) · "
+    "[Dr. Phillips Chamber](https://drphillipschamber.org/organizer/dr-phillips-chamber-of-commerce/)"
+)
+st.markdown(
+    "**Nearby Central Florida calendars:** "
+    "[Seminole County Chamber](https://business.seminolebusiness.org/events/) · "
     "[Eventbrite Orlando](https://www.eventbrite.com/d/fl--orlando/business--events/) · "
     "[Meetup Orlando](https://www.meetup.com/find/?keywords=business%20networking&location=us--fl--orlando&source=EVENTS)"
 )
@@ -153,15 +158,33 @@ st.warning(
 
 show_targets=st.toggle("Show unverified research targets",value=True)
 
+def event_market(item):
+    text = f"{item.get('organization', '')} {item.get('location', '')}".casefold()
+    if any(term in text for term in ("orlando", "winter park", "dr. phillips", "dr phillips", "west orange", "winter garden", "windermere", "horizon west", "ocoee", "apopka", "maitland")):
+        return "Orange County"
+    if "seminole" in text or any(term in text for term in ("lake mary", "sanford", "oviedo", "altamonte", "casselberry", "heathrow")):
+        return "Seminole County"
+    if "osceola" in text or "kissimmee" in text or "celebration" in text:
+        return "Osceola County"
+    if "lake county" in text or "clermont" in text or "leesburg" in text:
+        return "Lake County"
+    return "Central Florida"
+
 rows=[]
 for item in EVENTS:
     if item["objective"] in goal:
         priority = "High" if item["importance"] >= 90 else ("Medium" if item["importance"] >= 80 else "Low")
-        rows.append(dict(Event=item["event"],Date=item["date"],Time=item["time"],Area=item["location"],Objective=item["objective"],Priority=priority,Verification=item.get("verification","Organizer-listed; verify RSVP"),Source=item["url"],Target_audience=item["fit"],Access=item.get("access","Confirm with organizer")))
+        rows.append(dict(Event=item["event"],Date=item["date"],Time=item["time"],Market=event_market(item),Area=item["location"],Objective=item["objective"],Priority=priority,Verification=item.get("verification","Organizer-listed; verify RSVP"),Source=item["url"],Target_audience=item["fit"],Access=item.get("access","Confirm with organizer"),_importance=item.get("importance",0)))
 for name,category,priority in TARGETS:
     if show_targets and category in goal:
-        rows.append(dict(Event=name,Date=None,Time=None,Area="Central Florida",Objective=category,Priority=priority,Verification="Research target — no date confirmed",Source="",Target_audience="Find a future scheduled event and verify details",Access="Not a scheduled event"))
+        rows.append(dict(Event=name,Date=None,Time=None,Market="Research target",Area="Central Florida",Objective=category,Priority=priority,Verification="Research target — no date confirmed",Source="",Target_audience="Find a future scheduled event and verify details",Access="Not a scheduled event",_importance=0))
 df=pd.DataFrame(rows)
+if not df.empty:
+    market_order={"Orange County":0,"Seminole County":1,"Osceola County":2,"Lake County":3,"Central Florida":4,"Research target":5}
+    df["_market_order"]=df["Market"].map(market_order).fillna(4)
+    df["_date_order"]=df["Date"].fillna("9999-12-31")
+    df=df.sort_values(["_market_order","_date_order","_importance"],ascending=[True,True,False]).drop(columns=["_market_order","_date_order","_importance"])
+st.caption("Orange County is shown first because it is your home market and gives you a natural community connection. Event times and admission are organizer-reported; verify before attending.")
 st.dataframe(df,hide_index=True,use_container_width=True,column_config={"Source":st.column_config.LinkColumn("Source / RSVP")})
 st.download_button("Download prospecting research CSV",df.to_csv(index=False).encode(),file_name=f"nyl_event_prospecting_{date.today():%Y%m%d}.csv",mime="text/csv")
 
