@@ -9,7 +9,15 @@ from core.branding import apply_brand_theme
 
 apply_brand_theme()
 
-from pages_event_catalog import VERIFIED_NETWORKING_EVENTS, RESEARCH_UPDATED as NETWORKING_RESEARCH_UPDATED
+import importlib
+import pages_event_catalog
+
+# Streamlit may keep imported modules alive between page reruns. Reload the
+# shared event catalog so a GitHub refresh is reflected without a stale session.
+pages_event_catalog = importlib.reload(pages_event_catalog)
+VERIFIED_NETWORKING_EVENTS = pages_event_catalog.VERIFIED_NETWORKING_EVENTS
+NETWORKING_RESEARCH_UPDATED = pages_event_catalog.RESEARCH_UPDATED
+
 import booth_opportunities as booth_catalog
 BOOTH_OPPORTUNITIES = booth_catalog.BOOTH_OPPORTUNITIES
 BOOTH_RESEARCH_UPDATED = getattr(booth_catalog, "BOOTH_RESEARCH_UPDATED", "2026-10-16")
