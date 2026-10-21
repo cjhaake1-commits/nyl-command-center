@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-from datetime import date
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
+import pandas as pd
 import streamlit as st
 
 from core.branding import brand_hero
@@ -28,9 +30,10 @@ total_discovery = business_count + hnw_count + network_count
 high_fit_network = sum(1 for x in MARKETING_NETWORK_LEADS if float(x.get("Audience fit score", 0) or 0) >= 95)
 high_hnw = sum(1 for x in HNW_LEADS if float(x.get("Opportunity score", 0) or 0) >= 95)
 
+today = datetime.now(ZoneInfo("America/New_York")).date()
 activity_rows = get_activity()
-month_start = date.today().replace(day=1).isoformat()
-month_end = date.today().isoformat()
+month_start = today.replace(day=1).isoformat()
+month_end = today.isoformat()
 month_activity = [
     row for row in activity_rows
     if month_start <= str(row.get("activity_date", "")) <= month_end
@@ -60,29 +63,33 @@ c3.metric("Sales This Month", month_sales, f"{len(month_activity)} days logged")
 c4.metric("Commission Logged This Month", f"${month_commission:,.0f}", "from saved activity")
 c5.metric("Referral Network", network_count, f"{high_fit_network} fit 95+")
 
-st.subheader("Goals at New York Life")
-g1, g2 = st.columns([1, 1])
-with g1:
-    st.markdown("### 5,000 verified, net-new lead objective")
-    st.write(
-        "The lead-building project target is 5,000 verified, Salesforce-ready prospects. "
-        "This app does not sync with Salesforce, so its research candidates and local pipeline are not a measure "
-        "of Salesforce imports or completed lead production."
-    )
-    st.caption(
-        f"Current curated discovery universe: {business_count} business, {hnw_count} HNW/COI, "
-        f"and {network_count} referral-network research records. These are research candidates, not validated imports."
-    )
-with g2:
-    st.markdown("### Turn production goals into daily actions")
-    st.write(
-        "Use Daily War Room to set a commission target, deadline, selling days, and funnel assumptions. "
-        "Log actuals there; the monthly production figures above are calculated from those saved entries."
-    )
-    st.caption(
-        "Starting commission and conversion assumptions are planning inputs. Confirm compensation and product-specific "
-        "rules through current NYL materials before using them for a client or business decision."
-    )
+st.subheader("Growth Priorities")
+st.caption("Targets describe the intended operating plan. This prototype does not claim these goals are completed or synced to Salesforce.")
+goals = [
+    {
+        "Goal": "Build a qualified prospect universe",
+        "Target": "5,000 validated, net-new leads",
+        "Proof": "Count accepted Salesforce Created rows only; deduplicate against existing records and preserve source evidence.",
+        "Next action": "Verify identity, business fit, public source, and contact details before approved import or outreach.",
+    },
+    {
+        "Goal": "Build a strong practice ramp",
+        "Target": "First 100 qualified accounts, then a consistent weekly rhythm",
+        "Proof": "Manager-confirmed 30/60/90-day expectations, approved tools, dated next actions, and weekly activity/conversion review.",
+        "Next action": "Align the ramp measures with the manager and use Daily War Room to test editable production assumptions.",
+    },
+    {
+        "Goal": "Earn sponsorship for a focused pilot",
+        "Target": "Demonstrate a reviewable Central Florida relationship-development workflow",
+        "Proof": "Source quality, follow-through, introductions, meetings, conversion, and clear compliance boundaries.",
+        "Next action": "Agree on a small scope and success measures before expanding access, data, or use.",
+    },
+]
+st.dataframe(pd.DataFrame(goals), width="stretch", hide_index=True)
+st.caption(
+    f"Curated discovery universe: {business_count} business, {hnw_count} HNW/COI, "
+    f"and {network_count} referral-network research records. These are research candidates, not validated Salesforce imports."
+)
 
 st.subheader("Operating Priorities")
 cols = st.columns(3)
@@ -146,6 +153,6 @@ with t3:
 
 st.divider()
 st.caption(
-    f"Chris Haake Command Center • {date.today().isoformat()} • Central Florida • "
+    f"Chris Haake Command Center • {today.isoformat()} • Central Florida • "
     "Personal productivity and research aid; not a client system of record or a substitute for NYL approval."
 )
