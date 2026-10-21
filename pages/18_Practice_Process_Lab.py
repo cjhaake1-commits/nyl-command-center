@@ -151,7 +151,7 @@ with practice:
     if submitted:
         low = response.strip().lower()
         prior_turns = st.session_state.get("practice_turns", [])
-        prior_text = " ".join(str(turn[0]) for turn in prior_turns)
+        prior_text = " ".join(str(item) for turn in prior_turns for item in turn[:2])
         if not low:
             st.warning("Enter a practice response first.")
         elif _contains_sensitive_details(response) or _contains_sensitive_details(prior_text):
