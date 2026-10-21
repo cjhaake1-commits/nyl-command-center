@@ -68,6 +68,7 @@ meeting_intel = st.Page("pages/10_Meeting_Intelligence.py", title="Meeting Intel
 prospecting = st.Page("pages/2_Prospecting.py", title="Prospecting & Pipeline", icon="🧭")
 prospect_discovery = st.Page("pages/2A_Prospect_Discovery.py", title="Prospect Discovery", icon="🎯")
 event_prospecting = st.Page("pages/15_Event_Prospecting.py", title="Event Prospecting", icon="🤝")
+event_schedule = st.Page("pages/26_Event_Schedule.py", title="Event Schedule", icon="🗓️")
 group_affinity = st.Page("pages/14_Group_Affinity_Benefits.py", title="Group / Affinity Benefits", icon="🤝")
 my_strategy = st.Page("pages/4_My_Strategy.py", title="Practice Strategy", icon="💎")
 rollover_playbook = st.Page("pages/16_Rollover_Playbook.py", title="401(k) Rollover Playbook", icon="📘")
@@ -91,7 +92,7 @@ navigation = st.navigation(
         "COMMAND": [executive, growth_plan, war_room, quarterback],
         "COACHING": [sales_coach],
         "MARKETS & ECONOMY": [market_monitor],
-        "PROSPECTING": [prospect_discovery, prospecting, lead_lists, opportunity, event_prospecting, group_affinity],
+        "PROSPECTING": [prospect_discovery, prospecting, lead_lists, opportunity, event_prospecting, event_schedule, group_affinity],
         "MARKETING & NETWORK": [marketing, influencer_network, linkedin_network, mailing],
         "INTELLIGENCE": [prospect_intel, meeting_intel, subject_brief, business_desk],
         "EXECUTION": [rollover_playbook, first_sale, autopilot, interview, practice_lab],
