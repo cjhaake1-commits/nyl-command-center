@@ -79,6 +79,78 @@ b.metric("To verify",len(TARGETS))
 c.metric("Recorded introductions",sum(int(v["introductions"]) for v in actions.values()))
 d.metric("Appointments booked",sum(int(v["appointments"]) for v in actions.values()))
 goal=st.multiselect("Prospecting objectives",["Introductions","401(k) rollovers","Business-owner benefits"],default=["Introductions","401(k) rollovers","Business-owner benefits"])
+from urllib.parse import quote_plus
+
+st.subheader("Live evening event finder")
+st.caption(
+    "Generate current public-search links for two event types on each date. This widens the search beyond the existing catalog; "
+    "search results are not verified event records, and no event is guaranteed to exist or be appropriate."
+)
+live_left, live_right = st.columns([1, 1])
+with live_left:
+    live_region = st.selectbox(
+        "Search market",
+        [
+            "Orlando and Winter Park",
+            "West Orange: Winter Garden, Windermere, Horizon West",
+            "Seminole: Lake Mary, Sanford, Oviedo, Altamonte Springs",
+            "Osceola: Kissimmee and Celebration",
+            "Lake County: Clermont and Leesburg",
+            "Polk County: Lakeland and Winter Haven",
+            "Volusia: DeLand and Daytona Beach",
+            "Tampa Bay",
+            "Jacksonville",
+        ],
+        help="Expand the market when nearby evening calendars are sparse; consider drive time before attending.",
+    )
+with live_right:
+    after_time = st.selectbox("Preferred start time", ["After 5:00 PM", "After 6:00 PM"], index=1)
+    live_dates = st.date_input(
+        "Daily event search window",
+        value=(date.today(), date.today() + timedelta(days=13)),
+        min_value=date.today(),
+        max_value=date.today() + timedelta(days=60),
+    )
+if isinstance(live_dates, tuple) and len(live_dates) == 2:
+    first_day, last_day = live_dates
+else:
+    first_day = last_day = live_dates if isinstance(live_dates, date) else date.today()
+live_rows = []
+day = first_day
+while day <= last_day:
+    day_text = day.strftime("%B %d, %Y")
+    query_a = f"business networking chamber after hours {live_region} {day_text} {after_time}"
+    query_b = f"entrepreneur small business professional meetup happy hour {live_region} {day_text} {after_time}"
+    live_rows.append({
+        "Date": day.isoformat(),
+        "Search lane 1 — chamber / business after-hours": "https://www.google.com/search?q=" + quote_plus(query_a),
+        "Search lane 2 — entrepreneur / professional": "https://www.google.com/search?q=" + quote_plus(query_b),
+    })
+    day += timedelta(days=1)
+if live_rows:
+    st.dataframe(
+        pd.DataFrame(live_rows),
+        hide_index=True,
+        width="stretch",
+        column_config={
+            "Search lane 1 — chamber / business after-hours": st.column_config.LinkColumn("Live search: business after-hours"),
+            "Search lane 2 — entrepreneur / professional": st.column_config.LinkColumn("Live search: entrepreneur / professional"),
+        },
+    )
+st.markdown(
+    "**Organizer calendars:** "
+    "[West Orange Chamber](https://biz.wochamber.com/events/) · "
+    "[Winter Park Chamber](https://business.winterpark.org/events/) · "
+    "[Seminole County Chamber](https://business.seminolebusiness.org/events/) · "
+    "[Orlando Chamber](https://my.orlandochamberofcommerce.com/events) · "
+    "[Eventbrite Orlando](https://www.eventbrite.com/d/fl--orlando/business--events/) · "
+    "[Meetup Orlando](https://www.meetup.com/find/?keywords=business%20networking&location=us--fl--orlando&source=EVENTS)"
+)
+st.warning(
+    "Use the links to find actual listings, then verify date, time, venue, cost, registration, audience fit, and travel before putting an event on your calendar. "
+    "Confirm NYL approval and organizer rules before solicitation, marketing, sponsorship, or lead collection. The daily rows are live search prompts, not a claim that one or two suitable events are scheduled every night."
+)
+
 show_targets=st.toggle("Show unverified research targets",value=True)
 
 rows=[]
