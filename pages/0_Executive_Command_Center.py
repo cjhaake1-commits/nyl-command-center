@@ -24,6 +24,12 @@ brand_hero(
     f"{REP_NAME} • New York Life",
 )
 
+st.page_link(
+    "pages/30_Tailor_Your_Experience.py",
+    label="🛠️ Tailor Your Experience — request prospect lists, events, or app changes",
+    help="Submit your own research, event, territory, or Command Center change request.",
+)
+
 business_count = len(PUBLIC_LEADS)
 hnw_count = len(HNW_LEADS)
 network_count = len(MARKETING_NETWORK_LEADS)
