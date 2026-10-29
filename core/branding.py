@@ -465,7 +465,18 @@ def sidebar_brand() -> None:
             """
             <div class="brand-lockup">
               <div class="brand-crown">◆  ◆  ◆</div>
-              <div class="brand-name">CHRIS HAAKE</div>
+              <div class="brand-team-row">
+                <span class="brand-jet" aria-label="fighter jet">
+                  <svg viewBox="0 0 100 100" role="img" aria-hidden="true">
+                    <path d="M50 3 57 29 88 45 88 52 59 46 56 73 70 86 70 92 50 88 30 92 30 86 44 73 41 46 12 52 12 45 43 29Z"/>
+                    <path class="brand-jet-cockpit" d="m50 15 4 18h-8z"/>
+                  </svg>
+                </span>
+                <div>
+                  <div class="brand-team-label">TEAM MAVERICK</div>
+                  <div class="brand-name">CHRIS HAAKE</div>
+                </div>
+              </div>
               <div class="brand-sub">COMMAND CENTER</div>
               <div class="brand-person">
                 <div class="brand-avatar-placeholder">CH</div>
