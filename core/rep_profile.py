@@ -3,7 +3,7 @@ from __future__ import annotations
 REP_NAME = "Devin Lynch"
 REP_INITIALS = "DL"
 COMPANY_NAME = "New York Life"
-APP_TITLE = "Devin Lynch Command Center"
+APP_TITLE = "Team Maverick | Devin Lynch Command Center"
 STREAMLIT_APP_NAME = "devin-lynch-command-center"
 USER_EMAIL = "dbl1095@aol.com"
 
