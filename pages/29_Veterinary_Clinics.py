@@ -58,6 +58,82 @@ events = [
 for title, detail, url in events:
     st.markdown(f"**{title}**  \n{detail}  \n[Check organizer’s current calendar]({url})")
 
+st.subheader("Add an office from Devin’s own network")
+st.caption("Add a clinic she knows directly. Saving creates a Veterinary Clinic record in the Command Center prospect pipeline.")
+from data.prospects import add_prospect, get_prospects, init_prospect_db
+init_prospect_db()
+
+with st.form("add_veterinary_clinic"):
+    clinic_name = st.text_input("Clinic / office name *")
+    city = st.text_input("City / area", placeholder="e.g., Winter Park")
+    contact_name = st.text_input("Known contact (optional)")
+    role = st.text_input("Role (optional)", placeholder="Practice manager, veterinarian, owner")
+    public_contact = st.text_input("Business phone or email (optional)")
+    relationship = st.selectbox(
+        "How Devin knows the office",
+        ["Existing professional relationship", "Warm introduction", "Former colleague / workplace", "Public business research", "Other"],
+    )
+    source_detail = st.text_input("Source or introduction path (optional)")
+    next_action = st.text_input("Suggested next step", value="Ask permission for a brief business conversation")
+    office_notes = st.text_area("Business context only — no employee health, compensation, or private financial details")
+    submitted = st.form_submit_button("Add clinic to prospect pipeline", type="primary")
+
+if submitted:
+    if not clinic_name.strip():
+        st.error("Enter the clinic or office name.")
+    else:
+        known = get_prospects()
+        duplicate = any(
+            str(p.get("organization", "")).strip().casefold() == clinic_name.strip().casefold()
+            and str(p.get("market_segment", "")).casefold() == "veterinary clinic"
+            for p in known
+        )
+        if duplicate:
+            st.warning("That clinic is already in the prospect pipeline.")
+        else:
+            details = " | ".join(x for x in [city.strip(), role.strip(), public_contact.strip()] if x)
+            if contact_name.strip():
+                details = f"{contact_name.strip()} — {details}" if details else contact_name.strip()
+            if source_detail.strip():
+                details = f"{details} | Relationship/source: {source_detail.strip()}" if details else source_detail.strip()
+            add_prospect(
+                prospect_name=contact_name.strip() or clinic_name.strip(),
+                organization=clinic_name.strip(),
+                market_segment="Veterinary Clinic",
+                source=relationship,
+                source_detail=details,
+                stage="New",
+                fit_score=3,
+                warmth_score=4 if relationship in {"Existing professional relationship", "Warm introduction", "Former colleague / workplace"} else 2,
+                urgency_score=3,
+                source_quality=4 if public_contact.strip() else 3,
+                consent_status="Existing relationship" if relationship in {"Existing professional relationship", "Former colleague / workplace"} else "Unknown",
+                next_action=next_action.strip(),
+                next_action_date=str(date.today()),
+                notes=office_notes.strip(),
+            )
+            st.success("Clinic added to the Command Center prospect pipeline.")
+            st.rerun()
+
+clinic_pipeline = [
+    p for p in get_prospects()
+    if str(p.get("market_segment", "")).casefold() == "veterinary clinic"
+]
+if clinic_pipeline:
+    st.markdown("#### Devin’s saved veterinary offices")
+    st.dataframe(
+        [{
+            "Clinic": p.get("organization", ""),
+            "Contact": p.get("prospect_name", ""),
+            "Stage": p.get("stage", ""),
+            "Next step": p.get("next_action", ""),
+            "Due": p.get("next_action_date", ""),
+            "Relationship/source": p.get("source", ""),
+        } for p in clinic_pipeline],
+        width="stretch",
+        hide_index=True,
+    )
+
 st.subheader("Suggested next steps")
 st.markdown("""
 1. Have Devin map her existing clinic relationships by clinic, role, relationship warmth, and the best permission-based introduction.
