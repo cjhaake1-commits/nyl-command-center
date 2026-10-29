@@ -86,13 +86,14 @@ business_desk = st.Page("pages/22_Business_Networking_Desk.py", title="Business 
 quarterback = st.Page("pages/23_Relationship_Quarterback.py", title="Relationship Quarterback", icon="🏈")
 series_7 = st.Page("pages/24_Series_7_Study_Guide.py", title="Series 7 Study Guide", icon="📚")
 series_65 = st.Page("pages/25_Series_65_Study_Guide.py", title="Series 65 Study Guide", icon="📖")
+community_prospecting = st.Page("pages/27_Community_Prospecting.py", title="Community Prospecting", icon="🌱")
 
 navigation = st.navigation(
     {
         "COMMAND": [executive, growth_plan, war_room, quarterback],
         "COACHING": [sales_coach],
         "MARKETS & ECONOMY": [market_monitor],
-        "PROSPECTING": [prospect_discovery, prospecting, lead_lists, opportunity, event_prospecting, event_schedule, group_affinity],
+        "PROSPECTING": [prospect_discovery, prospecting, lead_lists, opportunity, event_prospecting, event_schedule, group_affinity, community_prospecting],
         "MARKETING & NETWORK": [marketing, influencer_network, linkedin_network, mailing],
         "INTELLIGENCE": [prospect_intel, meeting_intel, subject_brief, business_desk],
         "EXECUTION": [rollover_playbook, first_sale, autopilot, interview, practice_lab],
