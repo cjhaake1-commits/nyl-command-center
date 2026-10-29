@@ -7,20 +7,21 @@ import pandas as pd
 import streamlit as st
 
 from core.branding import brand_hero
+from core.rep_profile import REP_NAME, APP_TITLE
 from data.db import get_activity, init_db, storage_backend, persistent_storage_enabled
 from data.hnw_leads import HNW_LEADS
 from data.marketing_network_leads import MARKETING_NETWORK_LEADS
 from data.prospects import init_prospect_db, prospect_counts
 from data.public_leads import PUBLIC_LEADS
 
-st.set_page_config(page_title="Command Center | Chris Haake", page_icon="◆", layout="wide")
+st.set_page_config(page_title=APP_TITLE, page_icon="◆", layout="wide")
 init_db()
 init_prospect_db()
 
 brand_hero(
     "Growth Command Center",
     "A practical operating view for Central Florida prospect development, relationship building, production activity, and disciplined follow-through.",
-    "Chris Haake • New York Life",
+    f"{REP_NAME} • New York Life",
 )
 
 business_count = len(PUBLIC_LEADS)
@@ -176,6 +177,6 @@ with t3:
 
 st.divider()
 st.caption(
-    f"Chris Haake Command Center • {today.isoformat()} • Central Florida • "
+    f"{REP_NAME} Command Center • {today.isoformat()} • Central Florida • "
     "Personal productivity and research aid; not a client system of record or a substitute for NYL approval."
 )
