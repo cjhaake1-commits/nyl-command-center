@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-REP_NAME = "Devin Lynch"
-REP_INITIALS = "DL"
+REP_NAME = "Ashley"
+REP_INITIALS = "A"
 COMPANY_NAME = "New York Life"
-APP_TITLE = "Devin Lynch Command Center"
-STREAMLIT_APP_NAME = "devin-lynch-command-center"
-USER_EMAIL = "dbl1095@aol.com"
+APP_TITLE = "Ashley Command Center"
+STREAMLIT_APP_NAME = "ashley-central-florida"
+USER_EMAIL = ""
 
 TERRITORY_ZIP = ""
 TERRITORY_CITY = "Central Florida / Ocala"
