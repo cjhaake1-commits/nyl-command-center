@@ -4,7 +4,7 @@ import streamlit as st
 
 from core.branding import apply_brand_theme, sidebar_brand
 
-st.set_page_config(page_title="Chris Haake Command Center", page_icon="📈", layout="wide")
+st.set_page_config(page_title="Team Maverick | Chris Haake Command Center", page_icon="✈️", layout="wide")
 apply_brand_theme()
 sidebar_brand()
 
