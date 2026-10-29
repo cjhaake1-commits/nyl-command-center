@@ -59,8 +59,11 @@ series_65 = st.Page("pages/25_Series_65_Study_Guide.py", title="Series 65 Study 
 special_needs = st.Page("pages/28_Special_Needs_Planning.py", title="Special Needs Planning", icon="💛")
 veterinary = st.Page("pages/29_Veterinary_Clinics.py", title="Veterinary Clinics", icon="🐾")
 
+tailor_experience = st.Page("pages/30_Tailor_Your_Experience.py", title="Tailor Your Experience", icon="🛠️")
+
 navigation = st.navigation(
     {
+        "SUPPORT": [tailor_experience],
         "COMMAND": [executive, growth_plan, war_room, quarterback],
         "COACHING": [sales_coach],
         "MARKETS & ECONOMY": [market_monitor],
