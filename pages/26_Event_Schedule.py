@@ -8,6 +8,7 @@ import pandas as pd
 import streamlit as st
 
 from core.branding import apply_brand_theme
+from data.community_hub import list_events
 
 apply_brand_theme()
 import pages_event_catalog
@@ -35,6 +36,8 @@ def market_for(item):
         return "Osceola County"
     if any(term in text for term in ("clermont", "leesburg", "lake county")):
         return "Lake County"
+    if any(term in text for term in ("ocala", "marion county", "world equestrian center", "hits post time", "florida horse park")):
+        return "Ocala / Marion County"
     return "Central Florida"
 
 rows = []
@@ -56,7 +59,33 @@ for item in events:
         "_importance": item.get("importance", 0),
     })
 
-market_order = {"Orange County": 0, "Seminole County": 1, "Osceola County": 2, "Lake County": 3, "Central Florida": 4}
+for item in list_events():
+    try:
+        event_date = date.fromisoformat(item["start_date"])
+    except (KeyError, ValueError):
+        continue
+    event_end = item.get("end_date") or item["start_date"]
+    try:
+        end = date.fromisoformat(event_end)
+    except ValueError:
+        end = event_date
+    if end < today or (end_date and event_date > end_date):
+        continue
+    rows.append({
+        "Date": event_date.isoformat(),
+        "Time": item.get("start_time", "See organizer"),
+        "Market": market_for({"organization": item.get("organizer", ""), "location": item.get("location", "")}),
+        "Event": item.get("title", ""),
+        "Organizer": item.get("organizer", ""),
+        "Location": item.get("location", ""),
+        "Fit": item.get("event_type", "Team-shared event"),
+        "Access / cost": "Confirm with organizer",
+        "Verification": item.get("status", "Shared entry — verify"),
+        "Source / RSVP": item.get("source_url", ""),
+        "_importance": 85,
+    })
+
+market_order = {"Orange County": 0, "Seminole County": 1, "Osceola County": 2, "Lake County": 3, "Ocala / Marion County": 4, "Central Florida": 5}
 df = pd.DataFrame(rows)
 if not df.empty:
     df["_market_order"] = df["Market"].map(market_order).fillna(4)
