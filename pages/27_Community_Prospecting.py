@@ -14,22 +14,10 @@ from data.community_hub import (
 )
 
 apply_brand_theme()
-REP_EMAIL = "dbl1095@aol.com"
-REP_NAME = "Devin Lynch"
+REP_EMAIL = "Ashley profile pending"
+REP_NAME = "Ashley"
 init_community_tables()
 
-SPECIAL_NEEDS = [
-    {"segment":"Special Needs","name":"Down Syndrome Association of Central Florida","organization":"Family education and caregiver programs","city":"Winter Park","state":"FL","contact_route":"407-478-5621 | info@dsacf.org","source_url":"https://dsacf.org/events/","qualification_status":"Organization / public route","permission_status":"Ask for program and guest-education permission","notes":"Do not contact participants or use support-group attendance as lead data."},
-    {"segment":"Special Needs","name":"UCF Center for Autism and Related Disabilities (UCF-CARD)","organization":"UCF / family resource center","city":"Orlando","state":"FL","contact_route":"407-823-6011 | official contact form","source_url":"https://ucf-card.org/","qualification_status":"Organization / public route","permission_status":"Ask about educator and partner rules","notes":"Serves Brevard, Lake, Orange, Osceola, Seminole, Sumter and Volusia."},
-    {"segment":"Special Needs","name":"Family Network on Disabilities — Central Florida","organization":"Parent training and family support","city":"Central Florida","state":"FL","contact_route":"Official contact page","source_url":"https://fndusa.org/contact-us/","qualification_status":"Organization / public route","permission_status":"Ask about guest education and volunteer policy","notes":"No member or attendee list requests."},
-    {"segment":"Special Needs","name":"Central Florida Dreamplex","organization":"Adaptive sports, recreation and family education","city":"Clermont","state":"FL","contact_route":"Official contact page","source_url":"https://www.cfldreamplex.com/","qualification_status":"Organization / public route","permission_status":"Ask for volunteer / event partner pathway","notes":"Confirm event date discrepancies before travel."},
-    {"segment":"Special Needs","name":"Special Olympics Florida","organization":"Sports and family community","city":"Orlando / Kissimmee","state":"FL","contact_route":"Official event contact routes","source_url":"https://www.specialolympicsflorida.org/events","qualification_status":"Organization / public route","permission_status":"Ask for event volunteer or sponsor rules","notes":"No prospecting of athletes or families at events."},
-    {"segment":"Special Needs","name":"PALS — Providing Autism Links & Support","organization":"Family programs and community partner","city":"Orlando","state":"FL","contact_route":"407-823-6020 | official contact page","source_url":"https://flpals.org/about/","qualification_status":"Organization / public route","permission_status":"Ask about approved education / volunteer role","notes":"Coordinate with qualified legal presenters for legal topics."},
-    {"segment":"Special Needs","name":"Autism Society of Greater Orlando","organization":"Autism family community","city":"Orlando","state":"FL","contact_route":"Official website/contact route","source_url":"https://www.autismsocietygreaterorlando.org/","qualification_status":"Organization / public route","permission_status":"Ask for public event and speaker rules","notes":"No outreach based on diagnosis or family status."},
-    {"segment":"Special Needs","name":"UCP of Central Florida","organization":"Family services and disability support","city":"Orlando","state":"FL","contact_route":"Official contact page","source_url":"https://www.ucpcfl.org/support","qualification_status":"Organization / public route","permission_status":"Ask about staff education / community partner process","notes":"Do not request client introductions or participant records."},
-    {"segment":"Special Needs","name":"Center for Independent Living in Central Florida","organization":"Independent living and advocacy","city":"Orlando","state":"FL","contact_route":"Official contact page","source_url":"https://cilorlando.org/","qualification_status":"Organization / public route","permission_status":"Ask about public events and partner criteria","notes":"Service participants are not a prospect list."},
-    {"segment":"Special Needs","name":"Ocala / Central Florida special-needs planning counsel directory","organization":"Professional COI research route","city":"Orlando","state":"FL","contact_route":"Special Needs Alliance attorney finder","source_url":"https://www.specialneedsalliance.org/find-an-attorney/","qualification_status":"COI research route","permission_status":"Public professional introductions only","notes":"Qualified attorneys lead legal planning; no referral fees."},
-]
 EQUINE = [
     {"segment":"Ocala Equine","name":"Ocala CEP Equine Initiative","organization":"Ocala/Marion County economic partnership","city":"Ocala","state":"FL","contact_route":"Official Equine Initiative page","source_url":"https://ocalacep.com/programs/equine","qualification_status":"Organization / public route","permission_status":"Ask how non-member professionals may participate","notes":"Monthly partner meeting; programs open to CEP partners."},
     {"segment":"Ocala Equine","name":"Ocala Horse Alliance","organization":"Marion County horse-industry network","city":"Ocala","state":"FL","contact_route":"Official contact/membership route","source_url":"https://ocalahorsealliance.com/","qualification_status":"Organization / public route","permission_status":"Ask about membership, educational seminars and event rules","notes":"Broad industry membership spanning disciplines and related businesses."},
@@ -51,20 +39,20 @@ STARTER_EVENTS = [
     {"title":"WEC Ocala December Series I","organizer":"World Equestrian Center — Ocala","start_date":"2026-12-01","end_date":"2026-12-06","start_time":"See official schedule","location":"1750 NW 80th Ave, Ocala, FL","event_type":"Equestrian / FEI show jumping","source_url":"https://worldequestriancenter.com/ocala-fl/equestrian/shows/november-december-show-series/","status":"Organizer-listed — confirm details","notes":"Public spectator event; confirm current access."},
     {"title":"WEC Ocala December Series II","organizer":"World Equestrian Center — Ocala","start_date":"2026-12-08","end_date":"2026-12-13","start_time":"See official schedule","location":"1750 NW 80th Ave, Ocala, FL","event_type":"Equestrian / FEI show jumping","source_url":"https://worldequestriancenter.com/ocala-fl/equestrian/shows/november-december-show-series/","status":"Organizer-listed — confirm details","notes":"Public spectator event; confirm current access."},
 ]
-for row in SPECIAL_NEEDS + EQUINE:
+for row in EQUINE:
     save_prospect(REP_EMAIL, row["segment"], row["name"], row["organization"], row["city"], row["state"],
                   row["contact_route"], row["source_url"], row["qualification_status"], row["permission_status"], row["notes"])
 for event in STARTER_EVENTS:
     add_event(REP_EMAIL, **event)
 
-st.title("🤝 Devin’s Community Prospecting")
-st.caption("Special-needs family education and Ocala equestrian relationships • shared team pipeline and event calendar")
+st.title("🤝 Ashley’s Community Prospecting")
+st.caption("Ocala equestrian relationships • shared team pipeline and event calendar")
 st.info(
     "This workspace is for organization research, public professional routes, event planning, and opted-in contacts. "
     "Do not add patient, disability, diagnosis, support-group, or family data. Community programs are not prospect lists."
 )
 
-tabs = st.tabs(["Special Needs", "Ocala Equine", "Shared Pipeline", "Request a List / Change", "Shared Events"])
+tabs = st.tabs(["Ocala Equine", "Shared Pipeline", "Request a List / Change", "Shared Events"])
 
 def show_segment(segment: str, intro: str):
     st.write(intro)
@@ -78,10 +66,6 @@ def show_segment(segment: str, intro: str):
     st.caption("Organization records are research targets. Verify current roles, route, event rules, and firm requirements before outreach.")
 
 with tabs[0]:
-    show_segment("Special Needs",
-        "Start with permission-based relationships through family-serving organizations and approved educational settings. Devin can speak from personal sibling experience, while clearly separating lived experience from professional advice.")
-    st.markdown("**Suggested first request:** ask each organization for its approved volunteer, guest-speaker, or community-education process. Do not approach families at support meetings or request participant lists.")
-with tabs[1]:
     show_segment("Ocala Equine",
         "Build from Devin’s existing relationships in the Ocala horse community. Begin with the Ocala CEP Equine Initiative, Ocala Horse Alliance, show organizers, and public equestrian events; prioritize introductions and service over event-floor prospecting.")
     st.markdown("**Current event anchors:** WEC’s November/December show series, HITS Post Time Dressage, the Arabian & Half Arabian Holiday Festival, and Florida Horse Park events. Verify the organizer listing before travel.")
@@ -97,7 +81,7 @@ with tabs[2]:
     st.subheader("Upload a researched CSV into the shared pipeline")
     st.caption("Accepted fields include name, organization, city, state, contact_route, source_url, qualification_status, permission_status, and notes. Review and deduplicate before import.")
     uploaded = st.file_uploader("Choose CSV", type=["csv"], key="community_csv")
-    segment = st.selectbox("Assign segment", ["Special Needs","Ocala Equine","Other Central Florida"])
+    segment = st.selectbox("Assign segment", ["Ocala Equine","Other Central Florida"])
     if uploaded and st.button("Add CSV rows to shared pipeline", type="primary"):
         try:
             parsed = pd.read_csv(uploaded).fillna("").to_dict(orient="records")
@@ -109,7 +93,7 @@ with tabs[3]:
     st.write("Submit a structured request for a new prospect list, event search, or experience change. Requests are saved in the shared queue and can be downloaded to bring into a research session.")
     with st.form("devin_request"):
         request_type = st.selectbox("Request type", ["New prospect list","Find events","Add industry / community","Change territory or filters","Tailor scripts / experience","App feature request","Other"])
-        focus = st.selectbox("Focus", ["Special Needs","Ocala Equine","Both","Other Central Florida"])
+        focus = st.selectbox("Focus", ["Ocala Equine","Other Central Florida"])
         territory = st.text_input("Territory", value="Central Florida / Ocala, FL")
         prompt = st.text_area("What should be researched or changed?", placeholder="Describe audience, geography, date range, source standards, and what would make the result useful.", height=140)
         submitted = st.form_submit_button("Submit request", type="primary")
@@ -135,7 +119,7 @@ with tabs[4]:
         with c2: end_date = st.date_input("End date (same day if one-day event)", value=date.today(), format="YYYY-MM-DD")
         with c3: start_time = st.text_input("Time / time range", value="Confirm with organizer")
         location = st.text_input("Location")
-        event_type = st.selectbox("Event type", ["Special Needs","Equestrian","Business networking","Community / charity","Other"])
+        event_type = st.selectbox("Event type", ["Equestrian","Business networking","Community / charity","Other"])
         source_url = st.text_input("Public source URL")
         notes = st.text_area("Verification / attendance notes")
         add_submitted = st.form_submit_button("Add to shared event calendar", type="primary")
