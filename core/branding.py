@@ -286,6 +286,12 @@ hr {{ border-color: #202832 !important; opacity: 1 !important; }}
     letter-spacing: .2em;
     margin-bottom: .3rem;
 }}
+
+.brand-team-row {{ display: flex; align-items: center; gap: .62rem; margin: .1rem 0 .12rem; }}
+.brand-jet {{ display: inline-flex; flex: 0 0 2.65rem; width: 2.65rem; height: 2.65rem; align-items: center; justify-content: center; border: 1px solid rgba(215,164,73,.38); border-radius: 50%; background: radial-gradient(circle, rgba(215,164,73,.16), rgba(215,164,73,.025) 70%); box-shadow: 0 0 18px rgba(215,164,73,.08); }}
+.brand-jet svg {{ width: 1.85rem; height: 1.85rem; fill: {GOLD_SOFT}; filter: drop-shadow(0 0 5px rgba(215,164,73,.3)); }}
+.brand-jet .brand-jet-cockpit {{ fill: #F8FAFC; opacity: .92; }}
+.brand-team-label {{ color: #E5B85F; font-size: .61rem; line-height: 1.2; letter-spacing: .24em; font-weight: 800; margin-bottom: .24rem; }}
 .brand-name {{
     font-family: Georgia, 'Times New Roman', serif;
     color: {GOLD_SOFT};
