@@ -1,0 +1,71 @@
+from __future__ import annotations
+
+# Original study drills distilled from user-provided XCEL Chapter 1 review-note screenshots.
+# No proprietary exam questions are reproduced.
+
+REVIEW_CARDS = [
+    {"front":"Insurance as risk transfer","back":"Insurance is a legal contract that transfers specified financial risk from the policyowner/insured side to the insurer in exchange for premium, subject to policy terms."},
+    {"front":"Premium pooling","back":"Premiums from many policyholders are pooled so losses of the few can be paid from the collective pool."},
+    {"front":"Indemnification","back":"Restoring an insured financially to approximately the pre-loss position rather than allowing profit from a covered loss."},
+    {"front":"Valued contract vs indemnity contract","back":"Life insurance generally pays a predetermined stated amount upon a covered death; many other forms of insurance are based on indemnifying actual covered loss."},
+    {"front":"Insured / insurer / premium / policyowner","back":"Insured = person receiving protection; insurer = company assuming risk; premium = payment for coverage; policyowner = person/entity holding contractual ownership rights and transferring risk under the policy."},
+    {"front":"Stock insurer","back":"Owned by shareholders; commonly issues nonparticipating policies; profits belong to stockholders."},
+    {"front":"Mutual insurer","back":"Owned by policyholders; commonly issues participating policies; eligible policyholders may receive dividends and elect directors."},
+    {"front":"Participating vs nonparticipating policy","back":"Participating policies may pay policyowner dividends when declared; nonparticipating policies do not share in divisible surplus through policy dividends."},
+    {"front":"Fraternal benefit society","back":"Nonprofit membership organization operating through a lodge system and existing for social/fraternal purposes beyond insurance; may provide insurance benefits to members."},
+    {"front":"Reciprocal insurer","back":"Unincorporated arrangement in which subscribers/members insure one another through an attorney-in-fact structure."},
+    {"front":"Risk retention group (RRG)","back":"Group created under federal law to provide liability insurance to members with similar or related exposures."},
+    {"front":"Captive insurer","back":"Insurance company owned by a parent or related organization primarily to insure the risks of that parent/group."},
+    {"front":"Marketing / sales department","back":"Generates prospective applicants and supports distribution and sales activity."},
+    {"front":"Underwriting department","back":"Reviews applications, assesses risk, and assigns risk classifications."},
+    {"front":"Claims department","back":"Processes, investigates as needed, and pays or denies claims according to policy terms."},
+    {"front":"Actuarial department","back":"Calculates rates, reserves, dividends, and other financial/statistical assumptions used in insurance operations."},
+    {"front":"Producer / underwriter / actuary / adjuster","back":"Producer sells/solicits insurance; underwriter assesses and classifies risk; actuary calculates rates/reserves; adjuster investigates and settles claims."},
+    {"front":"Career agency system","back":"Agents generally work within a career system associated with one insurer/company structure."},
+    {"front":"Independent agency system","back":"Independent agents may represent multiple insurers rather than one exclusive company."},
+    {"front":"PPGA","back":"Personal producing general agency: producer-oriented distribution structure focused heavily on personal sales production and may build a sales force."},
+    {"front":"Direct selling","back":"Insurer deals directly with consumers without a traditional independent-agent distribution layer."},
+    {"front":"Captive agent vs independent agent","back":"Captive agent generally represents one insurer; independent agent may represent multiple insurers."},
+    {"front":"Broker","back":"Generally represents the insurance buyer/client rather than an insurer."},
+    {"front":"Solicitor","back":"Assists a producer in soliciting prospects/applicants but is not independently licensed to complete insurance sales in the same manner as a licensed producer; follow current Florida licensing rules for exact authority."},
+    {"front":"Chapter 1 regulation timeline core","back":"Paul v. Virginia (1868) = state regulation; McCarran-Ferguson (1945) = primary insurance regulation returned/preserved to states; FCRA (1970) = consumer-report protections; GLBA (1999) = financial privacy."},
+    {"front":"NAIC core functions","back":"Promotes uniformity among state insurance laws, develops model acts/regulations, protects consumer interests, and supports state-based regulation."},
+    {"front":"NCOIL core role","back":"Legislative organization of state lawmakers focused on insurance; develops model laws and supports state legislative authority."},
+    {"front":"State insurance department","back":"Primary state-level regulator that licenses, examines, and enforces applicable state insurance law."},
+    {"front":"Rating services","back":"Organizations such as A.M. Best evaluate and publicize insurer financial strength; they are not the primary insurance regulator."},
+]
+
+REVIEW_QUESTIONS = [
+    {"q":"Premium pooling primarily allows insurers to:","choices":["Spread risk across many policyholders","Guarantee every policyholder a dividend","Eliminate underwriting","Avoid maintaining reserves"],"answer":0,"why":"Pooling spreads losses across a large group rather than concentrating them on one insured."},
+    {"q":"Which statement best distinguishes life insurance from a traditional indemnity contract?","choices":["Life insurance generally pays a predetermined stated amount for a covered death","Life insurance always reimburses exact economic loss","Life insurance has no contract value","Life insurance cannot name beneficiaries"],"answer":0,"why":"Life insurance is typically a valued contract with a stated death benefit rather than reimbursement of a measured property loss."},
+    {"q":"Who owns a stock insurance company?","choices":["Policyholders","Shareholders","State regulators","Producers"],"answer":1,"why":"Stock insurers are owned by shareholders."},
+    {"q":"Who owns a mutual insurance company?","choices":["Policyholders","Shareholders","Federal regulators","Agents"],"answer":0,"why":"Mutual insurers are owned by their policyholders."},
+    {"q":"Which insurer type is characterized by a lodge system and purposes beyond insurance?","choices":["Fraternal benefit society","Stock insurer","Captive insurer","Surplus-lines insurer"],"answer":0,"why":"Fraternal benefit societies are membership organizations operating through a lodge system and broader fraternal purposes."},
+    {"q":"A company creates an insurer primarily to cover its own corporate risks. This is a:","choices":["Captive insurer","Reciprocal insurer","Mutual insurer","Fraternal society"],"answer":0,"why":"Captive insurers are owned by a parent/group to insure related risks."},
+    {"q":"Which department primarily reviews applications and assigns risk classifications?","choices":["Underwriting","Claims","Marketing","Accounting"],"answer":0,"why":"Underwriting evaluates applicants and risk classes."},
+    {"q":"Which professional primarily calculates rates and reserves?","choices":["Actuary","Adjuster","Broker","Solicitor"],"answer":0,"why":"Actuaries use statistical and financial methods to calculate rates and reserves."},
+    {"q":"Which professional primarily investigates and settles claims?","choices":["Adjuster","Actuary","Underwriter","Producer"],"answer":0,"why":"Adjusters handle claim investigation and settlement functions."},
+    {"q":"An agent who represents multiple insurers is most commonly described as:","choices":["Independent agent","Captive agent","Adjuster","Actuary"],"answer":0,"why":"Independent agents may represent multiple companies."},
+    {"q":"A broker generally represents:","choices":["The buyer/client","Only the insurer","The state insurance department","A rating agency"],"answer":0,"why":"Brokers generally act on behalf of the insurance buyer/client."},
+    {"q":"Which organization is a professional association for insurance/financial advisors rather than a regulator?","choices":["NAIFA","State insurance department","NAIC","Florida DFS"],"answer":0,"why":"NAIFA is a professional association, not a government regulator."},
+    {"q":"Which organization evaluates insurer financial strength rather than directly enforcing insurance laws?","choices":["A.M. Best","State insurance department","Florida DFS","Insurance commissioner"],"answer":0,"why":"A.M. Best is a rating service, not the primary regulator."},
+]
+
+REVIEW_LIGHTNING = [
+    ("Spreads loss exposure across many insureds", "Premium pooling"),
+    ("Restore to pre-loss financial position", "Indemnification"),
+    ("Owned by shareholders", "Stock insurer"),
+    ("Owned by policyholders", "Mutual insurer"),
+    ("Lodge system; nonprofit membership organization", "Fraternal benefit society"),
+    ("Members insure one another", "Reciprocal insurer"),
+    ("Parent company insures its own risks", "Captive insurer"),
+    ("Evaluates applicants and classifies risk", "Underwriting"),
+    ("Processes and settles claims", "Claims"),
+    ("Rates and reserves", "Actuarial"),
+    ("One-company agent", "Captive/career agent"),
+    ("Multiple-company agent", "Independent agent"),
+    ("Represents buyer", "Broker"),
+    ("State regulators + model acts", "NAIC"),
+    ("State legislators + model laws", "NCOIL"),
+    ("Financial-strength evaluation", "Rating services"),
+]
